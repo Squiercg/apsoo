@@ -1,5 +1,7 @@
 package sistema;
 
+import interfaces.SystemInterface;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -7,6 +9,7 @@ public class SystemRun {
 	
 	private String systemDatabaseURL;
 	private String systemLabelStatusText;
+	private SystemInterface systemInterface;
 	
 	public SystemRun() {
 		setSystemDatabaseURL();
@@ -21,6 +24,8 @@ public class SystemRun {
 			systemLabelStatusText = "O caminho do banco de dados nao foi encontrado!";
 		}
 	}
+	
+	
 	
 	public String getSystemDatabaseURL() {
 		return systemDatabaseURL;

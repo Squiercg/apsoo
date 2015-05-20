@@ -25,8 +25,6 @@ public class SystemRun {
 		}
 	}
 	
-	
-	
 	public String getSystemDatabaseURL() {
 		return systemDatabaseURL;
 	}

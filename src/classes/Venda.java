@@ -13,6 +13,10 @@ public class Venda {
 	private ArrayList<ItemVenda> vendaItem;
 	private double vendaValor;
 	
+	/*
+	 * Aqui também, dois construtores, caso não queira setar o valor da venda, podemos calcular 
+	 * ele a partir do vendaItem
+	 */
 	
 	
 	public Venda(
@@ -29,10 +33,38 @@ public class Venda {
 		this.vendaValor = vendaValor;
 	}
 	
-	//Certeza que é setvalor aqui, não é adicionar um desconto, algo assim?
-	public void setVendaValor(double vendaValor) {
-		this.vendaValor = vendaValor;
+	public Venda(
+			int vendaId, 
+			Date vendaData, 
+			Cliente vendaCliente,
+			ArrayList<ItemVenda> vendaItem) {
+
+		this.vendaId = vendaId;
+		this.vendaData = vendaData;
+		this.vendaCliente = vendaCliente;
+		this.vendaItem = vendaItem;
+		this.setVendaValor();
 	}
+	
+	/*
+	 * Fiz dois set valor, um ele le do proprio objeto o valor a ser usado, o outro deixa
+	 * você colocar qualquer valor, caso queria dar um desconto por exemplo.
+	 */
+	public void setVendaValor(double vendaValor) {
+		if(vendaValor>=0){
+			this.vendaValor = vendaValor;			
+		}
+	}
+	
+	public void setVendaValor() {
+		double soma=0;
+		for(int i=0;i<this.vendaItem.size();i++){
+			soma+=vendaItem.get(i).getItemVendaCusto();
+		}
+		this.vendaValor = soma;
+	}
+	
+	
 	public int getVendaId() {
 		return vendaId;
 	}
@@ -42,14 +74,9 @@ public class Venda {
 	public Cliente getVendaCliente() {
 		return vendaCliente;
 	}
-	
-	//verificar esse getter
+
 	public double getVendaValor() {
-		double soma=0;
-		for(int i=0;i<this.vendaItem.size();i++){
-			soma+=vendaItem.get(i).getItemVendaCusto();
-		}
-		return soma;
+		return this.vendaValor;
 	}	
 
 }

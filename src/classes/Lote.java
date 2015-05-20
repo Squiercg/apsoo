@@ -10,24 +10,26 @@ public class Lote {
 	private ArrayList<ItemLote> itemLote;
 	private double loteValor;
 	
-	
 	public Lote(
 			int loteId, 
 			Date loteData, 
 			Fornecedor loteFornecedor,
-			ArrayList<ItemLote> itemLote, 
-			double loteValor) {
+			ArrayList<ItemLote> itemLote) {
 
 		this.loteId = loteId;
 		this.loteData = loteData;
 		this.loteFornecedor = loteFornecedor;
 		this.itemLote = itemLote;
-		this.loteValor = loteValor;
+		this.setLoteValor();
 	}
 
 	//Confirmar esse getter e setter
-	public void setLoteValor(double loteValor) {
-		this.loteValor = loteValor;
+	public void setLoteValor() {
+		double soma = 0.0;
+		for(int i=0;i<this.itemLote.size();i++) {
+			soma+= itemLote.get(i).getItemLoteCusto();
+		}
+		this.loteValor = soma;
 	}
 	
 	public double getLoteValor() {

@@ -5,9 +5,9 @@ public class Categoria {
 	private String categoriaDesc;	
 	
 	public Categoria(
-			int categoriaId, 
+//			int categoriaId, 
 			String categoriaDesc) {
-		this.categoriaId = categoriaId;
+//		this.categoriaId = categoriaId;
 		this.categoriaDesc = categoriaDesc;
 	}
 

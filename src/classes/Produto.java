@@ -11,35 +11,32 @@ public class Produto {
 	
 	/**/
 	public Produto(
-			int produtoId, 
+//			int produtoId, 
 			String produtoDesc,
 			Categoria produtoCategoria, 
 			double produtoCusto,
 			double produtoPreco) {
-		this.produtoId = produtoId;
+//		this.produtoId = produtoId;
 		this.produtoDesc = produtoDesc;
 		this.produtoCategoria = produtoCategoria;
 		this.produtoCusto = produtoCusto;
 		this.setProdutoPreco(produtoPreco);
 	}	
 
-	/**Dois construtores estão falhando
-	 * mas eu queria deixar 2 construtores porque ou você constroi a classe com o lucro
-	 * ou você poe o preço, mas uma informação é devirada da outra.
-
+/*
 	public Produto(
-			int produtoId, 
+//			int produtoId, 
 			String produtoDesc,
 			Categoria produtoCategoria, 
 			double produtoCusto, 
 			double produtoLucro) {
-		this.produtoId = produtoId;
+//		this.produtoId = produtoId;
 		this.produtoDesc = produtoDesc;
 		this.produtoCategoria = produtoCategoria;
 		this.produtoCusto = produtoCusto;
 		this.setProdutoLucro(produtoLucro);
 	}
-	 */
+	*/ 
 
 
 	public double getProdutoPreco() {
@@ -85,10 +82,10 @@ public class Produto {
 
 	public static void main(String[] args) {
 		System.out.println("Criando um objeto categoria.");
-		Categoria calca = new Categoria(1,"Calças");
+		Categoria calca = new Categoria("Calças");
 		
 		System.out.println("Criando um objeto Produto.");
-		Produto produto = new Produto(1, "Calça Jeans",	calca, 30.00, 0.2);
+		Produto produto = new Produto( "Calça Jeans",	calca, 30.00, 0.2);
 	
 		System.out.println(produto);
 

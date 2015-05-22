@@ -70,8 +70,7 @@ public class SystemInterface {
 		try {
 			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_icon.png";
 			systemInterfaceFrame.setIconImage((new ImageIcon(systemIconImagePath)).getImage());
-		}
-		catch (IOException exPathNotFound) {
+		} catch (IOException exPathNotFound) {
 			systemInterfaceLabelStatus.setText("A imagem do icone do sistema nao foi encontrada!");
 			System.out.print(systemInterfaceLabelStatus.getText());
 		}
@@ -110,21 +109,39 @@ public class SystemInterface {
 		systemInterfaceMenuNames.add("Fornecedores");
 		systemInterfaceMenuNames.add("Categorias");
 		systemInterfaceMenuNames.add("Produtos");
+		
 		ArrayList<String> systemInterfaceMenuItemNames = new ArrayList<String>();
 		systemInterfaceMenuItemNames.add("Cadastrar");
 		systemInterfaceMenuItemNames.add("Consultar");
+		
 		for(String systemInterfaceMenuName : systemInterfaceMenuNames) {
 			systemInterfaceMenu = new JMenu(systemInterfaceMenuName);
 			systemInterfaceMenu.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenu.getFont().getSize() + 4));
 			systemInterfaceMenu.addMouseListener(new HandlerMenuOptions(systemInterfaceMenuName, null));
 			for(String systemInterfaceMenuItemName : systemInterfaceMenuItemNames) {
 				systemInterfaceMenuItem = new JMenuItem(systemInterfaceMenuItemName);
-				systemInterfaceMenuItem.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenuItem.getFont().getSize() + 2));
+				systemInterfaceMenuItem.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenuItem.getFont().getSize() + 3));
 				systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions(systemInterfaceMenuName, systemInterfaceMenuItemName));
 				systemInterfaceMenu.add(systemInterfaceMenuItem);
 			}
 			systemInterfaceMenuBar.add(systemInterfaceMenu);
 		}
+		systemInterfaceMenu = new JMenu("Relatorios");
+		systemInterfaceMenu.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenu.getFont().getSize() + 4));
+		systemInterfaceMenu.addMouseListener(new HandlerMenuOptions("Relatorios", null));
+		systemInterfaceMenuItemNames.clear();
+		systemInterfaceMenuItemNames.add("Conferencia de Estoque");
+		systemInterfaceMenuItemNames.add("Historico de Lotes");
+		systemInterfaceMenuItemNames.add("Comprovante de Venda");
+		systemInterfaceMenuItemNames.add("Historico de Vendas");
+		
+		for(String systemInterfaceMenuItemName : systemInterfaceMenuItemNames) {
+			systemInterfaceMenuItem = new JMenuItem(systemInterfaceMenuItemName);
+			systemInterfaceMenuItem.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenuItem.getFont().getSize() + 3));
+			systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions("Relatorios", systemInterfaceMenuItemName));
+			systemInterfaceMenu.add(systemInterfaceMenuItem);
+		}
+		systemInterfaceMenuBar.add(systemInterfaceMenu);
 	}
 	
 	private void setSystemExitButton() {
@@ -145,21 +162,21 @@ public class SystemInterface {
 			systemInterfaceFrame.setVisible(true);
 			try {
 			    Thread.sleep(1337 * 2);
-			}
-			catch(InterruptedException exThreadFailed) {
+			} catch(InterruptedException exThreadFailed) {
 				systemInterfaceLabelStatus.setText("Houve algum erro ao carregar o programa!");
 			    Thread.currentThread().interrupt();
 			}
 			systemInterfaceFrame.remove(systemInterfaceLabelImage);
-		}
-		catch(IOException exPathNotFound) {
+			systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_background.jpg";
+			systemInterfaceLabelImage = new JLabel(new ImageIcon(systemWelcomeImagePath));
+		} catch(IOException exPathNotFound) {
 			systemInterfaceLabelStatus.setText("Imagem da tela de login nao encontrada!");
-		}
-		finally {
+		} finally {
 			systemInterfaceFrame.repaint();
 			systemInterfaceStatusMessage = "Home";
 			systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 			systemInterfacePanelMain = new JPanel(new BorderLayout());
+			systemInterfacePanelMain.add(systemInterfaceLabelImage);
 			systemInterfaceFrame.add(systemInterfacePanelMain, BorderLayout.CENTER);
 		}
 	}
@@ -183,6 +200,7 @@ public class SystemInterface {
 		systemInterfacePanelMain.removeAll();
 		systemInterfacePanelMain.revalidate();
 		systemInterfacePanelMain.repaint();
+		systemInterfacePanelMain.add(systemInterfaceLabelImage);
 	}
 	
 	private class HandlerHomeButton implements MouseListener {
@@ -222,8 +240,7 @@ public class SystemInterface {
 			try {
 			    Thread.sleep(1337 * 2);
 			    systemInterfaceFrame.dispose();
-			}
-			catch(InterruptedException exThreadFailed) {
+			} catch(InterruptedException exThreadFailed) {
 				systemInterfaceLabelStatus.setText("Houve algum erro ao encerrar o programa!");
 			    Thread.currentThread().interrupt();
 			}
@@ -264,20 +281,19 @@ public class SystemInterface {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(!(e.getSource() instanceof JMenu)) {
-				systemInterfaceStatusMessage = 
+				systemInterfaceStatusMessage = systemInterfaceMenuName.equalsIgnoreCase("Relatorios") ? 
+					String.format("Home > %s > %s", systemInterfaceMenuName, systemInterfaceMenuItemName) : 
 					String.format("Home > %s > %s %s", systemInterfaceMenuName, systemInterfaceMenuItemName, systemInterfaceMenuName.toLowerCase());
 				systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 				if(e.getSource() instanceof JMenuItem) {
 					clearSystemInterface();
 					if(systemInterfaceMenuItemName.equals("Cadastrar")) {
 //						cadastraAlgo(systemInterfaceMenuName); // Implementar
-					}
-					else if(systemInterfaceMenuItemName.equals("Consultar")) {
+					} else if(systemInterfaceMenuItemName.equals("Consultar")) {
 //						consultaAlgo(systemInterfaceMenuName); // Implementar
 					}
 				}
-			}
-			else {
+			} else {
 				mouseEntered(e);
 			}
 		}
@@ -289,9 +305,12 @@ public class SystemInterface {
 					systemInterfaceStatusMessage : systemInterfaceLabelStatus.getText();
 			if(e.getSource() instanceof JMenu) {
 				systemInterfaceLabelStatus.setText("Acessa o modulo de " + systemInterfaceMenuName.toLowerCase());
-			}
-			else {
-				systemInterfaceLabelStatus.setText(systemInterfaceMenuItemName + " " + systemInterfaceMenuName.toLowerCase()); 
+			} else {
+				if(systemInterfaceMenuName.equalsIgnoreCase("Relatorios")) {
+					systemInterfaceLabelStatus.setText(systemInterfaceMenuName + " de " + systemInterfaceMenuItemName.toLowerCase());
+				} else {
+					systemInterfaceLabelStatus.setText(systemInterfaceMenuItemName + " " + systemInterfaceMenuName.toLowerCase());
+				}
 			}
 		}
 		

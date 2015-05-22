@@ -10,6 +10,7 @@ public class ItemLote {
 	@DatabaseField(canBeNull = false)
 	private int itemLoteQuantidade;
 	
+	public ItemLote() {}
 	
 	public ItemLote(
 			Produto itemLoteProduto, 

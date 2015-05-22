@@ -20,8 +20,10 @@ public class Cliente {
 	@DatabaseField(canBeNull = true)
 	private String clienteEmail;	
 	
+	public Cliente() {}
+	
 	public Cliente(
-//			int clienteId, 
+			int clienteId, 
 			String clienteNome, 
 			String clienteEndereco,
 			String clienteEstado, 
@@ -29,7 +31,7 @@ public class Cliente {
 			String clienteDocumento, 
 			String clienteEmail) {
 
-//		this.clienteId = clienteId;
+		this.clienteId = clienteId;
 		this.clienteNome = clienteNome;
 		this.clienteEndereco = clienteEndereco;
 		this.clienteEstado = clienteEstado;

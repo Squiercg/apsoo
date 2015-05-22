@@ -17,6 +17,8 @@ public class Lote {
 	@DatabaseField(canBeNull = false)
 	private double loteValor;
 	
+	public Lote() {}
+	
 	public Lote(
 			int loteId, 
 			Date loteData, 

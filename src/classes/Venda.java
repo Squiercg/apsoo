@@ -26,6 +26,7 @@ public class Venda {
 	 * ele a partir do vendaItem
 	 */
 	
+	public Venda() {}
 	
 	public Venda(
 			int vendaId, 

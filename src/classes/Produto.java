@@ -19,6 +19,7 @@ public class Produto {
 	@DatabaseField(columnName = "prod_lucro")
 	private double produtoLucro;
 	
+	public Produto() {}
 	/**/
 	public Produto(
 			int produtoId, 

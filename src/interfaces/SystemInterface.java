@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -44,6 +45,9 @@ public class SystemInterface {
 	private JTextField systemInterfaceFieldNorth;
 	private JTextField systemInterfaceFieldSouth;
 	private JTextField systemInterfaceFieldCenter;
+	private JComboBox systemInterfaceComboBoxNorth;
+	private JComboBox systemInterfaceComboBoxSouth;
+	private JComboBox systemInterfaceComboBoxCenter;
 	private ButtonGroup systemInterfaceButtonGroup;
 	private Border systemInterfaceBorderDefault;
 	private Border systemInterfaceBorderEmpty;

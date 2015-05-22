@@ -32,8 +32,7 @@ public class Produto {
 		this.produtoCusto = produtoCusto;
 		this.setProdutoPreco(produtoPreco);
 	}	
-
-/*
+	
 	public Produto(
 //			int produtoId, 
 			String produtoDesc,
@@ -46,7 +45,7 @@ public class Produto {
 		this.produtoCusto = produtoCusto;
 		this.setProdutoLucro(produtoLucro);
 	}
-	*/ 
+	
 
 
 	public double getProdutoPreco() {

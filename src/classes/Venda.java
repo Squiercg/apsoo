@@ -28,13 +28,13 @@ public class Venda {
 	
 	
 	public Venda(
-//			int vendaId, 
+			int vendaId, 
 			Date vendaData, 
 			Cliente vendaCliente,
 			ArrayList<ItemVenda> vendaItem, 
 			double vendaValor) {
 
-//		this.vendaId = vendaId;
+		this.vendaId = vendaId;
 		this.vendaData = vendaData;
 		this.vendaCliente = vendaCliente;
 		this.vendaItem = vendaItem;
@@ -42,12 +42,12 @@ public class Venda {
 	}
 	
 	public Venda(
-//			int vendaId, 
+			int vendaId, 
 			Date vendaData, 
 			Cliente vendaCliente,
 			ArrayList<ItemVenda> vendaItem) {
 
-//		this.vendaId = vendaId;
+		this.vendaId = vendaId;
 		this.vendaData = vendaData;
 		this.vendaCliente = vendaCliente;
 		this.vendaItem = vendaItem;

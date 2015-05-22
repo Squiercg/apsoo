@@ -18,12 +18,12 @@ public class Lote {
 	private double loteValor;
 	
 	public Lote(
-//			int loteId, 
+			int loteId, 
 			Date loteData, 
 			Fornecedor loteFornecedor,
 			ArrayList<ItemLote> itemLote) {
 
-//		this.loteId = loteId;
+		this.loteId = loteId;
 		this.loteData = loteData;
 		this.loteFornecedor = loteFornecedor;
 		this.itemLote = itemLote;

@@ -18,12 +18,12 @@ public class Fornecedor {
 	
 	
 	public Fornecedor(
-//			int fornecedorId, 
+			int fornecedorId, 
 			String fornecedorNome,
 			String fornecedorTelefone, 
 			String fornecedorEmail) {
 
-//		this.fornecedorId = fornecedorId;
+		this.fornecedorId = fornecedorId;
 		this.fornecedorNome = fornecedorNome;
 		this.fornecedorTelefone = fornecedorTelefone;
 		this.fornecedorEmail = fornecedorEmail;

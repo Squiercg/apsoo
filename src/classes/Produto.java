@@ -21,29 +21,29 @@ public class Produto {
 	
 	/**/
 	public Produto(
-//			int produtoId, 
+			int produtoId, 
 			String produtoDesc,
 			Categoria produtoCategoria, 
 			double produtoCusto,
 			double produtoPreco) {
-//		this.produtoId = produtoId;
+		this.produtoId = produtoId;
 		this.produtoDesc = produtoDesc;
 		this.produtoCategoria = produtoCategoria;
 		this.produtoCusto = produtoCusto;
-		this.setProdutoPreco(produtoPreco);
+		this.setProdutoPreco();
 	}	
 	
 	public Produto(
-//			int produtoId, 
+			int produtoId, 
 			String produtoDesc,
 			Categoria produtoCategoria, 
 			double produtoCusto, 
-			double produtoLucro) {
-//		this.produtoId = produtoId;
+			float produtoLucro) {
+		this.produtoId = produtoId;
 		this.produtoDesc = produtoDesc;
 		this.produtoCategoria = produtoCategoria;
-		this.produtoCusto = produtoCusto;
-		this.setProdutoLucro(produtoLucro);
+		this.produtoCusto = (double) produtoCusto;
+		this.setProdutoLucro();
 	}
 	
 
@@ -55,11 +55,13 @@ public class Produto {
 	public void setProdutoPreco(double produtoPreco) {
 		if(produtoPreco>0){
 			this.produtoPreco = produtoPreco;
-			this.produtoLucro = (this.produtoCusto-this.produtoPreco)/this.produtoCusto;
 		} else {
 			this.produtoPreco = 0;
-		}
-		
+		}		
+	}
+	
+	public void setProdutoPreco() {
+		this.produtoPreco = this.produtoPreco + this.produtoLucro * this.produtoPreco;				
 	}
 
 	//Esse valor sera porcentagem, de 0 a 1?
@@ -68,9 +70,11 @@ public class Produto {
 	}
 
 	public void setProdutoLucro(double produtoLucro) {
-		this.produtoLucro = produtoLucro;
-		this.produtoPreco = this.produtoPreco + this.produtoLucro * this.produtoPreco;
-		
+		this.produtoLucro = produtoLucro;	
+	}
+	
+	public void setProdutoLucro() {
+		this.produtoLucro = (this.produtoCusto-this.produtoPreco)/this.produtoCusto;		
 	}
 
 	public int getProdutoId() {
@@ -91,10 +95,10 @@ public class Produto {
 
 	public static void main(String[] args) {
 		System.out.println("Criando um objeto categoria.");
-		Categoria calca = new Categoria("Calças");
+		Categoria calca = new Categoria(1,"Calças");
 		
 		System.out.println("Criando um objeto Produto.");
-		Produto produto = new Produto( "Calça Jeans",	calca, 30.00, 0.2);
+		Produto produto = new Produto(1, "Calça Jeans",	calca, 30.00, 0.2);
 	
 		System.out.println(produto);
 

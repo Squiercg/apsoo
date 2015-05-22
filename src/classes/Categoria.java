@@ -1,7 +1,13 @@
 package classes;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(tableName = "Categoria")
 public class Categoria {
+	@DatabaseField(generatedId = true)
 	private int categoriaId;
+	@DatabaseField(canBeNull = false)
 	private String categoriaDesc;	
 	
 	public Categoria(

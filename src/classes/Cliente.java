@@ -1,12 +1,23 @@
 package classes;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(tableName = "Cliente")
 public class Cliente {
+	@DatabaseField(generatedId = true)
 	private int clienteId;
+	@DatabaseField(canBeNull = false)
 	private String clienteNome;
+	@DatabaseField(canBeNull = true)
 	private String clienteEndereco;
+	@DatabaseField(canBeNull = true)
 	private String clienteEstado;
+	@DatabaseField(canBeNull = true)
 	private String clienteTelefone;
+	@DatabaseField(canBeNull = true)
 	private String clienteDocumento;
+	@DatabaseField(canBeNull = true)
 	private String clienteEmail;	
 	
 	public Cliente(

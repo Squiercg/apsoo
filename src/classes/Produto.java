@@ -1,12 +1,22 @@
 package classes;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(tableName = "Produto")
 public class Produto {
+	@DatabaseField(generatedId = true)
 	private int produtoId;
+	@DatabaseField(canBeNull = false)
 	private String produtoDesc;
+	@DatabaseField(canBeNull = false, foreign = true)
 	private Categoria produtoCategoria;
+	@DatabaseField(canBeNull = true)
 	private double produtoCusto;
-	/*Lucro está implementado  como um valor maior que zero, que é a porcentagem de lucro*/	
+	/*Lucro esta implementado  como um valor maior que zero, que eh a porcentagem de lucro*/	
+	@DatabaseField(columnName = "prod_preco")
 	private double produtoPreco;
+	@DatabaseField(columnName = "prod_lucro")
 	private double produtoLucro;
 	
 	/**/

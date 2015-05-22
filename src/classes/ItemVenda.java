@@ -1,7 +1,13 @@
 package classes;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(tableName = "ItemVenda")
 public class ItemVenda {
+	@DatabaseField(generatedId = true)
 	private Produto itemVendaProduto;
+	@DatabaseField(canBeNull = false)
 	private int itemVendaQuantidade;
 	
 	

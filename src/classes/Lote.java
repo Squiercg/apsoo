@@ -3,11 +3,18 @@ package classes;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+@DatabaseTable(tableName = "Lote")
 public class Lote {
+	@DatabaseField(generatedId = true)
 	private int loteId;
+	@DatabaseField(canBeNull = false)
 	private Date loteData;
+	@DatabaseField(canBeNull = false, foreign = true)
 	private Fornecedor loteFornecedor;
 	private ArrayList<ItemLote> itemLote;
+	@DatabaseField(canBeNull = false)
 	private double loteValor;
 	
 	public Lote(

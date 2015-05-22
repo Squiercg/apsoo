@@ -2,15 +2,23 @@ package classes;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 //Confirmar imports
 //Usar arraylist para vendaItem?
 
+@DatabaseTable(tableName = "Venda")
 public class Venda {
 	
+	@DatabaseField(generatedId = true)
 	private int vendaId;
+	@DatabaseField(canBeNull = false)
 	private Date vendaData;
+	@DatabaseField(canBeNull = false, foreign = true)
 	private Cliente vendaCliente;
 	private ArrayList<ItemVenda> vendaItem;
+	@DatabaseField(canBeNull = true)
 	private double vendaValor;
 	
 	/*

@@ -8,7 +8,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 
-public abstract class GenericDao<E>{
+public abstract class GenericDao<E> {
 
 	protected Dao<E, Integer> dao;
 	private Class<E> type;
@@ -28,6 +28,7 @@ public abstract class GenericDao<E>{
 			e.printStackTrace();
 		}
 	}
+	
 	//Devolve todos os campos de uma tabela qualquer
 	public List<E> getAll() {
 		try{
@@ -36,8 +37,11 @@ public abstract class GenericDao<E>{
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
+		}finally{
+			finaliza();
 		}
 	}
+	
 	// Devolve resultado pelo id solicitado
 	public E getById(int id) {
 		try{
@@ -46,6 +50,54 @@ public abstract class GenericDao<E>{
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
+		}finally{
+			finaliza();
+		}
+	}
+	// Altera um dado no banco
+	public int update(E data){
+		int rows = 0;
+		try {
+			rows = dao.update(data);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			finaliza();
+		}
+		return rows;
+	}
+	
+	//Apaga um registro completo no banco
+	public int delete (E data){
+		int rows = 0;
+		try {
+			rows = dao.delete(data);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			finaliza();
+		}
+		return rows;
+	}
+	
+	//Apaga um registro pelo Id no banco
+		public int delete (int id){
+			int rows = 0;
+			try {
+				rows = dao.deleteById(id);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}finally{
+				finaliza();
+			}
+			return rows;
+		}
+	
+	private void finaliza(){
+		try {
+			connectionSource.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }

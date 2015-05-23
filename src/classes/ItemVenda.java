@@ -10,7 +10,7 @@ public class ItemVenda {
 	@DatabaseField(canBeNull = false)
 	private int itemVendaQuantidade;
 	
-	
+	public ItemVenda() {}
 	
 	public ItemVenda(
 			Produto itemVendaProduto, 

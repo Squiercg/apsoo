@@ -15,7 +15,7 @@ public class Fornecedor {
 	@DatabaseField(canBeNull = true)
 	private String fornecedorEmail;
 	
-	
+	public Fornecedor() {}
 	
 	public Fornecedor(
 			int fornecedorId, 

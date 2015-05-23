@@ -10,6 +10,8 @@ public class Categoria {
 	@DatabaseField(canBeNull = false)
 	private String categoriaDesc;	
 	
+	public Categoria() {}
+	
 	public Categoria(
 			int categoriaId, 
 			String categoriaDesc) {

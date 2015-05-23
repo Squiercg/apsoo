@@ -1,6 +1,7 @@
 package interfaces;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -10,63 +11,62 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 public class SystemInterface {
 	
+	private Integer systemInterfaceLoadTime;
+	private Boolean systemInterfaceBusy;
+	private Dimension systemInterfaceDimension;
+	private Border systemInterfaceBorderDefault;
 	private JFrame systemInterfaceFrame;
 	private JPanel systemInterfacePanelMain;
-	private JPanel systemInterfacePanelNorth;
-	private JPanel systemInterfacePanelSouth;
-	private JPanel systemInterfacePanelCenter;
 	private JMenuBar systemInterfaceMenuBar;
 	private JMenu systemInterfaceMenu;
 	private JMenuItem systemInterfaceMenuItem;
 	private JLabel systemInterfaceLabelStatus;
 	private JLabel systemInterfaceLabelImage;
-	private JScrollPane systemInterfaceScrollNorth;
-	private JScrollPane systemInterfaceScrollSouth;
-	private JScrollPane systemInterfaceScrollCenter;
-	private JTable systemInterfaceTableNorth;
-	private JTable systemInterfaceTableSouth;
-	private JTable systemInterfaceTableCenter;
-	private JTextField systemInterfaceFieldNorth;
-	private JTextField systemInterfaceFieldSouth;
-	private JTextField systemInterfaceFieldCenter;
-	private JComboBox systemInterfaceComboBoxNorth;
-	private JComboBox systemInterfaceComboBoxSouth;
-	private JComboBox systemInterfaceComboBoxCenter;
-	private ButtonGroup systemInterfaceButtonGroup;
-	private Border systemInterfaceBorderDefault;
-	private Border systemInterfaceBorderEmpty;
 	private String systemInterfaceStatusMessage;
 	
 	public SystemInterface() {
-		setSystemDefaultBorders();
+		setSystemInterfaceLoadTime(1);
+		setSystemInterfaceBusy();
+		setSystemInterfaceDefaultBorder();
+		setSystemInterfaceDimension();
 		setSystemInterfaceFrame();
 		setSystemInterfaceLabelStatus();
 		setSystemInterfaceMenuBar();
-		setSystemHomeButton();
+		setSystemInterfaceHomeButton();
 		setSystemInterfaceMenu();
-		setSystemExitButton();
+		setSystemInterfaceExitButton();
 		setSystemInterface();
+		setSystemInterfaceBusy();
 	}
 	
-	private void setSystemDefaultBorders() {
+	private void setSystemInterfaceLoadTime(int systemInterfaceLoadTime) {
+		this.systemInterfaceLoadTime = systemInterfaceLoadTime;
+	}
+	
+	private void setSystemInterfaceBusy() {
+		if(systemInterfaceBusy == null)
+			systemInterfaceBusy = true;
+		else
+			systemInterfaceBusy = !systemInterfaceBusy;
+	}
+	
+	private void setSystemInterfaceDefaultBorder() {
 		systemInterfaceBorderDefault = BorderFactory.createRaisedBevelBorder();
-		systemInterfaceBorderEmpty = BorderFactory.createEmptyBorder();
+	}
+	
+	private void setSystemInterfaceDimension() {
+		systemInterfaceDimension = new Dimension(1024, 800);
 	}
 	
 	private void setSystemInterfaceFrame() {
@@ -79,8 +79,9 @@ public class SystemInterface {
 			System.out.print(systemInterfaceLabelStatus.getText());
 		}
 		systemInterfaceFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		systemInterfaceFrame.setResizable(false);
 		systemInterfaceFrame.setLayout(new BorderLayout());
-		systemInterfaceFrame.setSize(1024, 768);
+		systemInterfaceFrame.setSize(systemInterfaceDimension);
 	}
 	
 	private void setSystemInterfaceLabelStatus() {
@@ -97,7 +98,7 @@ public class SystemInterface {
 		systemInterfaceFrame.setJMenuBar(systemInterfaceMenuBar);
 	}
 	
-	private void setSystemHomeButton() {
+	private void setSystemInterfaceHomeButton() {
 		JLabel systemInterfaceLabelHome = new JLabel("   Home   ");
 		systemInterfaceLabelHome.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceLabelHome.getFont().getSize() + 4));
 		systemInterfaceLabelHome.setVerticalAlignment(JLabel.BOTTOM);
@@ -148,7 +149,7 @@ public class SystemInterface {
 		systemInterfaceMenuBar.add(systemInterfaceMenu);
 	}
 	
-	private void setSystemExitButton() {
+	private void setSystemInterfaceExitButton() {
 		JLabel systemInterfaceLabelExit = new JLabel("   Sair   ");
 		systemInterfaceLabelExit.addMouseListener(new HandlerExitButton());
 		systemInterfaceLabelExit.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceLabelExit.getFont().getSize() + 4));
@@ -165,7 +166,7 @@ public class SystemInterface {
 			systemInterfaceFrame.add(systemInterfaceLabelImage);
 			systemInterfaceFrame.setVisible(true);
 			try {
-			    Thread.sleep(1337 * 2);
+			    Thread.sleep(systemInterfaceLoadTime * 2);
 			} catch(InterruptedException exThreadFailed) {
 				systemInterfaceLabelStatus.setText("Houve algum erro ao carregar o programa!");
 			    Thread.currentThread().interrupt();
@@ -185,55 +186,47 @@ public class SystemInterface {
 		}
 	}
 	
-	private void clearSystemInterface() {
-		if(systemInterfacePanelNorth != null) {
-			systemInterfacePanelNorth.removeAll();
-			systemInterfacePanelNorth.revalidate();
-			systemInterfacePanelNorth.repaint();
-		}
-		if(systemInterfacePanelSouth != null) {
-			systemInterfacePanelSouth.removeAll();
-			systemInterfacePanelSouth.revalidate();
-			systemInterfacePanelSouth.repaint();
-		}
-		if(systemInterfacePanelCenter != null) {
-			systemInterfacePanelCenter.removeAll();
-			systemInterfacePanelCenter.revalidate();
-			systemInterfacePanelCenter.repaint();
-		}
+	private void clearSystemInterface(Boolean fullClear) {
 		systemInterfacePanelMain.removeAll();
 		systemInterfacePanelMain.revalidate();
 		systemInterfacePanelMain.repaint();
-		systemInterfacePanelMain.add(systemInterfaceLabelImage);
+		if(!fullClear)
+			systemInterfacePanelMain.add(systemInterfaceLabelImage);
 	}
 	
 	private class HandlerHomeButton implements MouseListener {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			clearSystemInterface();
-			systemInterfaceStatusMessage = "Home";
-			systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
+			if(!systemInterfaceBusy) {
+				clearSystemInterface(false);
+				systemInterfaceStatusMessage = "Home";
+				systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
+			}
 		}
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			systemInterfaceLabelStatus.setText("Retorna à tela principal");
+			if(!systemInterfaceBusy)
+				systemInterfaceLabelStatus.setText("Retorna à tela principal");
 		}
 		
 		@Override
 		public void mouseExited(MouseEvent e) {
-			systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
+			if(!systemInterfaceBusy)
+				systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 		}
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
-			mouseEntered(e);
+			if(!systemInterfaceBusy)
+				mouseEntered(e);
 		}
 		
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			mouseClicked(e);
+			if(!systemInterfaceBusy)
+				mouseClicked(e);
 		}
 	}
 	
@@ -241,34 +234,41 @@ public class SystemInterface {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			try {
-			    Thread.sleep(1337 * 2);
-			    systemInterfaceFrame.dispose();
-			} catch(InterruptedException exThreadFailed) {
-				systemInterfaceLabelStatus.setText("Houve algum erro ao encerrar o programa!");
-			    Thread.currentThread().interrupt();
+			if(!systemInterfaceBusy) {
+				try {
+				    Thread.sleep(systemInterfaceLoadTime * 2);
+				    systemInterfaceFrame.dispose();
+				} catch(InterruptedException exThreadFailed) {
+					systemInterfaceLabelStatus.setText("Houve algum erro ao encerrar o programa!");
+				    Thread.currentThread().interrupt();
+				}
 			}
 		}
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			systemInterfaceLabelStatus.setText("Encerra o sistema");
+			if(!systemInterfaceBusy)
+				systemInterfaceLabelStatus.setText("Encerra o sistema");
 		}
 		
 		@Override
 		public void mouseExited(MouseEvent e) {
-			systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
+			if(!systemInterfaceBusy)
+				systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 		}
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
-			clearSystemInterface();
-			systemInterfaceLabelStatus.setText("Encerrando conexoes..");
+			if(!systemInterfaceBusy) {
+				clearSystemInterface(false);
+				systemInterfaceLabelStatus.setText("Encerrando conexoes..");
+			}
 		}
 		
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			mouseClicked(e);
+			if(!systemInterfaceBusy)
+				mouseClicked(e);
 		}
 	}
 	
@@ -284,53 +284,61 @@ public class SystemInterface {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(!(e.getSource() instanceof JMenu)) {
-				systemInterfaceStatusMessage = systemInterfaceMenuName.equalsIgnoreCase("Relatorios") ? 
-					String.format("Home > %s > %s", systemInterfaceMenuName, systemInterfaceMenuItemName) : 
-					String.format("Home > %s > %s %s", systemInterfaceMenuName, systemInterfaceMenuItemName, systemInterfaceMenuName.toLowerCase());
-				systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
-				if(e.getSource() instanceof JMenuItem) {
-					clearSystemInterface();
-					if(systemInterfaceMenuItemName.equals("Cadastrar")) {
-//						cadastraAlgo(systemInterfaceMenuName); // Implementar
-					} else if(systemInterfaceMenuItemName.equals("Consultar")) {
-//						consultaAlgo(systemInterfaceMenuName); // Implementar
+			if(!systemInterfaceBusy) {
+				if(!(e.getSource() instanceof JMenu)) {
+					systemInterfaceStatusMessage = systemInterfaceMenuName.equalsIgnoreCase("Relatorios") ? 
+						String.format("Home > %s > %s", systemInterfaceMenuName, systemInterfaceMenuItemName) : 
+						String.format("Home > %s > %s %s", systemInterfaceMenuName, systemInterfaceMenuItemName, systemInterfaceMenuName.toLowerCase());
+					systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
+					if(e.getSource() instanceof JMenuItem) {
+						clearSystemInterface(true);
+						if(systemInterfaceMenuItemName.equalsIgnoreCase("Cadastrar")) {
+							if(systemInterfaceMenuName.equalsIgnoreCase("Lotes"))
+								systemInterfacePanelMain.add(Methods.cadastraLote(systemInterfaceDimension));
+						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
+							// TO_DO
+						}
 					}
+				} else {
+					mouseEntered(e);
 				}
-			} else {
-				mouseEntered(e);
 			}
 		}
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			systemInterfaceStatusMessage = systemInterfaceStatusMessage != null && e.getSource() instanceof JMenu &&  
-				!(systemInterfaceStatusMessage.equals(systemInterfaceLabelStatus.getText())) ?  
-					systemInterfaceStatusMessage : systemInterfaceLabelStatus.getText();
-			if(e.getSource() instanceof JMenu) {
-				systemInterfaceLabelStatus.setText("Acessa o modulo de " + systemInterfaceMenuName.toLowerCase());
-			} else {
-				if(systemInterfaceMenuName.equalsIgnoreCase("Relatorios")) {
-					systemInterfaceLabelStatus.setText(systemInterfaceMenuName + " de " + systemInterfaceMenuItemName.toLowerCase());
+			if(!systemInterfaceBusy) {
+				systemInterfaceStatusMessage = systemInterfaceStatusMessage != null && e.getSource() instanceof JMenu &&  
+					!(systemInterfaceStatusMessage.equals(systemInterfaceLabelStatus.getText())) ?  
+						systemInterfaceStatusMessage : systemInterfaceLabelStatus.getText();
+				if(e.getSource() instanceof JMenu) {
+					systemInterfaceLabelStatus.setText("Acessa o modulo de " + systemInterfaceMenuName.toLowerCase());
 				} else {
-					systemInterfaceLabelStatus.setText(systemInterfaceMenuItemName + " " + systemInterfaceMenuName.toLowerCase());
+					if(systemInterfaceMenuName.equalsIgnoreCase("Relatorios")) {
+						systemInterfaceLabelStatus.setText(systemInterfaceMenuName + " de " + systemInterfaceMenuItemName.toLowerCase());
+					} else {
+						systemInterfaceLabelStatus.setText(systemInterfaceMenuItemName + " " + systemInterfaceMenuName.toLowerCase());
+					}
 				}
 			}
 		}
 		
 		@Override
 		public void mouseExited(MouseEvent e) {
-			systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
+			if(!systemInterfaceBusy)
+				systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 		}
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
-			mouseEntered(e);
+			if(!systemInterfaceBusy)
+				mouseEntered(e);
 		}
 		
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			mouseClicked(e);
+			if(!systemInterfaceBusy)
+				mouseClicked(e);
 		}
 	}
 }

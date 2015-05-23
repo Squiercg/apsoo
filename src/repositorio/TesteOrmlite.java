@@ -12,7 +12,6 @@ public class TesteOrmlite {
 	
 	// URL do Banco de dados	
 	private String systemDatabaseURL = "jdbc:sqlite:";
-	private final static String DATABASE_URL = "jdbc:sqlite:";
 	
 	@SuppressWarnings("unused")
 	private Dao<CategoriaEntity, Integer> categoriaDao;

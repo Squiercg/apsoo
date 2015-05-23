@@ -81,7 +81,7 @@ public abstract class GenericDao<E> {
 	}
 	
 	//Apaga um registro pelo Id no banco
-		public int delete (int id){
+		public int deleteById (int id){
 			int rows = 0;
 			try {
 				rows = dao.deleteById(id);

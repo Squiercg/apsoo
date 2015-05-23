@@ -5,31 +5,20 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "ItemVenda")
 public class ItemVenda {
-	@DatabaseField(generatedId = true)
-	private Produto itemVendaProduto;
+	@DatabaseField(foreign = true, canBeNull = false)
+	private int produto;
 	@DatabaseField(canBeNull = false)
-	private int itemVendaQuantidade;
+	private int quantidade;
+	@DatabaseField(foreign = true, canBeNull = false)
+	private int venda;
 	
 	public ItemVenda() {}
 	
 	public ItemVenda(
-			Produto itemVendaProduto, 
-			int itemVendaQuantidade) {
+			int produto, 
+			int quantidade) {
 		
-		this.itemVendaProduto = itemVendaProduto;
-		this.itemVendaQuantidade = itemVendaQuantidade;
+		this.produto = produto;
+		this.produto = produto;
 	}
-	public Produto getItemVendaProduto() {
-		return itemVendaProduto;
-	}
-	public int getItemVendaQuantidade() {
-		return itemVendaQuantidade;
-	}	
-	//definir como é o desconto do produto
-	public double getItemVendaCusto() {
-		return this.itemVendaQuantidade * 
-				this.itemVendaProduto.getProdutoPreco();
-	}
-	
-
 }

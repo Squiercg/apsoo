@@ -5,30 +5,22 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "ItemLote")
 public class ItemLote {
-	@DatabaseField(generatedId = true)
-	private Produto itemLoteProduto;
+	@DatabaseField(foreign = true, canBeNull = false)
+	private int lote;
 	@DatabaseField(canBeNull = false)
-	private int itemLoteQuantidade;
+	private int quantidade;
+	@DatabaseField(foreign = true, canBeNull = false)
+	private int produto;
 	
 	public ItemLote() {}
 	
 	public ItemLote(
-			Produto itemLoteProduto, 
-			int itemLoteQuantidade) {
+			int produto, 
+			int quantidade,
+			int lote) {
 
-		this.itemLoteProduto = itemLoteProduto;
-		this.itemLoteQuantidade = itemLoteQuantidade;
+		this.produto = produto;
+		this.quantidade = quantidade;
+		this.lote = lote;
 	}
-	public Produto getItemLoteProduto() {
-		return itemLoteProduto;
-	}
-	public int getItemLoteQuantidade() {
-		return itemLoteQuantidade;
-	}
-	
-	public double getItemLoteCusto() {
-		return this.itemLoteQuantidade*
-				this.itemLoteProduto.getProdutoPreco();
-	}	
-
 }

@@ -26,6 +26,7 @@ public abstract class GenericDao<E> {
 			dao = DaoManager.createDao(connectionSource, type);
 		}catch(Exception e){
 			e.printStackTrace();
+			finaliza();
 		}
 	}
 	

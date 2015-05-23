@@ -4,15 +4,14 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "Fornecedor")
-//Coloquei telefone como no cliente, como string
 public class Fornecedor {
-	@DatabaseField(generatedId = true)
+	@DatabaseField(generatedId = true, columnName = "id_fornecedor")
 	private int fornecedorId;
-	@DatabaseField(canBeNull = false)
+	@DatabaseField(canBeNull = false, columnName = "fornecedor_nome")
 	private String fornecedorNome;
-	@DatabaseField(canBeNull = true)
+	@DatabaseField(columnName = "fornecedor_fone")
 	private String fornecedorTelefone;
-	@DatabaseField(canBeNull = true)
+	@DatabaseField(columnName = "fornecedor_email")
 	private String fornecedorEmail;
 	
 	public Fornecedor() {}

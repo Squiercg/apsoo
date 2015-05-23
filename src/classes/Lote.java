@@ -1,58 +1,60 @@
 package classes;
 
 import java.sql.Date;
-import java.util.ArrayList;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "Lote")
 public class Lote {
-	@DatabaseField(generatedId = true)
+	@DatabaseField(generatedId = true, columnName = "id_lote")
 	private int loteId;
-	@DatabaseField(canBeNull = false)
+	@DatabaseField(canBeNull = false, columnName = "lote_data")
 	private Date loteData;
-	@DatabaseField(canBeNull = false, foreign = true)
-	private Fornecedor loteFornecedor;
-	private ArrayList<ItemLote> itemLote;
-	@DatabaseField(canBeNull = false)
+	@DatabaseField(canBeNull = false, foreign = true, columnName = "lote_fornecedor")
+	private int loteFornecedor;
+	@DatabaseField(canBeNull = false, columnName = "lote_valor")
 	private double loteValor;
 	
 	public Lote() {}
 	
-	public Lote(
-			int loteId, 
-			Date loteData, 
-			Fornecedor loteFornecedor,
-			ArrayList<ItemLote> itemLote) {
-
+	public Lote(int loteId, Date loteData, int loteFornecedor, double loteValor) {
 		this.loteId = loteId;
 		this.loteData = loteData;
 		this.loteFornecedor = loteFornecedor;
-		this.itemLote = itemLote;
-		this.setLoteValor();
-	}
-
-	//Confirmar esse getter e setter
-	public void setLoteValor() {
-		double soma = 0.0;
-		for(int i=0;i<this.itemLote.size();i++) {
-			soma+= itemLote.get(i).getItemLoteCusto();
-		}
-		this.loteValor = soma;
-	}
-	
-	public double getLoteValor() {
-		return loteValor;
+		this.loteValor = loteValor;
 	}
 
 	public int getLoteId() {
 		return loteId;
 	}
+
+	public void setLoteId(int loteId) {
+		this.loteId = loteId;
+	}
+
 	public Date getLoteData() {
 		return loteData;
 	}
-	public Fornecedor getLoteFornecedor() {
-		return loteFornecedor;
-	}	
 
+	public void setLoteData(Date loteData) {
+		this.loteData = loteData;
+	}
+
+	public int getLoteFornecedor() {
+		return loteFornecedor;
+	}
+
+	public void setLoteFornecedor(int loteFornecedor) {
+		this.loteFornecedor = loteFornecedor;
+	}
+
+	public double getLoteValor() {
+		return loteValor;
+	}
+
+	public void setLoteValor(double loteValor) {
+		this.loteValor = loteValor;
+	}
+	
+	
 }

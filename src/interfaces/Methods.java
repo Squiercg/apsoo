@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -81,7 +82,7 @@ public class Methods {
 		placeHolder = new JLabel("");
 		placeHolder.setBorder(defaultBorder);
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3) + (int) (preferredSize.getWidth() / 64) - 
-			(int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
+			(int) (preferredSize.getWidth() / 4) - 5, (int) (preferredSize.getHeight() / 32)));
 		panelLevel5.add(placeHolder, BorderLayout.WEST);
 		
 		JTextField textField = new JTextField();
@@ -97,16 +98,38 @@ public class Methods {
 		
 		placeHolder = new JLabel("");
 		placeHolder.setBorder(defaultBorder);
-		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4) + 
+			(int) (preferredSize.getWidth() / 64), (int) (preferredSize.getHeight() / 32)));
 		panelLevel5.add(placeHolder, BorderLayout.EAST);
 		
-		panelLevel3 = new JPanel(new BorderLayout());
-		panelLevel2.add(panelLevel3, BorderLayout.SOUTH);
+		panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.CENTER);
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel4.add(placeHolder, BorderLayout.NORTH);
+		
+		panelLevel3 = panelLevel4;
+		panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.CENTER);
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.NORTH);
+		
+		JButton button = new JButton("Incluir produtos");
+		hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
+		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
+		button.setForeground(Color.white);
+		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 6), (int) (preferredSize.getHeight() / 16) - 
+			(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(button, BorderLayout.WEST);
+		
+		panelLevel2 = new JPanel(new BorderLayout());
+		panelLevel1.add(panelLevel2, BorderLayout.SOUTH);
 		
 		placeHolder = new JLabel("");
 		placeHolder.setBorder(defaultBorder);
-		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 64), (int) (preferredSize.getHeight() / 32)));
-		panelLevel3.add(placeHolder, BorderLayout.CENTER);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 16), (int) (preferredSize.getHeight() / 64)));
+		panelLevel2.add(placeHolder, BorderLayout.CENTER);
 		
 		return panelLevel0;
 	}

@@ -128,18 +128,18 @@ public class SystemInterface {
 		for(String systemInterfaceMenuName : systemInterfaceMenuNames) {
 			systemInterfaceMenu = new JMenu(systemInterfaceMenuName);
 			systemInterfaceMenu.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenu.getFont().getSize() + 4));
-			systemInterfaceMenu.addMouseListener(new HandlerMenuOptions(systemInterfaceMenuName, null));
+			systemInterfaceMenu.addMouseListener(new HandlerMenuOptions(systemInterfaceMenuName, null, this));
 			for(String systemInterfaceMenuItemName : systemInterfaceMenuItemNames) {
 				systemInterfaceMenuItem = new JMenuItem(systemInterfaceMenuItemName);
 				systemInterfaceMenuItem.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenuItem.getFont().getSize() + 3));
-				systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions(systemInterfaceMenuName, systemInterfaceMenuItemName));
+				systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions(systemInterfaceMenuName, systemInterfaceMenuItemName, this));
 				systemInterfaceMenu.add(systemInterfaceMenuItem);
 			}
 			systemInterfaceMenuBar.add(systemInterfaceMenu);
 		}
 		systemInterfaceMenu = new JMenu("Relatorios");
 		systemInterfaceMenu.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenu.getFont().getSize() + 4));
-		systemInterfaceMenu.addMouseListener(new HandlerMenuOptions("Relatorios", null));
+		systemInterfaceMenu.addMouseListener(new HandlerMenuOptions("Relatorios", null, this));
 		systemInterfaceMenuItemNames.clear();
 		systemInterfaceMenuItemNames.add("Conferencia de Estoque");
 		systemInterfaceMenuItemNames.add("Historico de Lotes");
@@ -149,7 +149,7 @@ public class SystemInterface {
 		for(String systemInterfaceMenuItemName : systemInterfaceMenuItemNames) {
 			systemInterfaceMenuItem = new JMenuItem(systemInterfaceMenuItemName);
 			systemInterfaceMenuItem.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenuItem.getFont().getSize() + 3));
-			systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions("Relatorios", systemInterfaceMenuItemName));
+			systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions("Relatorios", systemInterfaceMenuItemName, this));
 			systemInterfaceMenu.add(systemInterfaceMenuItem);
 		}
 		systemInterfaceMenuBar.add(systemInterfaceMenu);
@@ -196,7 +196,15 @@ public class SystemInterface {
 		systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 	}
 	
-	private void clearSystemInterface(Boolean fullClear) {
+	public JLabel getSystemInterfaceLabelStatus() {
+		return systemInterfaceLabelStatus;
+	}
+	
+	public String getSystemInterfaceDatabaseURL() {
+		return systemInterfaceDatabaseURL;
+	}
+	
+	protected void clearSystemInterface(Boolean fullClear) {
 		systemInterfacePanelMain.removeAll();
 		systemInterfacePanelMain.revalidate();
 		systemInterfacePanelMain.repaint();
@@ -204,7 +212,7 @@ public class SystemInterface {
 			systemInterfacePanelMain.add(systemInterfaceLabelImage);
 	}
 	
-	private class HandlerHomeButton implements MouseListener {
+	protected class HandlerHomeButton implements MouseListener {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -286,10 +294,12 @@ public class SystemInterface {
 		
 		private String systemInterfaceMenuName;
 		private String systemInterfaceMenuItemName;
+		private SystemInterface systemInterface;
 		
-		public HandlerMenuOptions(String systemInterfaceMenuName, String systemInterfaceMenuItemName) {
+		public HandlerMenuOptions(String systemInterfaceMenuName, String systemInterfaceMenuItemName, SystemInterface systemInterface) {
 			this.systemInterfaceMenuName = systemInterfaceMenuName;
 			this.systemInterfaceMenuItemName = systemInterfaceMenuItemName;
+			this.systemInterface = systemInterface;
 		}
 		
 		@Override
@@ -304,7 +314,7 @@ public class SystemInterface {
 						clearSystemInterface(true);
 						if(systemInterfaceMenuItemName.equalsIgnoreCase("Cadastrar")) {
 							if(systemInterfaceMenuName.equalsIgnoreCase("Lotes"))
-								systemInterfacePanelMain.add(Methods.cadastraLote(systemInterfaceDimension, systemInterfaceLabelStatus, systemInterfaceDatabaseURL));
+								systemInterfacePanelMain.add(Methods.cadastraLote(systemInterfaceDimension, systemInterface));
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
 							// TO_DO
 						}

@@ -23,8 +23,8 @@ import classes.Fornecedor;
 public class Methods {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static JPanel cadastraLote(Dimension preferredSize, JLabel statusBar, String databaseURL) {
-		Boolean isBrunoTesting = true;
+	public static JPanel cadastraLote(Dimension preferredSize, SystemInterface systemInterface) {
+		Boolean isBrunoTesting = false;
 		
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		Border defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
@@ -77,15 +77,15 @@ public class Methods {
 		String[] lista = null;
 		List<Fornecedor> fornecedores = null;
 		try {
-			FornecedorDao fornecedorDao = new FornecedorDao(databaseURL);
+			FornecedorDao fornecedorDao = new FornecedorDao(systemInterface.getSystemInterfaceDatabaseURL());
 			fornecedores = fornecedorDao.getAll();
 		} catch (SQLException e) {
-			statusBar.setText("Houve um erro ao recuperar a lista de fornecedores!");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de fornecedores!");
 		} finally {
 			if(fornecedores == null) {
 				lista = new String[1];
 				lista[0] = "Nenhum valor encontrado";
-				statusBar.setText("Houve um erro ao recuperar a lista de fornecedores!");
+				systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de fornecedores!");
 			}
 			else {
 				lista = new String[fornecedores.size()];
@@ -158,6 +158,68 @@ public class Methods {
 		placeHolder.setBorder(defaultBorder);
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
 		panelLevel3.add(placeHolder, BorderLayout.NORTH);
+		
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.CENTER);
+		placeHolder = new JLabel("Produtos");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 15));
+		panelLevel3.add(placeHolder, BorderLayout.NORTH);
+		
+		panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.CENTER);
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.NORTH);
+		
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.SOUTH);
+		panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.SOUTH);
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.SOUTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.EAST);
+		
+		button = new JButton("Voltar");
+		button.setBackground(Color.white);
+		button.setForeground(Color.black);
+		button.addMouseListener(systemInterface.new HandlerHomeButton());
+		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
+			(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(button, BorderLayout.EAST);
+
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 64),  (int) (preferredSize.getHeight() / 16) - 
+				(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+
+		button = new JButton("Salvar");
+		hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
+		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
+		button.setForeground(Color.white);
+		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
+			(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(button, BorderLayout.WEST);
 		
 		return panelLevel0;
 	}

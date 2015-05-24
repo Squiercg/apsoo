@@ -24,7 +24,7 @@ public class Methods {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static JPanel cadastraLote(Dimension preferredSize, JLabel statusBar, String databaseURL) {
-		Boolean isBrunoTesting = false;
+		Boolean isBrunoTesting = true;
 		
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		Border defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
@@ -77,10 +77,8 @@ public class Methods {
 		String[] lista = null;
 		List<Fornecedor> fornecedores = null;
 		try {
-			if(!isBrunoTesting) {
-				FornecedorDao fornecedorDao = new FornecedorDao(databaseURL);
-				fornecedores = fornecedorDao.getAll();
-			}
+			FornecedorDao fornecedorDao = new FornecedorDao(databaseURL);
+			fornecedores = fornecedorDao.getAll();
 		} catch (SQLException e) {
 			statusBar.setText("Houve um erro ao recuperar a lista de fornecedores!");
 		} finally {
@@ -150,12 +148,16 @@ public class Methods {
 		panelLevel5.add(button, BorderLayout.WEST);
 		
 		panelLevel2 = new JPanel(new BorderLayout());
+		panelLevel2.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 2) + 
+			(int) (preferredSize.getHeight() / 11) + 3));
 		panelLevel1.add(panelLevel2, BorderLayout.SOUTH);
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.NORTH);
 		
 		placeHolder = new JLabel("");
 		placeHolder.setBorder(defaultBorder);
-		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 16), (int) (preferredSize.getHeight() / 64)));
-		panelLevel2.add(placeHolder, BorderLayout.CENTER);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel3.add(placeHolder, BorderLayout.NORTH);
 		
 		return panelLevel0;
 	}

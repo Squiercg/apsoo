@@ -1,5 +1,6 @@
 package repositorio;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public abstract class GenericDao<E> {
 	private ConnectionSource connectionSource;
  
 	public GenericDao(String databaseUrl, Class<E> type) throws SQLException {
+		DriverManager.registerDriver(new org.sqlite.JDBC());
 		this.type = type;
 		connectionSource = new JdbcConnectionSource(databaseUrl);
 		setDao();

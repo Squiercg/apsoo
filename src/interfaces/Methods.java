@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import repositorio.FornecedorDao;
 import classes.Fornecedor;
-import classes.FornecedorDao;
 
 public class Methods {
 	

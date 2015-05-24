@@ -1,6 +1,8 @@
-package classes;
+package repositorio;
 
 import java.sql.SQLException;
+
+import classes.Produto;
 
 public class ProdutoDao extends GenericDao<Produto>{
 

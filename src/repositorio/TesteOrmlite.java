@@ -40,6 +40,10 @@ public class TesteOrmlite {
 		categoriaDao = DaoManager.createDao(connectionSource, CategoriaEntity.class);
 		// Cria a tabela se a mesma não existir
 		TableUtils.createTableIfNotExists(connectionSource, CategoriaEntity.class);
+		
+		CategoriaEntity cateroria = new CategoriaEntity("Roupa");
+		int id = categoriaDao.create(cateroria);
+		System.out.println(cateroria.getCategoriaId());
 	}
 
 }

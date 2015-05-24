@@ -4,8 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -15,12 +17,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import sistema.SystemRun;
+import classes.Fornecedor;
+import classes.FornecedorDao;
+
 public class Methods {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static JPanel cadastraLote(Dimension preferredSize) {
+	public static JPanel cadastraLote(Dimension preferredSize, JLabel statusBar, String databaseURL) {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
-		Boolean isBrunoTesting = false;
+		Boolean isBrunoTesting = true;
 		Border defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
 		makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
@@ -68,12 +74,31 @@ public class Methods {
 		JPanel panelLevel4 = new JPanel(new BorderLayout());
 		panelLevel3.add(panelLevel4, BorderLayout.NORTH);
 		
-		String[] listaClientes = {"Augusto Ribas", "Bruno Nazário", "Doglas Sorgatto", "Thiago Machado", "André Fulano"};
-		JComboBox comboBox = new JComboBox(listaClientes);
+		String[] lista = null;
+		List<Fornecedor> fornecedores = null;
+		try {
+			System.out.println(databaseURL);
+			FornecedorDao fornecedorDao = new FornecedorDao(SystemRun.getSystemDatabaseURL());
+			fornecedores = fornecedorDao.getAll();
+		} catch (SQLException e) {
+			statusBar.setText("Houve um erro ao recuperar a lista de fornecedores!");
+		} finally {
+			System.out.println(databaseURL);
+			if(fornecedores == null) {
+				lista = new String[1];
+				lista[0] = "ERRO";
+			}
+			else {
+				lista = new String[fornecedores.size()];
+				for(Fornecedor f : fornecedores)
+					lista[fornecedores.indexOf(f)] = f.getFornecedorNome();
+			}
+		}
+		JComboBox comboBox = new JComboBox(lista);
 		comboBox.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
 		comboBox.setBackground(Color.white);
 		comboBox.setEditable(false);
-		comboBox.setSelectedIndex(1);
+		comboBox.setSelectedIndex(0);
 		panelLevel4.add(comboBox, BorderLayout.WEST);
 		
 		JPanel panelLevel5 = new JPanel(new BorderLayout());

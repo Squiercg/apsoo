@@ -34,8 +34,10 @@ public class SystemInterface {
 	private JLabel systemInterfaceLabelStatus;
 	private JLabel systemInterfaceLabelImage;
 	private String systemInterfaceStatusMessage;
+	private String systemInterfaceDatabaseURL;
 	
-	public SystemInterface() {
+	public SystemInterface(String systemDatabaseURL) {
+		setSystemInterfaceDatabaseURL(systemDatabaseURL);
 		setSystemInterfaceLoadTime(1);
 		setSystemInterfaceBusy();
 		setSystemInterfaceDefaultBorder();
@@ -67,6 +69,10 @@ public class SystemInterface {
 	
 	private void setSystemInterfaceDimension() {
 		systemInterfaceDimension = new Dimension(1024, 800);
+	}
+	
+	private void setSystemInterfaceDatabaseURL(String systemInterfaceDatabaseURL) {
+		this.systemInterfaceDatabaseURL = systemInterfaceDatabaseURL;
 	}
 	
 	private void setSystemInterfaceFrame() {
@@ -186,6 +192,10 @@ public class SystemInterface {
 		}
 	}
 	
+	public void setSystemInterfaceStatusMessage(String systemInterfaceStatusMessage) {
+		systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
+	}
+	
 	private void clearSystemInterface(Boolean fullClear) {
 		systemInterfacePanelMain.removeAll();
 		systemInterfacePanelMain.revalidate();
@@ -294,7 +304,7 @@ public class SystemInterface {
 						clearSystemInterface(true);
 						if(systemInterfaceMenuItemName.equalsIgnoreCase("Cadastrar")) {
 							if(systemInterfaceMenuName.equalsIgnoreCase("Lotes"))
-								systemInterfacePanelMain.add(Methods.cadastraLote(systemInterfaceDimension));
+								systemInterfacePanelMain.add(Methods.cadastraLote(systemInterfaceDimension, systemInterfaceLabelStatus, systemInterfaceDatabaseURL));
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
 							// TO_DO
 						}

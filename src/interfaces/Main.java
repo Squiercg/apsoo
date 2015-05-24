@@ -1,10 +1,12 @@
 package interfaces;
 
+import sistema.SystemRun;
+
 public class Main {
 	
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		
-		SystemInterface sys = new SystemInterface();
+		SystemRun run = new SystemRun();
 	}
 }

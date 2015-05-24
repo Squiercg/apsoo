@@ -7,29 +7,36 @@ import java.io.IOException;
 
 public class SystemRun {
 	
-	private String systemDatabaseURL;
-	private String systemLabelStatusText;
+	private static String systemDatabaseURL;
 	private SystemInterface systemInterface;
+	private String systemStartMessage;
 	
 	public SystemRun() {
 		setSystemDatabaseURL();
+		setSystemInterface();
 	}
 	
 	private void setSystemDatabaseURL() {
 		try {
-			systemDatabaseURL = new File("../lib/.").getCanonicalPath() + "\\" + "CDT_database.sqlite";
-			systemLabelStatusText = "Caminho para o banco de dados OK!";
+			systemDatabaseURL = new File("lib/.").getCanonicalPath() + "\\" + "CDT_database.sqlite";
+			systemStartMessage = "Conectado ao banco de dados!";
 		}
 		catch(IOException e) {
-			systemLabelStatusText = "O caminho do banco de dados nao foi encontrado!";
+			systemStartMessage = "O caminho do banco de dados nao foi encontrado!";
 		}
 	}
 	
-	public String getSystemDatabaseURL() {
-		return systemDatabaseURL;
+	private void setSystemInterface() {
+		systemInterface = new SystemInterface(systemDatabaseURL);
+		systemInterface.setSystemInterfaceStatusMessage(systemStartMessage);
 	}
 	
-	public String getSystemLabelStatusText() {
-		return systemLabelStatusText;
+	@SuppressWarnings("unused")
+	private SystemInterface getSystemInterface() {
+		return systemInterface;
+	}
+	
+	public static String getSystemDatabaseURL() {
+		return systemDatabaseURL;
 	}
 }

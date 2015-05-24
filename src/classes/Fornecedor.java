@@ -7,7 +7,8 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Fornecedor {
 	@DatabaseField(generatedId = true, columnName = "id_fornecedor")
 	private int fornecedorId;
-	@DatabaseField(canBeNull = false, columnName = "fornecedor_nome")
+	@DatabaseField(canBeNull = false, columnName = "fornecedor_nome",
+			index = true, indexName = "Nome_Fornecedor")
 	private String fornecedorNome;
 	@DatabaseField(columnName = "fornecedor_fone")
 	private String fornecedorTelefone;

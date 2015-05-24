@@ -9,7 +9,8 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Cliente {
 	@DatabaseField(generatedId = true, columnName = "id_cliente")
 	private int clienteId;
-	@DatabaseField(canBeNull = false, columnName = "cliente_nome")
+	@DatabaseField(canBeNull = false, columnName = "cliente_nome",
+			index = true, indexName = "Nome_clientes")
 	private String clienteNome;
 	@DatabaseField(columnName = "cliente_endereco")
 	private String clienteEndereco;

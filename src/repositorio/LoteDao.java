@@ -1,6 +1,8 @@
-package classes;
+package repositorio;
 
 import java.sql.SQLException;
+
+import classes.Lote;
 
 public class LoteDao extends GenericDao<Lote>{
 

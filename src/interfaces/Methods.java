@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-import sistema.SystemRun;
 import classes.Fornecedor;
 import classes.FornecedorDao;
 
@@ -25,8 +24,9 @@ public class Methods {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static JPanel cadastraLote(Dimension preferredSize, JLabel statusBar, String databaseURL) {
+		Boolean isBrunoTesting = false;
+		
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
-		Boolean isBrunoTesting = true;
 		Border defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
 		makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
@@ -77,16 +77,17 @@ public class Methods {
 		String[] lista = null;
 		List<Fornecedor> fornecedores = null;
 		try {
-			System.out.println(databaseURL);
-			FornecedorDao fornecedorDao = new FornecedorDao(SystemRun.getSystemDatabaseURL());
-			fornecedores = fornecedorDao.getAll();
+			if(!isBrunoTesting) {
+				FornecedorDao fornecedorDao = new FornecedorDao(databaseURL);
+				fornecedores = fornecedorDao.getAll();
+			}
 		} catch (SQLException e) {
 			statusBar.setText("Houve um erro ao recuperar a lista de fornecedores!");
 		} finally {
-			System.out.println(databaseURL);
 			if(fornecedores == null) {
 				lista = new String[1];
-				lista[0] = "ERRO";
+				lista[0] = "Nenhum valor encontrado";
+				statusBar.setText("Houve um erro ao recuperar a lista de fornecedores!");
 			}
 			else {
 				lista = new String[fornecedores.size()];

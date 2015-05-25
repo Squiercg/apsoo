@@ -6,13 +6,12 @@ import java.util.List;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
 
 public abstract class GenericDao<E> {
 
 	protected Dao<E, Integer> dao;
 	private Class<E> type;
-	private ConnectionSource connectionSource;
+	private JdbcConnectionSource connectionSource;
  
 	public GenericDao(String databaseUrl, Class<E> type) throws SQLException {
 		this.type = type;

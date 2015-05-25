@@ -7,7 +7,8 @@ import com.j256.ormlite.table.DatabaseTable;
 public class Produto {
 	@DatabaseField(generatedId = true, columnName = "id_produto")
 	private int produtoId;
-	@DatabaseField(canBeNull = false, columnName = "prod_descricao")
+	@DatabaseField(canBeNull = false, columnName = "prod_descricao", 
+			index = true, indexName = "Nome_Produto")
 	private String produtoDesc;
 	@DatabaseField(canBeNull = false, foreign = false, columnName = "prod_categoria")
 	private int produtoCategoria;

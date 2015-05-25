@@ -88,6 +88,7 @@ public class SystemInterface {
 		systemInterfaceFrame.setResizable(false);
 		systemInterfaceFrame.setLayout(new BorderLayout());
 		systemInterfaceFrame.setSize(systemInterfaceDimension);
+		systemInterfaceFrame.setLocationRelativeTo(null);
 	}
 	
 	private void setSystemInterfaceLabelStatus() {
@@ -170,7 +171,6 @@ public class SystemInterface {
 			String systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_welcome.jpg";
 			systemInterfaceLabelImage = new JLabel(new ImageIcon(systemWelcomeImagePath));
 			systemInterfaceFrame.add(systemInterfaceLabelImage);
-			systemInterfaceFrame.setVisible(true);
 			try {
 			    Thread.sleep(systemInterfaceLoadTime * 2);
 			} catch(InterruptedException exThreadFailed) {
@@ -183,6 +183,7 @@ public class SystemInterface {
 		} catch(IOException exPathNotFound) {
 			systemInterfaceLabelStatus.setText("Imagem da tela de login nao encontrada!");
 		} finally {
+			systemInterfaceFrame.setVisible(true);
 			systemInterfaceFrame.repaint();
 			systemInterfaceStatusMessage = "Home";
 			systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
@@ -196,8 +197,16 @@ public class SystemInterface {
 		systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 	}
 	
+	public Dimension getSystemInterfaceDimension() {
+		return systemInterfaceDimension;
+	}
+	
 	public JLabel getSystemInterfaceLabelStatus() {
 		return systemInterfaceLabelStatus;
+	}
+	
+	public String getSystemInterfaceStatusMessage() {
+		return systemInterfaceStatusMessage;
 	}
 	
 	public String getSystemInterfaceDatabaseURL() {
@@ -314,7 +323,7 @@ public class SystemInterface {
 						clearSystemInterface(true);
 						if(systemInterfaceMenuItemName.equalsIgnoreCase("Cadastrar")) {
 							if(systemInterfaceMenuName.equalsIgnoreCase("Lotes"))
-								systemInterfacePanelMain.add(Methods.cadastraLote(systemInterfaceDimension, systemInterface));
+								systemInterfacePanelMain.add(Methods.cadastraLote(systemInterface));
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
 							// TO_DO
 						}

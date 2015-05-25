@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,8 +16,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import repositorio.FornecedorDao;
 import classes.Fornecedor;
@@ -23,8 +30,9 @@ import classes.Fornecedor;
 public class Methods {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static JPanel cadastraLote(Dimension preferredSize, SystemInterface systemInterface) {
+	public static JPanel cadastraLote(SystemInterface systemInterface) {
 		Boolean isBrunoTesting = false;
+		Dimension preferredSize = systemInterface.getSystemInterfaceDimension();
 		
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		Border defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
@@ -115,8 +123,8 @@ public class Methods {
 		Color innerBorderColor = Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]);
 		hsbColor = Color.RGBtoHSB(122, 138, 153, null);
 		Color outerBorderColor = Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]);
-		textField.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-			.createLineBorder(outerBorderColor), BorderFactory.createLineBorder(innerBorderColor)));
+		Border compound = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outerBorderColor), BorderFactory.createLineBorder(innerBorderColor));
+		textField.setBorder(compound);
 		textField.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3), (int) (preferredSize.getHeight() / 32)));
 		panelLevel5.add(textField, BorderLayout.CENTER);
 		
@@ -143,6 +151,7 @@ public class Methods {
 		hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
 		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
 		button.setForeground(Color.white);
+		button.addMouseListener(new HandlerAddProducts(systemInterface, defaultBorder));
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 6), (int) (preferredSize.getHeight() / 16) - 
 			(int) (preferredSize.getHeight() / 64)));
 		panelLevel5.add(button, BorderLayout.WEST);
@@ -175,6 +184,40 @@ public class Methods {
 		placeHolder.setBorder(defaultBorder);
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
 		panelLevel5.add(placeHolder, BorderLayout.NORTH);
+		
+		//
+		
+		String columnNames[] = {"ID", "Nome", "Idade"};
+		String tableContents[][] = {{"1", "Bruno", "23"}, {"2", "Doglas", "35"}, {"3", "Augusto", "89"}};
+		JScrollPane pane = new JScrollPane(makeTable(tableContents, columnNames, preferredSize, compound));
+		pane.setBorder(defaultBorder);
+		pane.setOpaque(false);
+		pane.getViewport().setOpaque(false);
+		pane.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 3) - (int) (preferredSize.getHeight() / 32)));
+		
+		panelLevel5.add(pane, BorderLayout.CENTER);
+		
+		//
+		
+		panelLevel4 = panelLevel5;
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.SOUTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("Total: R$ 1337,00");
+		placeHolder.setHorizontalAlignment(SwingConstants.RIGHT);
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 5));
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4) + 16, (int) (preferredSize.getHeight() / 32) + 7));
+		
+		panelLevel4 = panelLevel5;
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.SOUTH);
+		panelLevel5.add(placeHolder, BorderLayout.EAST);
 		
 		panelLevel3 = new JPanel(new BorderLayout());
 		panelLevel2.add(panelLevel3, BorderLayout.SOUTH);
@@ -224,7 +267,7 @@ public class Methods {
 		return panelLevel0;
 	}
 	
-	private static void makeLateralBorders(JPanel panel, Dimension reference, Border style) {
+	public static void makeLateralBorders(JPanel panel, Dimension reference, Border style) {
 		JLabel placeHolder = new JLabel("");
 		placeHolder.setBorder(style);
 		placeHolder.setPreferredSize(new Dimension((int) (reference.getWidth() / 16), (int) (reference.getHeight())));
@@ -234,5 +277,61 @@ public class Methods {
 		placeHolder.setBorder(style);
 		placeHolder.setPreferredSize(new Dimension((int) (reference.getWidth() / 32), (int) (reference.getHeight())));
 		panel.add(placeHolder, BorderLayout.EAST);
+	}
+	
+	private static JTable makeTable(Object[][] tableContents, String[] columnNames, Dimension reference, Border style) {
+		JTable table = new JTable(tableContents, columnNames);
+		
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+		renderer.setHorizontalAlignment(SwingConstants.CENTER);
+		for(int i = 0; i < table.getColumnCount(); i++)
+			table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+		
+		ListSelectionModel listSelection = 	table.getSelectionModel();
+		listSelection.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.setShowGrid(false);
+		table.setBorder(style);
+		
+		table.getTableHeader().setBorder(BorderFactory.createEmptyBorder());
+		table.getTableHeader().setFont(new Font(null, Font.PLAIN + Font.BOLD, table.getTableHeader().getFont().getSize() + 2));
+		
+		return table;
+	}
+	
+	protected static class HandlerAddProducts implements MouseListener {
+		
+		private SystemInterface systemInterface;
+		private Border systemBorder;
+		
+		public HandlerAddProducts(SystemInterface systemInterface, Border systemBorder) {
+			this.systemInterface = systemInterface;
+			this.systemBorder = systemBorder;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			PopUps.selecionaProduto(systemInterface, systemBorder);
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Adiciona produtos ao lote");
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			mouseEntered(e);
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			mouseExited(e);
+		}
 	}
 }

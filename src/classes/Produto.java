@@ -9,7 +9,7 @@ public class Produto {
 	private int produtoId;
 	@DatabaseField(canBeNull = false, columnName = "prod_descricao")
 	private String produtoDesc;
-	@DatabaseField(canBeNull = false, foreign = true, columnName = "prod_categoria")
+	@DatabaseField(canBeNull = false, foreign = false, columnName = "prod_categoria")
 	private int produtoCategoria;
 	@DatabaseField(columnName = "prod_custo")
 	private double produtoCusto;

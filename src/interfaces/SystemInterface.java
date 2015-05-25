@@ -36,6 +36,7 @@ public class SystemInterface {
 	private String systemInterfaceStatusMessage;
 	private String systemInterfaceDatabaseURL;
 	private CadastraLotes systemInterfaceCadastraLotes;
+	private CadastraVendas systemInterfaceCadastraVendas;
 	
 	public SystemInterface(String systemDatabaseURL) {
 		setSystemInterfaceDatabaseURL(systemDatabaseURL);
@@ -52,6 +53,7 @@ public class SystemInterface {
 		setSystemInterface();
 		setSystemInterfaceBusy();
 		setSystemInterfaceCadastraLotes();
+		setSystemInterfaceCadastraVendas();
 	}
 	
 	private void setSystemInterfaceLoadTime(int systemInterfaceLoadTime) {
@@ -202,6 +204,9 @@ public class SystemInterface {
 	public void setSystemInterfaceCadastraLotes() {
 		systemInterfaceCadastraLotes = new CadastraLotes(this);
 	}
+	public void setSystemInterfaceCadastraVendas() {
+		systemInterfaceCadastraVendas = new CadastraVendas(this);
+	}
 	
 	public Dimension getSystemInterfaceDimension() {
 		return systemInterfaceDimension;
@@ -221,6 +226,14 @@ public class SystemInterface {
 	
 	public CadastraLotes getSystemInterfaceCadastraLotes() {
 		return systemInterfaceCadastraLotes;
+	}
+	
+	public CadastraVendas getSystemInterfaceCadastraVendas() {
+		return systemInterfaceCadastraVendas;
+	}
+	
+	public JPanel getSystemInterfacePanelMain() {
+		return systemInterfacePanelMain;
 	}
 	
 	protected void clearSystemInterface(Boolean fullClear) {
@@ -333,6 +346,8 @@ public class SystemInterface {
 						if(systemInterfaceMenuItemName.equalsIgnoreCase("Cadastrar")) {
 							if(systemInterfaceMenuName.equalsIgnoreCase("Lotes")) {
 								systemInterfacePanelMain.add(systemInterfaceCadastraLotes.cadastraLote());
+							} else if(systemInterfaceMenuName.equalsIgnoreCase("Vendas")) {
+								systemInterfacePanelMain.add(systemInterfaceCadastraVendas.cadastraVenda());
 							} else {
 								////////////////////////////////////////////////////////////////////////
 								systemInterfacePanelMain.add(systemInterfaceCadastraLotes.underConstruction());								

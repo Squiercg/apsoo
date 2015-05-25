@@ -5,11 +5,11 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "ItemLoteProduto")
 public class ItemLote {
-	@DatabaseField(foreign = true, canBeNull = false)
+	@DatabaseField(foreign = false, canBeNull = false)
 	private int lote;
 	@DatabaseField(canBeNull = false)
 	private int quantidade;
-	@DatabaseField(foreign = true, canBeNull = false)
+	@DatabaseField(foreign = false, canBeNull = false)
 	private int produto;
 	
 	public ItemLote() {}

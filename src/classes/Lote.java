@@ -23,6 +23,12 @@ public class Lote {
 		this.loteFornecedor = loteFornecedor;
 		this.loteValor = loteValor;
 	}
+	
+	public Lote(Date date, int loteFornecedor, double loteValor) {
+		this.loteData = date;
+		this.loteFornecedor = loteFornecedor;
+		this.loteValor = loteValor;
+	}
 
 	public int getLoteId() {
 		return loteId;

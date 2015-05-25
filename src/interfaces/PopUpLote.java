@@ -32,7 +32,7 @@ import classes.ItemLote;
 import classes.Produto;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class PopUps {
+public class PopUpLote {
 	
 	private static SystemInterface systemInterface;
 	private Dimension preferredSize;
@@ -49,10 +49,10 @@ public class PopUps {
 	private JComboBox comboBoxCategorias;
 	private JFrame frame;
 	
-	public PopUps(SystemInterface systemInterface, Border defaultBorder) {
-		PopUps.systemInterface = systemInterface;
+	public PopUpLote(SystemInterface systemInterface, Border defaultBorder) {
+		PopUpLote.systemInterface = systemInterface;
 		preferredSize = systemInterface.getSystemInterfaceDimension();
-		PopUps.defaultBorder = defaultBorder;
+		PopUpLote.defaultBorder = defaultBorder;
 		itensLote = new ArrayList<ItemLote>();
 		itensLotePrecos = new ArrayList<Double>();
 	}
@@ -289,9 +289,9 @@ public class PopUps {
 	
 	private static class HandlerComboBox implements ActionListener {
 		
-		private PopUps source;
+		private PopUpLote source;
 		
-		public HandlerComboBox(PopUps source) {
+		public HandlerComboBox(PopUpLote source) {
 			this.source = source;
 		}
 		

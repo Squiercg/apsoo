@@ -29,6 +29,10 @@ public abstract class GenericDao<E> {
 		}
 	}
 	
+	public int insert(E data) throws SQLException {
+		return dao.create(data);
+	}
+	
 	//Devolve todos os campos de uma tabela qualquer
 	public List<E> getAll() {
 		try{

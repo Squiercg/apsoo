@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -21,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -35,39 +32,39 @@ import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import repositorio.FornecedorDao;
-import repositorio.ItemLoteProdutoDao;
-import repositorio.LoteDao;
-import classes.Fornecedor;
-import classes.ItemLote;
-import classes.Lote;
+import repositorio.ClienteDao;
+import repositorio.ItemVendaDao;
+import repositorio.VendaDao;
+import classes.Cliente;
+import classes.ItemVenda;
+import classes.Venda;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class CadastraLotes {
+public class CadastraVendas {
 	
 	private static Boolean isBrunoTesting;
 	private static Dimension preferredSize;
 	private static Border defaultBorder;
 	private static String[] lista;
-	private static List<Fornecedor> fornecedores;
-	private static FornecedorDao fornecedorDao;
-	private static JComboBox comboBoxFornecedores;
-	private static PopUpLote popUp;
+	private static List<Cliente> clientes;
+	private static ClienteDao ClienteDao;
+	private static JComboBox comboBoxClientes;
+	private static PopUpVenda popUp;
 	private static String columnNames[];
 	private static JTable table;
 	private static JLabel labelValorTotal;
 	private static Double valorTotal;
 	private static JTextField textField;
-	private static Lote lote;
+	private static Venda venda;
 	private SystemInterface systemInterface;
 	
-	public CadastraLotes(SystemInterface systemInterface) {
+	public CadastraVendas(SystemInterface systemInterface) {
 		isBrunoTesting = false;
 		this.systemInterface = systemInterface;
 		preferredSize = systemInterface.getSystemInterfaceDimension();
 		defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
-		popUp = new PopUpLote(systemInterface, defaultBorder);
-		String[] newColumnNames = {"Código", "Nome", "Categoria", "Quantidade", "Custo"};
+		popUp = new PopUpVenda(systemInterface, defaultBorder);
+		String[] newColumnNames = {"Código", "Nome", "Categoria", "Quantidade", "Preço"};
 		columnNames = newColumnNames;
 	}
 	
@@ -75,11 +72,11 @@ public class CadastraLotes {
 		return table;
 	}
 	
-	public PopUpLote getPopUps() {
+	public PopUpVenda getPopUps() {
 		return popUp;
 	}
 	
-	public JPanel cadastraLote() {
+	public JPanel cadastraVenda() {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
@@ -94,7 +91,7 @@ public class CadastraLotes {
 		placeHolder.setBorder(defaultBorder);
 		panelLevel2.add(placeHolder, BorderLayout.NORTH);
 		
-		placeHolder = new JLabel("Cadastro de Lotes");
+		placeHolder = new JLabel("Cadastro de Vendas");
 		placeHolder.setBorder(defaultBorder);
 		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 20));
 		panelLevel2.add(placeHolder, BorderLayout.CENTER);
@@ -110,7 +107,7 @@ public class CadastraLotes {
 		JPanel panelLevel3 = new JPanel(new BorderLayout());
 		panelLevel2.add(panelLevel3, BorderLayout.NORTH);
 		
-		placeHolder = new JLabel("Fornecedor");
+		placeHolder = new JLabel("Cliente");
 		placeHolder.setBorder(defaultBorder);
 		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getHeight() / 64 + (int) (preferredSize.getWidth() / 3)), 
@@ -128,30 +125,30 @@ public class CadastraLotes {
 		panelLevel3.add(panelLevel4, BorderLayout.NORTH);
 		
 		lista = null;
-		fornecedores = null;
+		clientes = null;
 		try {
-			fornecedorDao = new FornecedorDao(systemInterface.getSystemInterfaceDatabaseURL());
-			fornecedores = fornecedorDao.getAll();
+			ClienteDao = new ClienteDao(systemInterface.getSystemInterfaceDatabaseURL());
+			clientes = ClienteDao.getAll();
 		} catch (SQLException e) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de fornecedores!");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de clientes!");
 		} finally {
-			if(fornecedores == null) {
+			if(clientes == null) {
 				lista = new String[1];
 				lista[0] = "Nenhum valor encontrado";
-				systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de fornecedores!");
+				systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de clientes!");
 			}
 			else {
-				lista = new String[fornecedores.size()];
-				for(Fornecedor f : fornecedores)
-					lista[fornecedores.indexOf(f)] = f.getFornecedorNome();
+				lista = new String[clientes.size()];
+				for(Cliente f : clientes)
+					lista[clientes.indexOf(f)] = f.getClienteNome();
 			}
 		}
-		comboBoxFornecedores = new JComboBox(lista);
-		comboBoxFornecedores.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
-		comboBoxFornecedores.setBackground(Color.white);
-		comboBoxFornecedores.setEditable(false);
-		comboBoxFornecedores.setSelectedIndex(0);
-		panelLevel4.add(comboBoxFornecedores, BorderLayout.WEST);
+		comboBoxClientes = new JComboBox(lista);
+		comboBoxClientes.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
+		comboBoxClientes.setBackground(Color.white);
+		comboBoxClientes.setEditable(false);
+		comboBoxClientes.setSelectedIndex(0);
+		panelLevel4.add(comboBoxClientes, BorderLayout.WEST);
 		
 		JPanel panelLevel5 = new JPanel(new BorderLayout());
 		panelLevel4.add(panelLevel5, BorderLayout.CENTER);
@@ -311,25 +308,12 @@ public class CadastraLotes {
 		hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
 		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
 		button.setForeground(Color.white);
-		button.addMouseListener(new HandlerAddLote(systemInterface));
+		button.addMouseListener(new HandlerAddVenda(systemInterface));
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
 			(int) (preferredSize.getHeight() / 64)));
 		panelLevel5.add(button, BorderLayout.WEST);
 		
 		return panelLevel0;
-	}
-	
-	public JPanel underConstruction() {
-		JPanel panel = new JPanel(new BorderLayout());
-		try {
-			String systemImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_underconstruction.png";
-			JLabel systemInterfaceLabelImage = new JLabel(new ImageIcon(systemImagePath));
-			panel.add(systemInterfaceLabelImage, BorderLayout.CENTER);
-			systemInterface.getSystemInterfaceLabelStatus().setText("Módulo em manutenção, desculpe o transtorno");
-		} catch(IOException exPathNotFound) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Imagem da tela de alerta nao encontrada!");
-		}
-		return panel;
 	}
 	
 	public static void makeLateralBorders(JPanel panel, Dimension reference, Border style) {
@@ -414,7 +398,7 @@ public class CadastraLotes {
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Adiciona produtos ao lote");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Adiciona produtos à venda");
 		}
 		
 		@Override
@@ -448,12 +432,12 @@ public class CadastraLotes {
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
 				DecimalFormat df = new DecimalFormat("R$ #,##0.00");
 				
-				valorTotal -= popUp.getItensLotePrecos().get(rowToDelete);
+				valorTotal -= popUp.getItensVendaPrecos().get(rowToDelete);
 				labelValorTotal.setText("Total: " + df.format(valorTotal));
 				
 				model.removeRow(rowToDelete);
-				popUp.getItensLote().remove(rowToDelete);
-				popUp.getItensLotePrecos().remove(rowToDelete);
+				popUp.getItensVenda().remove(rowToDelete);
+				popUp.getItensVendaPrecos().remove(rowToDelete);
 				
 				systemInterface.getSystemInterfaceLabelStatus().setText("Registro removido com sucesso!");
 			} catch (ArrayIndexOutOfBoundsException ex) {
@@ -463,7 +447,7 @@ public class CadastraLotes {
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Remove os produtos selecionados do lote");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Remove os produtos selecionados da venda");
 		}
 		
 		@Override
@@ -482,11 +466,11 @@ public class CadastraLotes {
 		}
 	}
 	
-	private static class HandlerAddLote implements MouseListener {
+	private static class HandlerAddVenda implements MouseListener {
 		
 		private SystemInterface systemInterface;
 		
-		public HandlerAddLote(SystemInterface systemInterface) {
+		public HandlerAddVenda(SystemInterface systemInterface) {
 			this.systemInterface = systemInterface;
 		}
 		
@@ -495,29 +479,29 @@ public class CadastraLotes {
 			if(isValidDate2(textField.getText())) {
 				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				try {
-					lote = new Lote(format.parse(textField.getText()), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), valorTotal);
+					venda = new Venda(format.parse(textField.getText()), clientes.get(comboBoxClientes.getSelectedIndex()).getClienteId(), valorTotal);
 				} catch (ParseException e1) {
-					lote = new Lote(new Date(), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), valorTotal);
+					venda = new Venda(new Date(), clientes.get(comboBoxClientes.getSelectedIndex()).getClienteId(), valorTotal);
 					systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida, utilizando dia atual!");
 				} finally {
 					try {
-						LoteDao loteDao = new LoteDao(systemInterface.getSystemInterfaceDatabaseURL());
-						ItemLoteProdutoDao itemLoteDao = new ItemLoteProdutoDao(systemInterface.getSystemInterfaceDatabaseURL());
+						VendaDao vendaDao = new VendaDao(systemInterface.getSystemInterfaceDatabaseURL());
+						ItemVendaDao itemVendaDao = new ItemVendaDao(systemInterface.getSystemInterfaceDatabaseURL());
 						
-						int id = loteDao.insertLote(lote);
-						for(ItemLote i : popUp.getItensLote()) {
-							i.setLote(id);
-							itemLoteDao.insert(i);
+						int id = vendaDao.insertVenda(venda);
+						for(ItemVenda i : popUp.getItensVenda()) {
+							i.setVenda(id);
+							itemVendaDao.insert(i);
 						}
 						
-						popUp.encerraLote();
-						lote = null;
+						popUp.encerraVenda();
+						venda = null;
 						systemInterface.clearSystemInterface(!isBrunoTesting);
-						systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCadastraLotes().cadastraLote());
+						systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCadastraVendas().cadastraVenda());
 						
-						systemInterface.getSystemInterfaceLabelStatus().setText("Lote cadastrado com sucesso!");
+						systemInterface.getSystemInterfaceLabelStatus().setText("Venda cadastrada com sucesso!");
 					} catch (SQLException e1) {
-						systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados do lote no banco!");
+						systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados da venda no banco!");
 					}
 				}
 				
@@ -529,7 +513,7 @@ public class CadastraLotes {
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Encerra o lote e adiciona ao banco");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Encerra a venda e adiciona ao banco");
 		}
 		
 		@Override

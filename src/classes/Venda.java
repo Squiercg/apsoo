@@ -1,5 +1,5 @@
 package classes;
-import java.sql.Date;
+import java.util.Date;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -11,7 +11,7 @@ public class Venda {
 	private int vendaId;
 	@DatabaseField(canBeNull = false, columnName = "venda_data")
 	private Date vendaData;
-	@DatabaseField(canBeNull = false, foreign = true, columnName = "venda_cliente")
+	@DatabaseField(canBeNull = false, foreign = false, columnName = "venda_cliente")
 	private int vendaCliente;
 	@DatabaseField(columnName = "venda_valor")
 	private double vendaValor;
@@ -21,6 +21,13 @@ public class Venda {
 	public Venda(int vendaId, Date vendaData, int vendaCliente,
 			double vendaValor) {
 		this.vendaId = vendaId;
+		this.vendaData = vendaData;
+		this.vendaCliente = vendaCliente;
+		this.vendaValor = vendaValor;
+	}
+	
+	public Venda(Date vendaData, int vendaCliente,
+			double vendaValor) {
 		this.vendaData = vendaData;
 		this.vendaCliente = vendaCliente;
 		this.vendaValor = vendaValor;

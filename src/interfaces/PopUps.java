@@ -43,6 +43,7 @@ public class PopUps {
 	private List<Produto> produtos;
 	private ProdutoDao produtoDao;
 	private List<ItemLote> itensLote;
+	private List<Double> itensLotePrecos;
 	private JTextField textField;
 	private JComboBox comboBoxProdutos;
 	private JComboBox comboBoxCategorias;
@@ -53,6 +54,7 @@ public class PopUps {
 		preferredSize = systemInterface.getSystemInterfaceDimension();
 		PopUps.defaultBorder = defaultBorder;
 		itensLote = new ArrayList<ItemLote>();
+		itensLotePrecos = new ArrayList<Double>();
 	}
 	
 	public void selecionaProduto() {
@@ -207,6 +209,14 @@ public class PopUps {
 		return frame;
 	}
 	
+	public List<ItemLote> getItensLote() {
+		return itensLote;
+	}
+	
+	public List<Double> getItensLotePrecos() {
+		return itensLotePrecos;
+	}
+	
 	private void criaListaProdutos() {
 		String[] novaLista = completaListaProdutos(systemInterface, comboBoxCategorias);
 		
@@ -223,6 +233,11 @@ public class PopUps {
 		comboBoxProdutos.setBackground(Color.white);
 		comboBoxProdutos.setEditable(false);
 		comboBoxProdutos.setSelectedIndex(0);
+	}
+	
+	public void encerraLote() {
+		itensLote.clear();
+		itensLotePrecos.clear();
 	}
 	
 	private String[] completaListaProdutos(SystemInterface systemInterface, JComboBox source) {
@@ -312,6 +327,7 @@ public class PopUps {
 						.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade));
 					
 					itensLote.add(new ItemLote(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId(), quantidade, 0));
+					itensLotePrecos.add(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade);
 					
 					systemInterface.getSystemInterfaceCadastraLotes().updateTable(newRow);
 					systemInterface.getSystemInterfaceCadastraLotes().updateValorTotal(produtos

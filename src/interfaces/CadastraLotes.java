@@ -9,10 +9,16 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -30,8 +36,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import repositorio.FornecedorDao;
+import repositorio.LoteDao;
 import classes.Fornecedor;
+import classes.Lote;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class CadastraLotes {
 	
 	private static Boolean isBrunoTesting;
@@ -40,12 +49,15 @@ public class CadastraLotes {
 	private static String[] lista;
 	private static List<Fornecedor> fornecedores;
 	private static FornecedorDao fornecedorDao;
+	private static JComboBox comboBoxFornecedores;
 	private static PopUps popUp;
 	private static String columnNames[];
 	private static JTable table;
+	private static JLabel labelValorTotal;
+	private static Double valorTotal;
+	private static JTextField textField;
+	private static Lote lote;
 	private SystemInterface systemInterface;
-	private JLabel labelValorTotal;
-	private Double valorTotal;
 	
 	public CadastraLotes(SystemInterface systemInterface) {
 		isBrunoTesting = false;
@@ -61,7 +73,10 @@ public class CadastraLotes {
 		return table;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public PopUps getPopUps() {
+		return popUp;
+	}
+	
 	public JPanel cadastraLote() {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
@@ -129,12 +144,12 @@ public class CadastraLotes {
 					lista[fornecedores.indexOf(f)] = f.getFornecedorNome();
 			}
 		}
-		JComboBox comboBox = new JComboBox(lista);
-		comboBox.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
-		comboBox.setBackground(Color.white);
-		comboBox.setEditable(false);
-		comboBox.setSelectedIndex(0);
-		panelLevel4.add(comboBox, BorderLayout.WEST);
+		comboBoxFornecedores = new JComboBox(lista);
+		comboBoxFornecedores.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
+		comboBoxFornecedores.setBackground(Color.white);
+		comboBoxFornecedores.setEditable(false);
+		comboBoxFornecedores.setSelectedIndex(0);
+		panelLevel4.add(comboBoxFornecedores, BorderLayout.WEST);
 		
 		JPanel panelLevel5 = new JPanel(new BorderLayout());
 		panelLevel4.add(panelLevel5, BorderLayout.CENTER);
@@ -145,7 +160,7 @@ public class CadastraLotes {
 			(int) (preferredSize.getWidth() / 4) - 5, (int) (preferredSize.getHeight() / 32)));
 		panelLevel5.add(placeHolder, BorderLayout.WEST);
 		
-		JTextField textField = new JTextField();
+		textField = new JTextField();
 		textField.setText((new SimpleDateFormat("dd/MM/yyyy")).format(new Date()));
 		float[] hsbColor = Color.RGBtoHSB(184, 207, 229, null);
 		Color innerBorderColor = Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]);
@@ -183,6 +198,15 @@ public class CadastraLotes {
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 6), (int) (preferredSize.getHeight() / 16) - 
 			(int) (preferredSize.getHeight() / 64)));
 		panelLevel5.add(button, BorderLayout.WEST);
+		
+		button = new JButton("Remover produtos");
+		hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
+		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
+		button.setForeground(Color.white);
+		button.addMouseListener(new HandlerRemoveProducts(systemInterface));
+		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 6), (int) (preferredSize.getHeight() / 16) - 
+			(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(button, BorderLayout.EAST);
 		
 		panelLevel2 = new JPanel(new BorderLayout());
 		panelLevel2.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 2) + 
@@ -285,6 +309,7 @@ public class CadastraLotes {
 		hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
 		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
 		button.setForeground(Color.white);
+		button.addMouseListener(new HandlerAddLote(systemInterface));
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
 			(int) (preferredSize.getHeight() / 64)));
 		panelLevel5.add(button, BorderLayout.WEST);
@@ -298,6 +323,7 @@ public class CadastraLotes {
 			String systemImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_underconstruction.png";
 			JLabel systemInterfaceLabelImage = new JLabel(new ImageIcon(systemImagePath));
 			panel.add(systemInterfaceLabelImage, BorderLayout.CENTER);
+			systemInterface.getSystemInterfaceLabelStatus().setText("Módulo em manutenção, desculpe o transtorno");
 		} catch(IOException exPathNotFound) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Imagem da tela de alerta nao encontrada!");
 		}
@@ -347,7 +373,31 @@ public class CadastraLotes {
 		labelValorTotal.setText("Total: " + df.format(valorTotal));
 	}
 	
-	protected static class HandlerAddProducts implements MouseListener {
+	private static int daysInMonth(int year, int month) {
+		Calendar mycal = new GregorianCalendar(year, month, 1);
+		return mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+	}
+	
+	private static Set<String> dates = new HashSet<String>();
+	static {
+	    for (int year = 1900; year < 2050; year++) {
+	        for (int month = 1; month <= 12; month++) {
+	            for (int day = 1; day <= daysInMonth(year, month); day++) {
+	                StringBuilder date = new StringBuilder();
+	                date.append(String.format("%02d/", day));
+	                date.append(String.format("%02d/", month));
+	                date.append(String.format("%04d", year));
+	                dates.add(date.toString());
+	            }
+	        }
+	    }
+	}
+	
+	public static boolean isValidDate2(String dateString) {
+	    return dates.contains(dateString);
+	}
+	
+	private static class HandlerAddProducts implements MouseListener {
 		
 		private SystemInterface systemInterface;
 		
@@ -363,6 +413,113 @@ public class CadastraLotes {
 		@Override
 		public void mouseEntered(MouseEvent e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Adiciona produtos ao lote");
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			mouseEntered(e);
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			mouseExited(e);
+		}
+	}
+	
+	private static class HandlerRemoveProducts implements MouseListener {
+		
+		private SystemInterface systemInterface;
+		
+		public HandlerRemoveProducts(SystemInterface systemInterface) {
+			this.systemInterface = systemInterface;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			try {
+				int rowToDelete = table.getSelectedRow(); 
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+				DecimalFormat df = new DecimalFormat("R$ #,##0.00");
+				
+				valorTotal -= popUp.getItensLotePrecos().get(rowToDelete);
+				labelValorTotal.setText("Total: " + df.format(valorTotal));
+				
+				model.removeRow(rowToDelete);
+				popUp.getItensLote().remove(rowToDelete);
+				popUp.getItensLotePrecos().remove(rowToDelete);
+				
+				systemInterface.getSystemInterfaceLabelStatus().setText("Registro removido com sucesso!");
+			} catch (ArrayIndexOutOfBoundsException ex) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros selecionados para remover!");
+			}
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Remove os produtos selecionados do lote");
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			mouseEntered(e);
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			mouseExited(e);
+		}
+	}
+	
+	private static class HandlerAddLote implements MouseListener {
+		
+		private SystemInterface systemInterface;
+		
+		public HandlerAddLote(SystemInterface systemInterface) {
+			this.systemInterface = systemInterface;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if(isValidDate2(textField.getText())) {
+				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					lote = new Lote(0, format.parse(textField.getText()), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), 0.0);
+				} catch (ParseException e1) {
+					lote = new Lote(0, new Date(), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), 0.0);
+					systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida, utilizando dia atual!");
+				} finally {
+					try {
+						LoteDao loteDao = new LoteDao(systemInterface.getSystemInterfaceDatabaseURL());
+						loteDao.update(lote);
+						
+						// Após inserir no banco o novo lote, faz-se necessário buscar todos os lotes, e pegar o maior ID, e alocar este aos ItensLote de PopUps
+						// Depois, executar simulação de chamada de um novo cadastro de Lote, a fim de limpar os ItensLote já existentes, e reparar a tela para nova inserção
+						
+						systemInterface.getSystemInterfaceLabelStatus().setText("Lote cadastrado com sucesso!");
+					} catch (SQLException e1) {
+						systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados do lote no banco!");
+					}
+				}
+				
+			} else {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
+				textField.setBackground(Color.yellow);
+			}
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Encerra o lote e adiciona ao banco");
 		}
 		
 		@Override

@@ -237,6 +237,7 @@ public class SystemInterface {
 		public void mouseClicked(MouseEvent e) {
 			if(!systemInterfaceBusy) {
 				clearSystemInterface(false);
+				systemInterfaceCadastraLotes.getPopUps().encerraLote();
 				systemInterfaceStatusMessage = "Home";
 				systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 			}

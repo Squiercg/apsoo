@@ -1,6 +1,6 @@
 package classes;
 
-import java.sql.Date;
+import java.util.Date;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -10,16 +10,16 @@ public class Lote {
 	private int loteId;
 	@DatabaseField(canBeNull = false, columnName = "lote_data")
 	private Date loteData;
-	@DatabaseField(canBeNull = false, foreign = true, columnName = "lote_fornecedor")
+	@DatabaseField(canBeNull = false, foreign = false, columnName = "lote_fornecedor")
 	private int loteFornecedor;
 	@DatabaseField(canBeNull = false, columnName = "lote_valor")
 	private double loteValor;
 	
 	public Lote() {}
 	
-	public Lote(int loteId, Date loteData, int loteFornecedor, double loteValor) {
+	public Lote(int loteId, Date date, int loteFornecedor, double loteValor) {
 		this.loteId = loteId;
-		this.loteData = loteData;
+		this.loteData = date;
 		this.loteFornecedor = loteFornecedor;
 		this.loteValor = loteValor;
 	}

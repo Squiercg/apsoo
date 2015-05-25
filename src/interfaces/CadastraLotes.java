@@ -6,12 +6,16 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -23,19 +27,43 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import repositorio.FornecedorDao;
 import classes.Fornecedor;
 
-public class Methods {
+public class CadastraLotes {
+	
+	private static Boolean isBrunoTesting;
+	private static Dimension preferredSize;
+	private static Border defaultBorder;
+	private static String[] lista;
+	private static List<Fornecedor> fornecedores;
+	private static FornecedorDao fornecedorDao;
+	private static PopUps popUp;
+	private static String columnNames[];
+	private static JTable table;
+	private SystemInterface systemInterface;
+	private JLabel labelValorTotal;
+	private Double valorTotal;
+	
+	public CadastraLotes(SystemInterface systemInterface) {
+		isBrunoTesting = false;
+		this.systemInterface = systemInterface;
+		preferredSize = systemInterface.getSystemInterfaceDimension();
+		defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
+		popUp = new PopUps(systemInterface, defaultBorder);
+		String[] newColumnNames = {"Código", "Nome", "Categoria", "Quantidade", "Preço"};
+		columnNames = newColumnNames;
+	}
+	
+	public JTable getTable() {
+		return table;
+	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static JPanel cadastraLote(SystemInterface systemInterface) {
-		Boolean isBrunoTesting = false;
-		Dimension preferredSize = systemInterface.getSystemInterfaceDimension();
-		
+	public JPanel cadastraLote() {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
-		Border defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
 		makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
 		JPanel panelLevel1 = new JPanel(new BorderLayout());
@@ -82,10 +110,10 @@ public class Methods {
 		JPanel panelLevel4 = new JPanel(new BorderLayout());
 		panelLevel3.add(panelLevel4, BorderLayout.NORTH);
 		
-		String[] lista = null;
-		List<Fornecedor> fornecedores = null;
+		lista = null;
+		fornecedores = null;
 		try {
-			FornecedorDao fornecedorDao = new FornecedorDao(systemInterface.getSystemInterfaceDatabaseURL());
+			fornecedorDao = new FornecedorDao(systemInterface.getSystemInterfaceDatabaseURL());
 			fornecedores = fornecedorDao.getAll();
 		} catch (SQLException e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de fornecedores!");
@@ -151,7 +179,7 @@ public class Methods {
 		hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
 		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
 		button.setForeground(Color.white);
-		button.addMouseListener(new HandlerAddProducts(systemInterface, defaultBorder));
+		button.addMouseListener(new HandlerAddProducts(systemInterface));
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 6), (int) (preferredSize.getHeight() / 16) - 
 			(int) (preferredSize.getHeight() / 64)));
 		panelLevel5.add(button, BorderLayout.WEST);
@@ -185,19 +213,14 @@ public class Methods {
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
 		panelLevel5.add(placeHolder, BorderLayout.NORTH);
 		
-		//
-		
-		String columnNames[] = {"ID", "Nome", "Idade"};
-		String tableContents[][] = {{"1", "Bruno", "23"}, {"2", "Doglas", "35"}, {"3", "Augusto", "89"}};
-		JScrollPane pane = new JScrollPane(makeTable(tableContents, columnNames, preferredSize, compound));
+		DefaultTableModel model = new DefaultTableModel(0, columnNames.length) ;
+		model.setColumnIdentifiers(columnNames);
+		JScrollPane pane = new JScrollPane(makeTable(model, preferredSize, compound));
 		pane.setBorder(defaultBorder);
 		pane.setOpaque(false);
 		pane.getViewport().setOpaque(false);
 		pane.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 3) - (int) (preferredSize.getHeight() / 32)));
-		
 		panelLevel5.add(pane, BorderLayout.CENTER);
-		
-		//
 		
 		panelLevel4 = panelLevel5;
 		panelLevel5 = new JPanel(new BorderLayout());
@@ -208,16 +231,18 @@ public class Methods {
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
 		panelLevel5.add(placeHolder, BorderLayout.NORTH);
 		
-		placeHolder = new JLabel("Total: R$ 1337,00");
-		placeHolder.setHorizontalAlignment(SwingConstants.RIGHT);
-		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 5));
-		placeHolder.setBorder(defaultBorder);
-		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4) + 16, (int) (preferredSize.getHeight() / 32) + 7));
+		DecimalFormat df = new DecimalFormat("R$ #,##0.00");
+		valorTotal = 0.0;
+		labelValorTotal = new JLabel("Total: " + df.format(valorTotal));
+		labelValorTotal.setHorizontalAlignment(SwingConstants.RIGHT);
+		labelValorTotal.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 5));
+		labelValorTotal.setBorder(defaultBorder);
+		labelValorTotal.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4) + 16, (int) (preferredSize.getHeight() / 32) + 7));
 		
 		panelLevel4 = panelLevel5;
 		panelLevel5 = new JPanel(new BorderLayout());
 		panelLevel4.add(panelLevel5, BorderLayout.SOUTH);
-		panelLevel5.add(placeHolder, BorderLayout.EAST);
+		panelLevel5.add(labelValorTotal, BorderLayout.EAST);
 		
 		panelLevel3 = new JPanel(new BorderLayout());
 		panelLevel2.add(panelLevel3, BorderLayout.SOUTH);
@@ -267,6 +292,18 @@ public class Methods {
 		return panelLevel0;
 	}
 	
+	public JPanel underConstruction() {
+		JPanel panel = new JPanel(new BorderLayout());
+		try {
+			String systemImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_underconstruction.png";
+			JLabel systemInterfaceLabelImage = new JLabel(new ImageIcon(systemImagePath));
+			panel.add(systemInterfaceLabelImage, BorderLayout.CENTER);
+		} catch(IOException exPathNotFound) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Imagem da tela de alerta nao encontrada!");
+		}
+		return panel;
+	}
+	
 	public static void makeLateralBorders(JPanel panel, Dimension reference, Border style) {
 		JLabel placeHolder = new JLabel("");
 		placeHolder.setBorder(style);
@@ -279,8 +316,8 @@ public class Methods {
 		panel.add(placeHolder, BorderLayout.EAST);
 	}
 	
-	private static JTable makeTable(Object[][] tableContents, String[] columnNames, Dimension reference, Border style) {
-		JTable table = new JTable(tableContents, columnNames);
+	private static JTable makeTable(DefaultTableModel model, Dimension reference, Border style) {
+		table = new JTable(model);
 		
 		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
 		renderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -299,19 +336,28 @@ public class Methods {
 		return table;
 	}
 	
+	public void updateTable(Object[] newRow) {
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		model.addRow(newRow);
+	}
+	
+	public void updateValorTotal(Double valor) {
+		valorTotal += valor;
+		DecimalFormat df = new DecimalFormat("R$ #,##0.00");
+		labelValorTotal.setText("Total: " + df.format(valorTotal));
+	}
+	
 	protected static class HandlerAddProducts implements MouseListener {
 		
 		private SystemInterface systemInterface;
-		private Border systemBorder;
 		
-		public HandlerAddProducts(SystemInterface systemInterface, Border systemBorder) {
+		public HandlerAddProducts(SystemInterface systemInterface) {
 			this.systemInterface = systemInterface;
-			this.systemBorder = systemBorder;
 		}
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			PopUps.selecionaProduto(systemInterface, systemBorder);
+			popUp.selecionaProduto();
 		}
 		
 		@Override

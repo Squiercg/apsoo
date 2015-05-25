@@ -83,11 +83,4 @@ public class Produto {
 	public void setProdutoLucro(double produtoLucro) {
 		this.produtoLucro = produtoLucro;
 	}
-	
-	public ArrayList<Produto> produtoPorCategoria(String idCategoria, String databaseUrl) throws SQLException{
-		ArrayList<Produto> produtos = new ArrayList<Produto>();
-		ProdutoDao buscador = new ProdutoDao(databaseUrl);
-		produtos = (ArrayList<Produto>) buscador.getForValue("prod_categoria", idCategoria);
-		return produtos;
-	}
 }

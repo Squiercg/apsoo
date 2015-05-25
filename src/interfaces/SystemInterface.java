@@ -35,6 +35,7 @@ public class SystemInterface {
 	private JLabel systemInterfaceLabelImage;
 	private String systemInterfaceStatusMessage;
 	private String systemInterfaceDatabaseURL;
+	private CadastraLotes systemInterfaceCadastraLotes;
 	
 	public SystemInterface(String systemDatabaseURL) {
 		setSystemInterfaceDatabaseURL(systemDatabaseURL);
@@ -50,6 +51,7 @@ public class SystemInterface {
 		setSystemInterfaceExitButton();
 		setSystemInterface();
 		setSystemInterfaceBusy();
+		setSystemInterfaceCadastraLotes();
 	}
 	
 	private void setSystemInterfaceLoadTime(int systemInterfaceLoadTime) {
@@ -197,6 +199,10 @@ public class SystemInterface {
 		systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 	}
 	
+	public void setSystemInterfaceCadastraLotes() {
+		systemInterfaceCadastraLotes = new CadastraLotes(this);
+	}
+	
 	public Dimension getSystemInterfaceDimension() {
 		return systemInterfaceDimension;
 	}
@@ -211,6 +217,10 @@ public class SystemInterface {
 	
 	public String getSystemInterfaceDatabaseURL() {
 		return systemInterfaceDatabaseURL;
+	}
+	
+	public CadastraLotes getSystemInterfaceCadastraLotes() {
+		return systemInterfaceCadastraLotes;
 	}
 	
 	protected void clearSystemInterface(Boolean fullClear) {
@@ -303,12 +313,10 @@ public class SystemInterface {
 		
 		private String systemInterfaceMenuName;
 		private String systemInterfaceMenuItemName;
-		private SystemInterface systemInterface;
 		
 		public HandlerMenuOptions(String systemInterfaceMenuName, String systemInterfaceMenuItemName, SystemInterface systemInterface) {
 			this.systemInterfaceMenuName = systemInterfaceMenuName;
 			this.systemInterfaceMenuItemName = systemInterfaceMenuItemName;
-			this.systemInterface = systemInterface;
 		}
 		
 		@Override
@@ -322,10 +330,21 @@ public class SystemInterface {
 					if(e.getSource() instanceof JMenuItem) {
 						clearSystemInterface(true);
 						if(systemInterfaceMenuItemName.equalsIgnoreCase("Cadastrar")) {
-							if(systemInterfaceMenuName.equalsIgnoreCase("Lotes"))
-								systemInterfacePanelMain.add(Methods.cadastraLote(systemInterface));
+							if(systemInterfaceMenuName.equalsIgnoreCase("Lotes")) {
+								systemInterfacePanelMain.add(systemInterfaceCadastraLotes.cadastraLote());
+							} else {
+								////////////////////////////////////////////////////////////////////////
+								systemInterfacePanelMain.add(systemInterfaceCadastraLotes.underConstruction());								
+								////////////////////////////////////////////////////////////////////////
+							}
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
-							// TO_DO
+							////////////////////////////////////////////////////////////////////////
+							systemInterfacePanelMain.add(systemInterfaceCadastraLotes.underConstruction());
+							////////////////////////////////////////////////////////////////////////
+						} else {
+							////////////////////////////////////////////////////////////////////////
+							systemInterfacePanelMain.add(systemInterfaceCadastraLotes.underConstruction());
+							////////////////////////////////////////////////////////////////////////
 						}
 					}
 				} else {
@@ -371,3 +390,4 @@ public class SystemInterface {
 		}
 	}
 }
+

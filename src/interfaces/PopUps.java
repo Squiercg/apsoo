@@ -6,33 +6,61 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import repositorio.CategoriaDao;
 import repositorio.ProdutoDao;
 import classes.Categoria;
+import classes.ItemLote;
 import classes.Produto;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class PopUps {
 	
-	public static void selecionaProduto(SystemInterface systemInterface, Border defaultBorder) {
-		Dimension preferredSize = systemInterface.getSystemInterfaceDimension();
-		JFrame frame = setSystemInterfaceFrame(preferredSize);
+	private static SystemInterface systemInterface;
+	private Dimension preferredSize;
+	private static Border defaultBorder;
+	private String[] lista;
+	private List<Categoria> categorias;
+	private CategoriaDao categoriaDao;
+	private List<Produto> produtos;
+	private ProdutoDao produtoDao;
+	private List<ItemLote> itensLote;
+	private JTextField textField;
+	private JComboBox comboBoxProdutos;
+	private JComboBox comboBoxCategorias;
+	private JFrame frame;
+	
+	public PopUps(SystemInterface systemInterface, Border defaultBorder) {
+		PopUps.systemInterface = systemInterface;
+		preferredSize = systemInterface.getSystemInterfaceDimension();
+		PopUps.defaultBorder = defaultBorder;
+		itensLote = new ArrayList<ItemLote>();
+	}
+	
+	public void selecionaProduto() {
+		frame = setSystemInterfaceFrame(preferredSize);
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		frame.add(panelLevel0, BorderLayout.CENTER);
 		
-		Methods.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
+		CadastraLotes.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
 		JPanel panelLevel1 = new JPanel(new BorderLayout());
 		panelLevel0.add(panelLevel1, BorderLayout.CENTER);
@@ -55,10 +83,10 @@ public class PopUps {
 		panelLevel3 = new JPanel(new BorderLayout());
 		panelLevel2.add(panelLevel3, BorderLayout.CENTER);
 		
-		String[] lista = null;
-		List<Categoria> categorias = null;
+		lista = null;
+		categorias = null;
 		try {
-			CategoriaDao categoriaDao = new CategoriaDao(systemInterface.getSystemInterfaceDatabaseURL());
+			categoriaDao = new CategoriaDao(systemInterface.getSystemInterfaceDatabaseURL());
 			categorias = categoriaDao.getAll();
 		} catch (SQLException e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de categorias!");
@@ -74,12 +102,12 @@ public class PopUps {
 					lista[categorias.indexOf(c)] = c.getCategoriaDesc();
 			}
 		}
-		JComboBox comboBoxCategorias = new JComboBox(lista);
+		comboBoxCategorias = new JComboBox(lista);
 		comboBoxCategorias.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
 		comboBoxCategorias.setBackground(Color.white);
 		comboBoxCategorias.setEditable(false);
 		comboBoxCategorias.setSelectedIndex(0);
-		comboBoxCategorias.addActionListener(new HandlerComboBox(comboBoxCategorias, systemInterface));
+		comboBoxCategorias.addActionListener(new HandlerComboBox(this));
 		panelLevel3.add(comboBoxCategorias, BorderLayout.NORTH);
 		
 		placeHolder = new JLabel("");
@@ -98,12 +126,65 @@ public class PopUps {
 		panelLevel3 = new JPanel(new BorderLayout());
 		panelLevel2.add(panelLevel3, BorderLayout.NORTH);
 		
-		JComboBox comboBoxProdutos = new JComboBox(completaListaPedidos(systemInterface, comboBoxCategorias));
-		comboBoxProdutos.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
-		comboBoxProdutos.setBackground(Color.white);
-		comboBoxProdutos.setEditable(false);
-		comboBoxProdutos.setSelectedIndex(0);
+		criaListaProdutos();
 		panelLevel3.add(comboBoxProdutos, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 2), (int) (preferredSize.getHeight() / 32)));
+		placeHolder.setBorder(defaultBorder);
+		panelLevel3.add(placeHolder, BorderLayout.SOUTH);
+		
+		panelLevel2 = new JPanel(new BorderLayout());
+		panelLevel2.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 2), (int) (preferredSize.getHeight() / 10) + 2));
+		panelLevel1.add(panelLevel2, BorderLayout.SOUTH);
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("Quantidade");
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 5));
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 6), (int) (preferredSize.getHeight() / 32)));
+		placeHolder.setBorder(defaultBorder);
+		panelLevel3.add(placeHolder, BorderLayout.WEST);
+		
+		JButton button = new JButton("Adicionar");
+		float[] hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
+		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
+		button.setForeground(Color.white);
+		button.addMouseListener(new HandlerAcceptButton(systemInterface, frame));
+		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 32) - 
+			(int) (preferredSize.getHeight() / 64)));
+		panelLevel3.add(button, BorderLayout.EAST);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 2), (int) (preferredSize.getHeight() / 64)));
+		placeHolder.setBorder(defaultBorder);
+		panelLevel2.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel3.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 2), (int) (preferredSize.getHeight() / 18)));
+		panelLevel2.add(panelLevel3, BorderLayout.SOUTH);
+		
+		panelLevel2 = panelLevel3;
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.NORTH);
+		
+		textField = new JTextField();
+		hsbColor = Color.RGBtoHSB(184, 207, 229, null);
+		Color innerBorderColor = Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]);
+		hsbColor = Color.RGBtoHSB(122, 138, 153, null);
+		Color outerBorderColor = Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]);
+		Border compound = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outerBorderColor), BorderFactory.createLineBorder(innerBorderColor));
+		textField.setBorder(compound);
+		textField.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 6), (int) (preferredSize.getHeight() / 32)));
+		panelLevel3.add(textField, BorderLayout.WEST);
+		
+		button = new JButton("Voltar");
+		button.setBackground(Color.white);
+		button.setForeground(Color.black);
+		button.addMouseListener(new HandlerBackButton(systemInterface, frame));
+		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 32) - 
+				(int) (preferredSize.getHeight() / 64)));
+		panelLevel3.add(button, BorderLayout.EAST);
 	}
 	
 	private static JFrame setSystemInterfaceFrame(Dimension preferredSize) {
@@ -114,7 +195,7 @@ public class PopUps {
 		} catch (IOException exPathNotFound) {
 			
 		}
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setLayout(new BorderLayout());
 		frame.setSize(new Dimension((int) (preferredSize.getWidth() / 2), (int) (preferredSize.getHeight() / 3)));
@@ -126,12 +207,30 @@ public class PopUps {
 		return frame;
 	}
 	
-	private static String[] completaListaPedidos(SystemInterface systemInterface, JComboBox source) {
-		String[] lista;
-		List<Produto> produtos = null;
+	private void criaListaProdutos() {
+		String[] novaLista = completaListaProdutos(systemInterface, comboBoxCategorias);
+		
+		if(comboBoxProdutos == null) {
+			comboBoxProdutos = new JComboBox<>(novaLista);
+		} else {
+			comboBoxProdutos.removeAllItems();
+		    for(String s : novaLista){
+		    	comboBoxProdutos.addItem(s);
+		    }
+		}
+	    
+		comboBoxProdutos.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		comboBoxProdutos.setBackground(Color.white);
+		comboBoxProdutos.setEditable(false);
+		comboBoxProdutos.setSelectedIndex(0);
+	}
+	
+	private String[] completaListaProdutos(SystemInterface systemInterface, JComboBox source) {
+		lista = null;
+		produtos = null;
 		try {
-			ProdutoDao produtoDao = new ProdutoDao(systemInterface.getSystemInterfaceDatabaseURL());
-			produtos = produtoDao.getAll();
+			produtoDao = new ProdutoDao(systemInterface.getSystemInterfaceDatabaseURL());
+			produtos = produtoDao.getForValue("prod_categoria", String.valueOf(categorias.get(source.getSelectedIndex()).getCategoriaId()));
 		} catch (SQLException e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de produtos!");
 		} finally {
@@ -149,19 +248,140 @@ public class PopUps {
 		return lista;
 	}
 	
+	public static boolean isInteger(String str) {
+		if (str == null) {
+			return false;
+		}
+		int length = str.length();
+		if (length == 0) {
+			return false;
+		}
+		int i = 0;
+		if (str.charAt(0) == '-') {
+			if (length == 1) {
+				return false;
+			}
+			i = 1;
+		}
+		for (; i < length; i++) {
+			char c = str.charAt(i);
+			if (c <= '/' || c >= ':') {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	private static class HandlerComboBox implements ActionListener {
 		
-		private JComboBox source;
-		private SystemInterface systemInterface;
+		private PopUps source;
 		
-		public HandlerComboBox(JComboBox source, SystemInterface systemInterface) {
+		public HandlerComboBox(PopUps source) {
 			this.source = source;
-			this.systemInterface = systemInterface;
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			completaListaPedidos(systemInterface, source);			
+			source.criaListaProdutos();
+		}
+	}
+	
+	private class HandlerAcceptButton implements MouseListener {
+		
+		private SystemInterface systemInterface;
+		private JFrame source;
+		
+		public HandlerAcceptButton(SystemInterface systemInterface, JFrame source) {
+			this.systemInterface = systemInterface;
+			this.source = source;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if(isInteger(textField.getText())) {
+				int quantidade = Integer.parseInt(textField.getText());
+				if(quantidade > 0) {
+					DecimalFormat df = new DecimalFormat("#,###.00");
+					Object[] newRow = new Object[systemInterface.getSystemInterfaceCadastraLotes().getTable().getColumnCount()];
+					
+					newRow[0] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId();
+					newRow[1] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoDesc();
+					newRow[2] = categorias.get(comboBoxCategorias.getSelectedIndex()).getCategoriaDesc();
+					newRow[3] = textField.getText();
+					newRow[4] = "R$ " + String.valueOf(df.format(produtos
+						.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade));
+					
+					itensLote.add(new ItemLote(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId(), quantidade, 0));
+					
+					systemInterface.getSystemInterfaceCadastraLotes().updateTable(newRow);
+					systemInterface.getSystemInterfaceCadastraLotes().updateValorTotal(produtos
+						.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade);
+					
+					source.dispose();
+				} else {
+					systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade deve ser maior que zero!");
+					textField.setBackground(Color.yellow);
+				}
+			} else {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade de itens é inválido!");
+				textField.setBackground(Color.yellow);
+			}
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Adiciona os dados informados à tabela de itens do lote");
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			
+		}
+	}
+	
+	private class HandlerBackButton implements MouseListener {
+		
+		private SystemInterface systemInterface;
+		private JFrame source;
+		
+		public HandlerBackButton(SystemInterface systemInterface, JFrame source) {
+			this.systemInterface = systemInterface;
+			this.source = source;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		    source.dispose();
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Retorna para o cadastro de lotes");
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			
 		}
 	}
 }

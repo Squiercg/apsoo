@@ -1,5 +1,10 @@
 package classes;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import repositorio.ProdutoDao;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -10,7 +15,7 @@ public class Produto {
 	@DatabaseField(canBeNull = false, columnName = "prod_descricao", 
 			index = true, indexName = "Nome_Produto")
 	private String produtoDesc;
-	@DatabaseField(canBeNull = false, foreign = false, columnName = "prod_categoria")
+	@DatabaseField(canBeNull = false, columnName = "prod_categoria")
 	private int produtoCategoria;
 	@DatabaseField(columnName = "prod_custo")
 	private double produtoCusto;
@@ -79,5 +84,10 @@ public class Produto {
 		this.produtoLucro = produtoLucro;
 	}
 	
-	
+	public ArrayList<Produto> produtoPorCategoria(String idCategoria, String databaseUrl) throws SQLException{
+		ArrayList<Produto> produtos = new ArrayList<Produto>();
+		ProdutoDao buscador = new ProdutoDao(databaseUrl);
+		produtos = (ArrayList<Produto>) buscador.getForValue("prod_categoria", idCategoria);
+		return produtos;
+	}
 }

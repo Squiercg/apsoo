@@ -42,6 +42,17 @@ public abstract class GenericDao<E> {
 		}
 	}
 	
+	public List<E> getForValue(String field, String value){
+		try {
+			return dao.queryForEq(field, value);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			finaliza();
+		}
+		return null;
+	}
+	
 	// Devolve resultado pelo id solicitado
 	public E getById(int id) {
 		try{
@@ -92,7 +103,7 @@ public abstract class GenericDao<E> {
 			}
 			return rows;
 		}
-	
+		
 	private void finaliza(){
 		try {
 			connectionSource.close();

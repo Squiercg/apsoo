@@ -492,7 +492,7 @@ public class CadastraLotes {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(isValidDate2(textField.getText())) {
+			if(isValidDate2(textField.getText()) && table.getRowCount() > 0) {
 				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				try {
 					lote = new Lote(format.parse(textField.getText()), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), valorTotal);
@@ -521,9 +521,11 @@ public class CadastraLotes {
 					}
 				}
 				
-			} else {
+			} else if(!isValidDate2(textField.getText())) {
 				systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
 				textField.setBackground(Color.yellow);
+			} else {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros a inserir no banco!");
 			}
 		}
 		

@@ -1,10 +1,5 @@
 package classes;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-
-import repositorio.ProdutoDao;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 

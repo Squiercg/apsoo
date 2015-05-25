@@ -40,7 +40,7 @@ public class SystemInterface {
 	
 	public SystemInterface(String systemDatabaseURL) {
 		setSystemInterfaceDatabaseURL(systemDatabaseURL);
-		setSystemInterfaceLoadTime(1);
+		setSystemInterfaceLoadTime(500);
 		setSystemInterfaceBusy();
 		setSystemInterfaceDefaultBorder();
 		setSystemInterfaceDimension();

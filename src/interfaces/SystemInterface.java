@@ -40,7 +40,7 @@ public class SystemInterface {
 	
 	public SystemInterface(String systemDatabaseURL) {
 		setSystemInterfaceDatabaseURL(systemDatabaseURL);
-		setSystemInterfaceLoadTime(500);
+		setSystemInterfaceLoadTime(1337);
 		setSystemInterfaceBusy();
 		setSystemInterfaceDefaultBorder();
 		setSystemInterfaceDimension();
@@ -175,6 +175,8 @@ public class SystemInterface {
 			String systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_welcome.jpg";
 			systemInterfaceLabelImage = new JLabel(new ImageIcon(systemWelcomeImagePath));
 			systemInterfaceFrame.add(systemInterfaceLabelImage);
+			systemInterfaceFrame.repaint();
+			systemInterfaceFrame.setVisible(true);
 			try {
 			    Thread.sleep(systemInterfaceLoadTime * 2);
 			} catch(InterruptedException exThreadFailed) {
@@ -187,8 +189,6 @@ public class SystemInterface {
 		} catch(IOException exPathNotFound) {
 			systemInterfaceLabelStatus.setText("Imagem da tela de login nao encontrada!");
 		} finally {
-			systemInterfaceFrame.setVisible(true);
-			systemInterfaceFrame.repaint();
 			systemInterfaceStatusMessage = "Home";
 			systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 			systemInterfacePanelMain = new JPanel(new BorderLayout());

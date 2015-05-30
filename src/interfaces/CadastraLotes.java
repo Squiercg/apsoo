@@ -6,22 +6,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -81,7 +74,7 @@ public class CadastraLotes {
 	
 	public JPanel cadastraLote() {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
-		makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
+		Common.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
 		JPanel panelLevel1 = new JPanel(new BorderLayout());
 		panelLevel0.add(panelLevel1, BorderLayout.CENTER);
@@ -319,31 +312,6 @@ public class CadastraLotes {
 		return panelLevel0;
 	}
 	
-	public JPanel underConstruction() {
-		JPanel panel = new JPanel(new BorderLayout());
-		try {
-			String systemImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_underconstruction.png";
-			JLabel systemInterfaceLabelImage = new JLabel(new ImageIcon(systemImagePath));
-			panel.add(systemInterfaceLabelImage, BorderLayout.CENTER);
-			systemInterface.getSystemInterfaceLabelStatus().setText("Módulo em manutenção, desculpe o transtorno");
-		} catch(IOException exPathNotFound) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Imagem da tela de alerta nao encontrada!");
-		}
-		return panel;
-	}
-	
-	public static void makeLateralBorders(JPanel panel, Dimension reference, Border style) {
-		JLabel placeHolder = new JLabel("");
-		placeHolder.setBorder(style);
-		placeHolder.setPreferredSize(new Dimension((int) (reference.getWidth() / 16), (int) (reference.getHeight())));
-		panel.add(placeHolder, BorderLayout.WEST);
-		
-		placeHolder = new JLabel("");
-		placeHolder.setBorder(style);
-		placeHolder.setPreferredSize(new Dimension((int) (reference.getWidth() / 32), (int) (reference.getHeight())));
-		panel.add(placeHolder, BorderLayout.EAST);
-	}
-	
 	private static JTable makeTable(DefaultTableModel model, Dimension reference, Border style) {
 		table = new JTable(model);
 		
@@ -373,30 +341,6 @@ public class CadastraLotes {
 		valorTotal += valor;
 		DecimalFormat df = new DecimalFormat("R$ #,##0.00");
 		labelValorTotal.setText("Total: " + df.format(valorTotal));
-	}
-	
-	private static int daysInMonth(int year, int month) {
-		Calendar mycal = new GregorianCalendar(year, month, 1);
-		return mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
-	}
-	
-	private static Set<String> dates = new HashSet<String>();
-	static {
-	    for (int year = 1900; year < 2050; year++) {
-	        for (int month = 1; month <= 12; month++) {
-	            for (int day = 1; day <= daysInMonth(year, month); day++) {
-	                StringBuilder date = new StringBuilder();
-	                date.append(String.format("%02d/", day));
-	                date.append(String.format("%02d/", month));
-	                date.append(String.format("%04d", year));
-	                dates.add(date.toString());
-	            }
-	        }
-	    }
-	}
-	
-	public static boolean isValidDate2(String dateString) {
-	    return dates.contains(dateString);
 	}
 	
 	private static class HandlerAddProducts implements MouseListener {
@@ -492,7 +436,7 @@ public class CadastraLotes {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(isValidDate2(textField.getText()) && table.getRowCount() > 0) {
+			if(Common.isValidDate2(textField.getText()) && table.getRowCount() > 0) {
 				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				try {
 					lote = new Lote(format.parse(textField.getText()), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), valorTotal);
@@ -521,7 +465,7 @@ public class CadastraLotes {
 					}
 				}
 				
-			} else if(!isValidDate2(textField.getText())) {
+			} else if(!Common.isValidDate2(textField.getText())) {
 				systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
 				textField.setBackground(Color.yellow);
 			} else {

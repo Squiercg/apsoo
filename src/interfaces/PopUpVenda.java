@@ -62,7 +62,7 @@ public class PopUpVenda {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		frame.add(panelLevel0, BorderLayout.CENTER);
 		
-		CadastraVendas.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
+		Common.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
 		JPanel panelLevel1 = new JPanel(new BorderLayout());
 		panelLevel0.add(panelLevel1, BorderLayout.CENTER);
@@ -263,30 +263,6 @@ public class PopUpVenda {
 		return lista;
 	}
 	
-	public static boolean isInteger(String str) {
-		if (str == null) {
-			return false;
-		}
-		int length = str.length();
-		if (length == 0) {
-			return false;
-		}
-		int i = 0;
-		if (str.charAt(0) == '-') {
-			if (length == 1) {
-				return false;
-			}
-			i = 1;
-		}
-		for (; i < length; i++) {
-			char c = str.charAt(i);
-			if (c <= '/' || c >= ':') {
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	private static class HandlerComboBox implements ActionListener {
 		
 		private PopUpVenda source;
@@ -313,7 +289,7 @@ public class PopUpVenda {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(isInteger(textField.getText())) {
+			if(Common.isInteger(textField.getText())) {
 				int quantidade = Integer.parseInt(textField.getText());
 				if(quantidade > 0) {
 					DecimalFormat df = new DecimalFormat("#,###.00");

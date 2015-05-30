@@ -37,10 +37,12 @@ public class SystemInterface {
 	private String systemInterfaceDatabaseURL;
 	private CadastraLotes systemInterfaceCadastraLotes;
 	private CadastraVendas systemInterfaceCadastraVendas;
+	private SystemInterface systemInterfaceSelfReference;
 	
 	public SystemInterface(String systemDatabaseURL) {
+		setSystemInterfaceSelfReference();
 		setSystemInterfaceDatabaseURL(systemDatabaseURL);
-		setSystemInterfaceLoadTime(1337);
+		setSystemInterfaceLoadTime(1);
 		setSystemInterfaceBusy();
 		setSystemInterfaceDefaultBorder();
 		setSystemInterfaceDimension();
@@ -54,6 +56,10 @@ public class SystemInterface {
 		setSystemInterfaceBusy();
 		setSystemInterfaceCadastraLotes();
 		setSystemInterfaceCadastraVendas();
+	}
+	
+	private void setSystemInterfaceSelfReference() {
+		systemInterfaceSelfReference = this;
 	}
 	
 	private void setSystemInterfaceLoadTime(int systemInterfaceLoadTime) {
@@ -208,6 +214,10 @@ public class SystemInterface {
 		systemInterfaceCadastraVendas = new CadastraVendas(this);
 	}
 	
+	public SystemInterface getSystemInterfaceSelfReference() {
+		return systemInterfaceSelfReference;
+	}
+	
 	public Dimension getSystemInterfaceDimension() {
 		return systemInterfaceDimension;
 	}
@@ -287,7 +297,7 @@ public class SystemInterface {
 		public void mouseClicked(MouseEvent e) {
 			if(!systemInterfaceBusy) {
 				try {
-				    Thread.sleep(systemInterfaceLoadTime * 2);
+				    Thread.sleep(systemInterfaceLoadTime);
 				    systemInterfaceFrame.dispose();
 				} catch(InterruptedException exThreadFailed) {
 					systemInterfaceLabelStatus.setText("Houve algum erro ao encerrar o programa!");
@@ -350,16 +360,16 @@ public class SystemInterface {
 								systemInterfacePanelMain.add(systemInterfaceCadastraVendas.cadastraVenda());
 							} else {
 								////////////////////////////////////////////////////////////////////////
-								systemInterfacePanelMain.add(systemInterfaceCadastraLotes.underConstruction());								
+								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));								
 								////////////////////////////////////////////////////////////////////////
 							}
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
 							////////////////////////////////////////////////////////////////////////
-							systemInterfacePanelMain.add(systemInterfaceCadastraLotes.underConstruction());
+							systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
 							////////////////////////////////////////////////////////////////////////
 						} else {
 							////////////////////////////////////////////////////////////////////////
-							systemInterfacePanelMain.add(systemInterfaceCadastraLotes.underConstruction());
+							systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
 							////////////////////////////////////////////////////////////////////////
 						}
 					}

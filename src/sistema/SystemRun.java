@@ -18,8 +18,7 @@ public class SystemRun {
 	
 	private void setSystemDatabaseURL() {
 		try {
-			systemDatabaseURL =   "jdbc:sqlite:";
-			systemDatabaseURL += new File("lib/.").getCanonicalPath() + "\\" + "CDT_database.sqlite";
+			systemDatabaseURL = "jdbc:sqlite:" + new File("lib/.").getCanonicalPath() + "\\" + "CDT_database.sqlite";
 			systemStartMessage = "Conectado ao banco de dados!";
 		}
 		catch(IOException e) {

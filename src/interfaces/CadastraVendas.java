@@ -55,7 +55,7 @@ public class CadastraVendas {
 	private SystemInterface systemInterface;
 	
 	public CadastraVendas(SystemInterface systemInterface) {
-		isBrunoTesting = true;
+		isBrunoTesting = false;
 		this.systemInterface = systemInterface;
 		preferredSize = systemInterface.getSystemInterfaceDimension();
 		defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();

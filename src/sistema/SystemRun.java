@@ -11,14 +11,14 @@ public class SystemRun {
 	private SystemInterface systemInterface;
 	private String systemStartMessage;
 	
-	public SystemRun() {
+	public SystemRun(String systemNomeLoja) {
 		setSystemDatabaseURL();
-		setSystemInterface();
+		setSystemInterface(systemNomeLoja);
 	}
 	
 	private void setSystemDatabaseURL() {
 		try {
-			systemDatabaseURL = "jdbc:sqlite:" + new File("lib/.").getCanonicalPath() + "\\" + "CDT_database.sqlite";
+			systemDatabaseURL = "jdbc:sqlite:" + new File("lib/.").getCanonicalPath() + "/" + "CDT_database.sqlite";
 			systemStartMessage = "Conectado ao banco de dados!";
 		}
 		catch(IOException e) {
@@ -26,8 +26,8 @@ public class SystemRun {
 		}
 	}
 	
-	private void setSystemInterface() {
-		systemInterface = new SystemInterface(systemDatabaseURL);
+	private void setSystemInterface(String systemNomeLoja) {
+		systemInterface = new SystemInterface(systemDatabaseURL, systemNomeLoja);
 		systemInterface.setSystemInterfaceStatusMessage(systemStartMessage);
 	}
 	

@@ -26,8 +26,10 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import repositorio.CategoriaDao;
+import repositorio.EstoqueDao;
 import repositorio.ProdutoDao;
 import classes.Categoria;
+import classes.Estoque;
 import classes.ItemVenda;
 import classes.Produto;
 
@@ -48,6 +50,7 @@ public class PopUpVenda {
 	private JComboBox comboBoxProdutos;
 	private JComboBox comboBoxCategorias;
 	private JFrame frame;
+	private int quantidadeEstoque;
 	
 	public PopUpVenda(SystemInterface systemInterface, Border defaultBorder) {
 		PopUpVenda.systemInterface = systemInterface;
@@ -192,7 +195,7 @@ public class PopUpVenda {
 	private static JFrame setSystemInterfaceFrame(Dimension preferredSize) {
 		JFrame frame = new JFrame("Seleção de Produtos");
 		try {
-			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_icon.png";
+			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_icon.png";
 			frame.setIconImage((new ImageIcon(systemIconImagePath)).getImage());
 		} catch (IOException exPathNotFound) {
 			
@@ -230,6 +233,7 @@ public class PopUpVenda {
 		}
 	    
 		comboBoxProdutos.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		comboBoxProdutos.addActionListener(new HandlerEstoque(this));
 		comboBoxProdutos.setBackground(Color.white);
 		comboBoxProdutos.setEditable(false);
 		comboBoxProdutos.setSelectedIndex(0);
@@ -263,6 +267,20 @@ public class PopUpVenda {
 		return lista;
 	}
 	
+	private void getEstoqueProduto(SystemInterface systemInterface, JComboBox source) {
+		try {
+			EstoqueDao estoqueDao = new EstoqueDao(systemInterface.getSystemInterfaceDatabaseURL());
+			Estoque estoque = estoqueDao.getById(produtos.get(source.getSelectedIndex()).getProdutoId());
+			quantidadeEstoque = estoque.getEstoque_produto_quantidade();
+			systemInterface.getSystemInterfaceLabelStatus().setText(produtos.get(source.getSelectedIndex()).getProdutoDesc() + 
+					" disponível em estoque: " + quantidadeEstoque);
+		} catch (SQLException e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar o estoque do produto!");
+		} catch (ArrayIndexOutOfBoundsException e) {
+			
+		}
+	}
+	
 	private static class HandlerComboBox implements ActionListener {
 		
 		private PopUpVenda source;
@@ -274,6 +292,20 @@ public class PopUpVenda {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			source.criaListaProdutos();
+		}
+	}
+	
+	private static class HandlerEstoque implements ActionListener {
+		
+		private PopUpVenda source;
+		
+		public HandlerEstoque(PopUpVenda popUpVenda) {
+			this.source = popUpVenda;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			source.getEstoqueProduto(systemInterface, source.comboBoxProdutos);
 		}
 	}
 	
@@ -290,28 +322,39 @@ public class PopUpVenda {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(Common.isInteger(textField.getText())) {
-				int quantidade = Integer.parseInt(textField.getText());
-				if(quantidade > 0) {
-					DecimalFormat df = new DecimalFormat("#,###.00");
-					Object[] newRow = new Object[systemInterface.getSystemInterfaceCadastraVendas().getTable().getColumnCount()];
-					
-					newRow[0] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId();
-					newRow[1] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoDesc();
-					newRow[2] = categorias.get(comboBoxCategorias.getSelectedIndex()).getCategoriaDesc();
-					newRow[3] = textField.getText();
-					newRow[4] = "R$ " + String.valueOf(df.format(produtos
-						.get(comboBoxProdutos.getSelectedIndex()).getProdutoPreco() * quantidade));
-					
-					itensvenda.add(new ItemVenda(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId(), quantidade, 0));
-					itensvendaPrecos.add(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoPreco() * quantidade);
-					
-					systemInterface.getSystemInterfaceCadastraVendas().updateTable(newRow);
-					systemInterface.getSystemInterfaceCadastraVendas().updateValorTotal(produtos
-						.get(comboBoxProdutos.getSelectedIndex()).getProdutoPreco() * quantidade);
-					
-					source.dispose();
+				if(Integer.parseInt(textField.getText()) <= quantidadeEstoque) {
+					int quantidade = Integer.parseInt(textField.getText());
+					if(quantidade > 0) {
+						
+						// Adicionar cláusula de confirmação
+						
+						systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
+						DecimalFormat df = new DecimalFormat("#,###.00");
+						Object[] newRow = new Object[systemInterface.getSystemInterfaceCadastraVendas().getTable().getColumnCount()];
+						
+						newRow[0] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId();
+						newRow[1] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoDesc();
+						newRow[2] = categorias.get(comboBoxCategorias.getSelectedIndex()).getCategoriaDesc();
+						newRow[3] = textField.getText();
+						newRow[4] = "R$ " + String.valueOf(df.format(produtos
+							.get(comboBoxProdutos.getSelectedIndex()).getProdutoPreco() * quantidade));
+						
+						itensvenda.add(new ItemVenda(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId(), quantidade, 0));
+						itensvendaPrecos.add(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoPreco() * quantidade);
+						
+						systemInterface.getSystemInterfaceCadastraVendas().updateTable(newRow);
+						systemInterface.getSystemInterfaceCadastraVendas().updateValorTotal(produtos
+							.get(comboBoxProdutos.getSelectedIndex()).getProdutoPreco() * quantidade);
+						
+						source.dispose();
+					} else {
+						systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade deve ser maior que zero!");
+						textField.setBackground(Color.yellow);
+					}
 				} else {
-					systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade deve ser maior que zero!");
+					systemInterface.getSystemInterfaceLabelStatus().setText("Não há quantidade de produto suficiente em estoque!");
+					systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+					textField.setText(String.valueOf(quantidadeEstoque));
 					textField.setBackground(Color.yellow);
 				}
 			} else {
@@ -353,6 +396,7 @@ public class PopUpVenda {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 		    source.dispose();
 		}
 		

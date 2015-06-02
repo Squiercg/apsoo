@@ -39,14 +39,14 @@ public class SystemInterface {
 	private CadastraVendas systemInterfaceCadastraVendas;
 	private SystemInterface systemInterfaceSelfReference;
 	
-	public SystemInterface(String systemDatabaseURL) {
+	public SystemInterface(String systemDatabaseURL, String systemInterfaceNomeLoja) {
 		setSystemInterfaceSelfReference();
 		setSystemInterfaceDatabaseURL(systemDatabaseURL);
 		setSystemInterfaceLoadTime(1);
 		setSystemInterfaceBusy();
 		setSystemInterfaceDefaultBorder();
 		setSystemInterfaceDimension();
-		setSystemInterfaceFrame();
+		setSystemInterfaceFrame(systemInterfaceNomeLoja);
 		setSystemInterfaceLabelStatus();
 		setSystemInterfaceMenuBar();
 		setSystemInterfaceHomeButton();
@@ -85,10 +85,10 @@ public class SystemInterface {
 		this.systemInterfaceDatabaseURL = systemInterfaceDatabaseURL;
 	}
 	
-	private void setSystemInterfaceFrame() {
-		systemInterfaceFrame = new JFrame("Sistema de Controle de Vendas e Estoque - CdT");
+	private void setSystemInterfaceFrame(String systemInterfaceNomeLoja) {
+		systemInterfaceFrame = new JFrame("SCVE-CdT - " + systemInterfaceNomeLoja);
 		try {
-			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_icon.png";
+			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_icon.png";
 			systemInterfaceFrame.setIconImage((new ImageIcon(systemIconImagePath)).getImage());
 		} catch (IOException exPathNotFound) {
 			systemInterfaceLabelStatus.setText("A imagem do icone do sistema nao foi encontrada!");
@@ -178,7 +178,7 @@ public class SystemInterface {
 	private void setSystemInterface() {
 		systemInterfaceLabelImage = null;
 		try {
-			String systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_welcome.jpg";
+			String systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_welcome.jpg";
 			systemInterfaceLabelImage = new JLabel(new ImageIcon(systemWelcomeImagePath));
 			systemInterfaceFrame.add(systemInterfaceLabelImage);
 			systemInterfaceFrame.repaint();
@@ -190,7 +190,7 @@ public class SystemInterface {
 			    Thread.currentThread().interrupt();
 			}
 			systemInterfaceFrame.remove(systemInterfaceLabelImage);
-			systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_background.jpg";
+			systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_background.jpg";
 			systemInterfaceLabelImage = new JLabel(new ImageIcon(systemWelcomeImagePath));
 		} catch(IOException exPathNotFound) {
 			systemInterfaceLabelStatus.setText("Imagem da tela de login nao encontrada!");

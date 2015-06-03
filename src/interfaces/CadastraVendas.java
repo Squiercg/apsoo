@@ -437,6 +437,7 @@ public class CadastraVendas {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			Confirmation con = new Confirmation(systemInterface, BorderFactory.createRaisedBevelBorder());
 			if(Common.isValidDate2(textField.getText()) && table.getRowCount() > 0) {
 				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 				try {

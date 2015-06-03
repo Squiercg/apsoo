@@ -340,9 +340,6 @@ public class PopUpVenda {
 					if(Integer.parseInt(textField.getText()) <= quantidadeEstoque) {
 						int quantidade = Integer.parseInt(textField.getText());
 						if(quantidade > 0) {
-							
-							// Adicionar cláusula de confirmação
-							
 							systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 							DecimalFormat df = new DecimalFormat("#,###.00");
 							Object[] newRow = new Object[systemInterface.getSystemInterfaceCadastraVendas().getTable().getColumnCount()];
@@ -366,17 +363,20 @@ public class PopUpVenda {
 						} else {
 							systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade deve ser maior que zero!");
 							systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+							textField.requestFocus();
 							textField.setBackground(Color.yellow);
 						}
 					} else {
 						systemInterface.getSystemInterfaceLabelStatus().setText("Não há quantidade de produto suficiente em estoque!");
 						systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
 						textField.setText(String.valueOf(quantidadeEstoque));
+						textField.requestFocus();
 						textField.setBackground(Color.yellow);
 					}
 				} else {
 					systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade de itens é inválido!");
 					systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+					textField.requestFocus();
 					textField.setBackground(Color.yellow);
 				}
 			} else {

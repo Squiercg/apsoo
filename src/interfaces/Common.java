@@ -28,8 +28,20 @@ public class Common {
 		panel.add(placeHolder, BorderLayout.EAST);
 	}
 	
+	public static void makePerimetralBorders(JPanel panel, Dimension reference, Border style) {
+		JLabel placeHolder = new JLabel("");
+		placeHolder.setBorder(style);
+		placeHolder.setPreferredSize(new Dimension((int) (reference.getWidth() / 16), (int) (reference.getHeight())));
+		panel.add(placeHolder, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(style);
+		placeHolder.setPreferredSize(new Dimension((int) (reference.getWidth() / 16), (int) (reference.getHeight())));
+		panel.add(placeHolder, BorderLayout.SOUTH);
+	}
+	
 	private static int daysInMonth(int year, int month) {
-		Calendar mycal = new GregorianCalendar(year, month, 1);
+		Calendar mycal = new GregorianCalendar(year, 1, month);
 		return mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 	

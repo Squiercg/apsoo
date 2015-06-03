@@ -15,8 +15,9 @@ public class Confirmation {
 	
 	public Confirmation(SystemInterface systemInterface, Border defaultBorder) {
 		JFrame frame = setSystemInterfaceFrame(systemInterface);
-		JPanel panelLevel0 = new JPanel(new BorderLayout());
-		frame.add(panelLevel0, BorderLayout.CENTER);
+		
+		frame.setVisible(true);
+		frame.repaint();
 	}
 	
 	private static JFrame setSystemInterfaceFrame(SystemInterface systemInterface) {
@@ -30,11 +31,8 @@ public class Confirmation {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setLayout(new BorderLayout());
-		frame.setSize(new Dimension((int) (systemInterface.getSystemInterfaceDimension().getWidth() / 4), (int) (systemInterface.getSystemInterfaceDimension().getHeight() / 6)));
+		frame.setSize(new Dimension((int) (systemInterface.getSystemInterfaceDimension().getWidth() / 4) + 32, (int) (systemInterface.getSystemInterfaceDimension().getHeight() / 6) + 32));
 		frame.setLocationRelativeTo(null);
-		
-		frame.setVisible(true);
-		frame.repaint();
 		
 		frame.add(setConfirmationWindow(frame.getSize()), BorderLayout.CENTER);
 		

@@ -247,6 +247,9 @@ public class SystemInterface {
 	}
 	
 	protected void clearSystemInterface(Boolean fullClear) {
+		systemInterfaceCadastraVendas.getPopUps().encerraVenda();
+		systemInterfaceCadastraLotes.getPopUps().encerraLote();
+		
 		systemInterfacePanelMain.removeAll();
 		systemInterfacePanelMain.revalidate();
 		systemInterfacePanelMain.repaint();
@@ -260,7 +263,6 @@ public class SystemInterface {
 		public void mouseClicked(MouseEvent e) {
 			if(!systemInterfaceBusy) {
 				clearSystemInterface(false);
-				systemInterfaceCadastraLotes.getPopUps().encerraLote();
 				systemInterfaceStatusMessage = "Home";
 				systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 			}

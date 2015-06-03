@@ -187,6 +187,10 @@ public class PopUpLote {
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 32) - 
 				(int) (preferredSize.getHeight() / 64)));
 		panelLevel3.add(button, BorderLayout.EAST);
+		
+		frame.setVisible(true);
+		textField.requestFocusInWindow();
+		frame.repaint();
 	}
 	
 	private static JFrame setSystemInterfaceFrame(Dimension preferredSize) {
@@ -202,9 +206,6 @@ public class PopUpLote {
 		frame.setLayout(new BorderLayout());
 		frame.setSize(new Dimension((int) (preferredSize.getWidth() / 2), (int) (preferredSize.getHeight() / 3)));
 		frame.setLocationRelativeTo(null);
-	
-		frame.setVisible(true);
-		frame.repaint();
 		
 		return frame;
 	}

@@ -398,6 +398,7 @@ public class CadastraVendas {
 				model.removeRow(rowToDelete);
 				popUp.getItensVenda().remove(rowToDelete);
 				popUp.getItensVendaPrecos().remove(rowToDelete);
+				popUp.getProdutosAdicionados().remove(rowToDelete);
 				
 				systemInterface.getSystemInterfaceLabelStatus().setText("Registro removido com sucesso!");
 			} catch (ArrayIndexOutOfBoundsException ex) {

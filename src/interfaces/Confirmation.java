@@ -4,8 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -15,16 +18,31 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+import classes.ItemVenda;
+import classes.Produto;
+
+@SuppressWarnings("unused")
 public class Confirmation {
 	
-	public Confirmation(SystemInterface systemInterface, Border defaultBorder) {
-		JFrame frame = setSystemInterfaceFrame(systemInterface, defaultBorder);
-		
+	private Boolean choice;
+	private JFrame frame;
+	private Border defaultBorder;
+	private SystemInterface systemInterface;
+	private Object caller;
+	
+	public Confirmation(SystemInterface systemInterface, Border defaultBorder, Object caller) {
+		this.systemInterface = systemInterface;
+		this.defaultBorder = defaultBorder;
+		this.caller = caller;
+	}
+	
+	public void requestConfirmation() {
+		frame = setSystemInterfaceFrame(systemInterface, defaultBorder, choice, caller);
 		frame.setVisible(true);
 		frame.repaint();
 	}
 	
-	private static JFrame setSystemInterfaceFrame(SystemInterface systemInterface, Border defaultBorder) {
+	private static JFrame setSystemInterfaceFrame(SystemInterface systemInterface, Border defaultBorder, Boolean choice, Object caller) {
 		JFrame frame = new JFrame();
 		try {
 			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_icon.png";
@@ -32,18 +50,18 @@ public class Confirmation {
 		} catch (IOException exPathNotFound) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de categorias!");
 		}
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setLayout(new BorderLayout());
 		frame.setSize(new Dimension((int) (systemInterface.getSystemInterfaceDimension().getWidth() / 4) + 32, (int) (systemInterface.getSystemInterfaceDimension().getHeight() / 6)));
 		frame.setLocationRelativeTo(null);
 		
-		frame.add(setConfirmationWindow(frame.getSize(), defaultBorder), BorderLayout.CENTER);
+		frame.add(setConfirmationWindow(frame, frame.getSize(), defaultBorder, choice, caller), BorderLayout.CENTER);
 		
 		return frame;
 	}
 	
-	private static JPanel setConfirmationWindow(Dimension preferredSize, Border defaultBorder) {
+	private static JPanel setConfirmationWindow(JFrame source, Dimension preferredSize, Border defaultBorder, Boolean choice, Object caller) {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		Common.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
@@ -83,28 +101,63 @@ public class Confirmation {
 		float[] hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
 		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
 		button.setForeground(Color.white);
-//		button.addMouseListener(new HandlerAcceptButton(systemInterface, frame));
+		button.addActionListener(new ChooseYes(source, caller));
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3) + 16, (int) (preferredSize.getHeight() / 6) + 8));
 		panelLevel3.add(button, BorderLayout.WEST);
-		/*
-		panelLevel1 = panelLevel2;
-		panelLevel2 = new JPanel(new BorderLayout());
-		panelLevel1.add(panelLevel2, BorderLayout.CENTER);
-		panelLevel3 = new JPanel(new BorderLayout());
-		panelLevel2.add(panelLevel3, BorderLayout.WEST);
 		
-		placeHolder = new JLabel("");
-		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 16), (int) (preferredSize.getHeight())));
-		placeHolder.setBorder(defaultBorder);
-		panelLevel3.add(placeHolder, BorderLayout.WEST);
-		*/
 		button = new JButton("Não");
 		button.setBackground(Color.white);
 		button.setForeground(Color.black);
-//		button.addMouseListener(new HandlerBackButton(systemInterface, frame));
+		button.addActionListener(new ChooseNo(source, caller));
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3) + 16, (int) (preferredSize.getHeight() / 6) + 8));
 		panelLevel3.add(button, BorderLayout.EAST);
 		
 		return panelLevel0;
+	}
+	
+	public Boolean getChoice() {
+		return choice;
+	}
+	
+	private static class ChooseYes implements ActionListener {
+		
+		private JFrame source;
+		private Object caller;
+		
+		public ChooseYes(JFrame source, Object caller) {
+			this.source = source;
+			this.caller = caller;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(caller instanceof CadastraVendas)
+				((CadastraVendas) caller).incluiVenda(true);
+			if(caller instanceof CadastraLotes)
+				((CadastraLotes) caller).incluiLote(true);
+			
+			source.dispose();
+		}
+	}
+	
+	private static class ChooseNo implements ActionListener {
+		
+		private JFrame source;
+		private Object caller;
+		
+		public ChooseNo(JFrame source, Object caller) {
+			this.source = source;
+			this.caller = caller;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(caller instanceof CadastraVendas)
+				((CadastraVendas) caller).incluiVenda(false);
+			if(caller instanceof CadastraLotes)
+				((CadastraLotes) caller).incluiLote(true);
+			
+			source.dispose();
+		}
 	}
 }

@@ -155,7 +155,7 @@ public class Confirmation {
 			if(caller instanceof CadastraVendas)
 				((CadastraVendas) caller).incluiVenda(false);
 			if(caller instanceof CadastraLotes)
-				((CadastraLotes) caller).incluiLote(true);
+				((CadastraLotes) caller).incluiLote(false);
 			
 			source.dispose();
 		}

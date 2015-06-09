@@ -28,6 +28,7 @@ import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import main.Main;
 import repositorio.FornecedorDao;
 import repositorio.ItemLoteProdutoDao;
 import repositorio.LoteDao;
@@ -35,10 +36,9 @@ import classes.Fornecedor;
 import classes.ItemLote;
 import classes.Lote;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class CadastraLotes {
 	
-	private static Boolean isBrunoTesting;
 	private static Dimension preferredSize;
 	private static Border defaultBorder;
 	private static String[] lista;
@@ -56,10 +56,9 @@ public class CadastraLotes {
 	private SystemInterface systemInterface;
 	
 	public CadastraLotes(SystemInterface systemInterface) {
-		isBrunoTesting = false;
 		this.systemInterface = systemInterface;
 		preferredSize = systemInterface.getSystemInterfaceDimension();
-		defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
+		defaultBorder = Main.isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
 		popUp = new PopUpLote(systemInterface, defaultBorder);
 		conf = new Confirmation(systemInterface, defaultBorder, this);
 		String[] newColumnNames = {"Código", "Nome", "Categoria", "Quantidade", "Custo"};
@@ -124,6 +123,7 @@ public class CadastraLotes {
 		
 		lista = null;
 		fornecedores = null;
+		
 		try {
 			fornecedorDao = new FornecedorDao(systemInterface.getSystemInterfaceDatabaseURL());
 			fornecedores = fornecedorDao.getAll();
@@ -346,41 +346,35 @@ public class CadastraLotes {
 	}
 
 	public void incluiLote(Boolean choice) {
-		if(Common.isValidDate2(textField.getText()) && table.getRowCount() > 0) {
-			if(choice) {
-				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		if(choice) {
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			
+			try {
+				lote = new Lote(format.parse(textField.getText()), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), valorTotal);
+			} catch (ParseException e1) {
+				lote = new Lote(new Date(), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), valorTotal);
+				systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida, utilizando dia atual!");
+			} finally {
 				try {
-					lote = new Lote(format.parse(textField.getText()), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), valorTotal);
-				} catch (ParseException e1) {
-					lote = new Lote(new Date(), fornecedores.get(comboBoxFornecedores.getSelectedIndex()).getFornecedorId(), valorTotal);
-					systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida, utilizando dia atual!");
-				} finally {
-					try {
-						LoteDao loteDao = new LoteDao(systemInterface.getSystemInterfaceDatabaseURL());
-						ItemLoteProdutoDao itemLoteDao = new ItemLoteProdutoDao(systemInterface.getSystemInterfaceDatabaseURL());
-						
-						int id = loteDao.insertLote(lote);
-						for(ItemLote i : popUp.getItensLote()) {
-							i.setLote(id);
-							itemLoteDao.insert(i);
-						}
-						
-						popUp.encerraLote();
-						lote = null;
-						systemInterface.clearSystemInterface(!isBrunoTesting);
-						systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCadastraLotes().cadastraLote());
-						
-						systemInterface.getSystemInterfaceLabelStatus().setText("Lote cadastrado com sucesso!");
-					} catch (SQLException e1) {
-						systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados do lote no banco!");
+					LoteDao loteDao = new LoteDao(systemInterface.getSystemInterfaceDatabaseURL());
+					ItemLoteProdutoDao itemLoteDao = new ItemLoteProdutoDao(systemInterface.getSystemInterfaceDatabaseURL());
+					
+					int id = loteDao.insertLote(lote);
+					for(ItemLote i : popUp.getItensLote()) {
+						i.setLote(id);
+						itemLoteDao.insert(i);
 					}
+					popUp.encerraLote();
+					lote = null;
+					
+					systemInterface.clearSystemInterface(!Main.isBrunoTesting);
+					systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCadastraLotes().cadastraLote());
+					
+					systemInterface.getSystemInterfaceLabelStatus().setText("Lote cadastrado com sucesso!");
+				} catch (SQLException e1) {
+					systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados do lote no banco!");
 				}
 			}
-		} else if(!Common.isValidDate2(textField.getText())) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
-			textField.setBackground(Color.yellow);
-		} else {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros a inserir no banco!");
 		}
 	}
 	
@@ -477,8 +471,11 @@ public class CadastraLotes {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(table.getRowCount() > 0) {
-				conf.requestConfirmation();
+			if(Common.isValidDate(textField.getText()) && table.getRowCount() > 0) {
+				conf.requestConfirmation(1);
+			} else if(!Common.isValidDate(textField.getText())) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
+				textField.setBackground(Color.yellow);
 			} else {
 				systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros a inserir no banco!");
 			}

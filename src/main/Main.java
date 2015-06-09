@@ -4,6 +4,8 @@ import sistema.SystemRun;
 
 public class Main {
 	
+	public static Boolean isBrunoTesting = false;
+	
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		

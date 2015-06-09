@@ -28,6 +28,7 @@ import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import main.Main;
 import repositorio.ClienteDao;
 import repositorio.ItemVendaDao;
 import repositorio.VendaDao;
@@ -38,7 +39,6 @@ import classes.Venda;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class CadastraVendas {
 	
-	private static Boolean isBrunoTesting;
 	private static Dimension preferredSize;
 	private static Border defaultBorder;
 	private static String[] lista;
@@ -56,10 +56,9 @@ public class CadastraVendas {
 	private SystemInterface systemInterface;
 	
 	public CadastraVendas(SystemInterface systemInterface) {
-		isBrunoTesting = false;
 		this.systemInterface = systemInterface;
 		preferredSize = systemInterface.getSystemInterfaceDimension();
-		defaultBorder = isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
+		defaultBorder = Main.isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
 		popUp = new PopUpVenda(systemInterface, defaultBorder);
 		conf = new Confirmation(systemInterface, defaultBorder, this);
 		String[] newColumnNames = {"Código", "Nome", "Categoria", "Quantidade", "Preço"};
@@ -124,6 +123,7 @@ public class CadastraVendas {
 		
 		lista = null;
 		clientes = null;
+		
 		try {
 			ClienteDao = new ClienteDao(systemInterface.getSystemInterfaceDatabaseURL());
 			clientes = ClienteDao.getAll();
@@ -346,41 +346,34 @@ public class CadastraVendas {
 	}
 	
 	public void incluiVenda(Boolean choice) {
-		if(Common.isValidDate2(textField.getText()) && table.getRowCount() > 0) {
-			if(choice) {
-				DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		if(choice) {
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				venda = new Venda(format.parse(textField.getText()), clientes.get(comboBoxClientes.getSelectedIndex()).getClienteId(), valorTotal);
+			} catch (ParseException e1) {
+				venda = new Venda(new Date(), clientes.get(comboBoxClientes.getSelectedIndex()).getClienteId(), valorTotal);
+				systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida, utilizando dia atual!");
+			} finally {
 				try {
-					venda = new Venda(format.parse(textField.getText()), clientes.get(comboBoxClientes.getSelectedIndex()).getClienteId(), valorTotal);
-				} catch (ParseException e1) {
-					venda = new Venda(new Date(), clientes.get(comboBoxClientes.getSelectedIndex()).getClienteId(), valorTotal);
-					systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida, utilizando dia atual!");
-				} finally {
-					try {
-						VendaDao vendaDao = new VendaDao(systemInterface.getSystemInterfaceDatabaseURL());
-						ItemVendaDao itemVendaDao = new ItemVendaDao(systemInterface.getSystemInterfaceDatabaseURL());
-						
-						int id = vendaDao.insertVenda(venda);
-						for(ItemVenda i : popUp.getItensVenda()) {
-							i.setVenda(id);
-							itemVendaDao.insert(i);
-						}
-						
-						popUp.encerraVenda();
-						venda = null;
-						systemInterface.clearSystemInterface(!isBrunoTesting);
-						systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCadastraVendas().cadastraVenda());
-						
-						systemInterface.getSystemInterfaceLabelStatus().setText("Venda cadastrada com sucesso!");
-					} catch (SQLException e1) {
-						systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados da venda no banco!");
+					VendaDao vendaDao = new VendaDao(systemInterface.getSystemInterfaceDatabaseURL());
+					ItemVendaDao itemVendaDao = new ItemVendaDao(systemInterface.getSystemInterfaceDatabaseURL());
+					
+					int id = vendaDao.insertVenda(venda);
+					for(ItemVenda i : popUp.getItensVenda()) {
+						i.setVenda(id);
+						itemVendaDao.insert(i);
 					}
+					popUp.encerraVenda();
+					venda = null;
+					
+					systemInterface.clearSystemInterface(!Main.isBrunoTesting);
+					systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCadastraVendas().cadastraVenda());
+					
+					systemInterface.getSystemInterfaceLabelStatus().setText("Venda cadastrada com sucesso!");
+				} catch (SQLException e1) {
+					systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados da venda no banco!");
 				}
 			}
-		} else if(!Common.isValidDate2(textField.getText())) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
-			textField.setBackground(Color.yellow);
-		} else {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros a inserir no banco!");
 		}
 	}
 	
@@ -478,8 +471,11 @@ public class CadastraVendas {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(table.getRowCount() > 0) {
-				conf.requestConfirmation();
+			if(Common.isValidDate(textField.getText()) && table.getRowCount() > 0) {
+				conf.requestConfirmation(1);
+			} else if(!Common.isValidDate(textField.getText())) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
+				textField.setBackground(Color.yellow);
 			} else {
 				systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros a inserir no banco!");
 			}

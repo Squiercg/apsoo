@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -25,7 +25,7 @@ import classes.Produto;
 public class Confirmation {
 	
 	private Boolean choice;
-	private JFrame frame;
+	private JDialog frame;
 	private Border defaultBorder;
 	private SystemInterface systemInterface;
 	private Object caller;
@@ -36,32 +36,32 @@ public class Confirmation {
 		this.caller = caller;
 	}
 	
-	public void requestConfirmation() {
-		frame = setSystemInterfaceFrame(systemInterface, defaultBorder, choice, caller);
+	public void requestConfirmation(Integer option) {
+		frame = setSystemInterfaceFrame(systemInterface, defaultBorder, choice, caller, option);
 		frame.setVisible(true);
 		frame.repaint();
 	}
 	
-	private static JFrame setSystemInterfaceFrame(SystemInterface systemInterface, Border defaultBorder, Boolean choice, Object caller) {
-		JFrame frame = new JFrame();
+	private static JDialog setSystemInterfaceFrame(SystemInterface systemInterface, Border defaultBorder, Boolean choice, Object caller, Integer option) {
+		JDialog frame = new JDialog(systemInterface.getSystemInterfaceFrame(), true);
 		try {
 			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_icon.png";
 			frame.setIconImage((new ImageIcon(systemIconImagePath)).getImage());
 		} catch (IOException exPathNotFound) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de categorias!");
+			systemInterface.getSystemInterfaceLabelStatus().setText("A imagem do icone do sistema nao foi encontrada!");
 		}
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setLayout(new BorderLayout());
 		frame.setSize(new Dimension((int) (systemInterface.getSystemInterfaceDimension().getWidth() / 4) + 32, (int) (systemInterface.getSystemInterfaceDimension().getHeight() / 6)));
 		frame.setLocationRelativeTo(null);
 		
-		frame.add(setConfirmationWindow(frame, frame.getSize(), defaultBorder, choice, caller), BorderLayout.CENTER);
+		frame.add(setConfirmationWindow(frame, frame.getSize(), defaultBorder, choice, caller, option), BorderLayout.CENTER);
 		
 		return frame;
 	}
 	
-	private static JPanel setConfirmationWindow(JFrame source, Dimension preferredSize, Border defaultBorder, Boolean choice, Object caller) {
+	private static JPanel setConfirmationWindow(JDialog source, Dimension preferredSize, Border defaultBorder, Boolean choice, Object caller, Integer option) {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		Common.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
@@ -77,7 +77,8 @@ public class Confirmation {
 		placeHolder.setBorder(defaultBorder);
 		panelLevel3.add(placeHolder, BorderLayout.NORTH);
 		
-		placeHolder = new JLabel("Concluir operação?");
+		String text = option == 0 ? "Deseja realmente sair?" : "Concluir operação?";
+		placeHolder = new JLabel(text);
 		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 5));
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 2), (int) (preferredSize.getHeight() / 6)));
 		placeHolder.setHorizontalAlignment(SwingConstants.CENTER);
@@ -121,10 +122,10 @@ public class Confirmation {
 	
 	private static class ChooseYes implements ActionListener {
 		
-		private JFrame source;
+		private JDialog source;
 		private Object caller;
 		
-		public ChooseYes(JFrame source, Object caller) {
+		public ChooseYes(JDialog source, Object caller) {
 			this.source = source;
 			this.caller = caller;
 		}
@@ -135,6 +136,8 @@ public class Confirmation {
 				((CadastraVendas) caller).incluiVenda(true);
 			if(caller instanceof CadastraLotes)
 				((CadastraLotes) caller).incluiLote(true);
+			if(caller instanceof SystemInterface)
+				((SystemInterface) caller).exitSystemInterface(true);
 			
 			source.dispose();
 		}
@@ -142,10 +145,10 @@ public class Confirmation {
 	
 	private static class ChooseNo implements ActionListener {
 		
-		private JFrame source;
+		private JDialog source;
 		private Object caller;
 		
-		public ChooseNo(JFrame source, Object caller) {
+		public ChooseNo(JDialog source, Object caller) {
 			this.source = source;
 			this.caller = caller;
 		}
@@ -156,6 +159,8 @@ public class Confirmation {
 				((CadastraVendas) caller).incluiVenda(false);
 			if(caller instanceof CadastraLotes)
 				((CadastraLotes) caller).incluiLote(false);
+			if(caller instanceof SystemInterface)
+				((SystemInterface) caller).exitSystemInterface(false);
 			
 			source.dispose();
 		}

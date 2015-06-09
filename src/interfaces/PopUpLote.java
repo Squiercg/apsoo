@@ -19,10 +19,11 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import repositorio.CategoriaDao;
@@ -31,7 +32,7 @@ import classes.Categoria;
 import classes.ItemLote;
 import classes.Produto;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class PopUpLote {
 	
 	private static SystemInterface systemInterface;
@@ -47,7 +48,7 @@ public class PopUpLote {
 	private JTextField textField;
 	private JComboBox comboBoxProdutos;
 	private JComboBox comboBoxCategorias;
-	private JFrame frame;
+	private JDialog frame;
 	
 	public PopUpLote(SystemInterface systemInterface, Border defaultBorder) {
 		PopUpLote.systemInterface = systemInterface;
@@ -188,20 +189,24 @@ public class PopUpLote {
 				(int) (preferredSize.getHeight() / 64)));
 		panelLevel3.add(button, BorderLayout.EAST);
 		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				textField.requestFocusInWindow();
+		    }
+		});
 		frame.setVisible(true);
-		textField.requestFocusInWindow();
 		frame.repaint();
 	}
 	
-	private static JFrame setSystemInterfaceFrame(Dimension preferredSize) {
-		JFrame frame = new JFrame("Seleção de Produtos");
+	private static JDialog setSystemInterfaceFrame(Dimension preferredSize) {
+		JDialog frame = new JDialog(systemInterface.getSystemInterfaceFrame(), "Seleção de Produtos", true);
 		try {
 			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_icon.png";
 			frame.setIconImage((new ImageIcon(systemIconImagePath)).getImage());
 		} catch (IOException exPathNotFound) {
 			
 		}
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setLayout(new BorderLayout());
 		frame.setSize(new Dimension((int) (preferredSize.getWidth() / 2), (int) (preferredSize.getHeight() / 3)));
@@ -281,9 +286,9 @@ public class PopUpLote {
 	private class HandlerAcceptButton implements MouseListener {
 		
 		private SystemInterface systemInterface;
-		private JFrame source;
+		private JDialog source;
 		
-		public HandlerAcceptButton(SystemInterface systemInterface, JFrame source) {
+		public HandlerAcceptButton(SystemInterface systemInterface, JDialog source) {
 			this.systemInterface = systemInterface;
 			this.source = source;
 		}
@@ -345,9 +350,9 @@ public class PopUpLote {
 	private class HandlerBackButton implements MouseListener {
 		
 		private SystemInterface systemInterface;
-		private JFrame source;
+		private JDialog source;
 		
-		public HandlerBackButton(SystemInterface systemInterface, JFrame source) {
+		public HandlerBackButton(SystemInterface systemInterface, JDialog source) {
 			this.systemInterface = systemInterface;
 			this.source = source;
 		}

@@ -20,6 +20,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+import main.Main;
+
 public class SystemInterface {
 	
 	private Integer systemInterfaceLoadTime;
@@ -38,6 +40,7 @@ public class SystemInterface {
 	private CadastraLotes systemInterfaceCadastraLotes;
 	private CadastraVendas systemInterfaceCadastraVendas;
 	private SystemInterface systemInterfaceSelfReference;
+	private Confirmation systemInterfaceConfirmation;
 	
 	public SystemInterface(String systemDatabaseURL, String systemInterfaceNomeLoja) {
 		setSystemInterfaceSelfReference();
@@ -45,6 +48,7 @@ public class SystemInterface {
 		setSystemInterfaceLoadTime(1);
 		setSystemInterfaceBusy();
 		setSystemInterfaceDefaultBorder();
+		setSystemInterfaceConfirmation();
 		setSystemInterfaceDimension();
 		setSystemInterfaceFrame(systemInterfaceNomeLoja);
 		setSystemInterfaceLabelStatus();
@@ -75,6 +79,11 @@ public class SystemInterface {
 	
 	private void setSystemInterfaceDefaultBorder() {
 		systemInterfaceBorderDefault = BorderFactory.createRaisedBevelBorder();
+	}
+	
+	private void setSystemInterfaceConfirmation() {
+		Border systemInterfaceAlternateBorder = Main.isBrunoTesting ? systemInterfaceBorderDefault : BorderFactory.createEmptyBorder();
+		systemInterfaceConfirmation = new Confirmation(systemInterfaceSelfReference, systemInterfaceAlternateBorder, this);
 	}
 	
 	private void setSystemInterfaceDimension() {
@@ -141,10 +150,12 @@ public class SystemInterface {
 			systemInterfaceMenu.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenu.getFont().getSize() + 4));
 			systemInterfaceMenu.addMouseListener(new HandlerMenuOptions(systemInterfaceMenuName, null, this));
 			for(String systemInterfaceMenuItemName : systemInterfaceMenuItemNames) {
-				systemInterfaceMenuItem = new JMenuItem(systemInterfaceMenuItemName);
-				systemInterfaceMenuItem.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenuItem.getFont().getSize() + 3));
-				systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions(systemInterfaceMenuName, systemInterfaceMenuItemName, this));
-				systemInterfaceMenu.add(systemInterfaceMenuItem);
+				if(!systemInterfaceMenuName.equalsIgnoreCase("Lotes") && !systemInterfaceMenuName.equalsIgnoreCase("Vendas") || !systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
+					systemInterfaceMenuItem = new JMenuItem(systemInterfaceMenuItemName);
+					systemInterfaceMenuItem.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenuItem.getFont().getSize() + 3));
+					systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions(systemInterfaceMenuName, systemInterfaceMenuItemName, this));
+					systemInterfaceMenu.add(systemInterfaceMenuItem);
+				}
 			}
 			systemInterfaceMenuBar.add(systemInterfaceMenu);
 		}
@@ -246,6 +257,10 @@ public class SystemInterface {
 		return systemInterfacePanelMain;
 	}
 	
+	public JFrame getSystemInterfaceFrame() {
+		return systemInterfaceFrame;
+	}
+	
 	protected void clearSystemInterface(Boolean fullClear) {
 		systemInterfaceCadastraVendas.getPopUps().encerraVenda();
 		systemInterfaceCadastraLotes.getPopUps().encerraLote();
@@ -255,6 +270,20 @@ public class SystemInterface {
 		systemInterfacePanelMain.repaint();
 		if(!fullClear)
 			systemInterfacePanelMain.add(systemInterfaceLabelImage);
+	}
+	
+	protected void exitSystemInterface(Boolean systemInterfaceChoice) {
+		if(systemInterfaceChoice) {
+			if(!systemInterfaceBusy) {
+				try {
+				    Thread.sleep(systemInterfaceLoadTime);
+				    systemInterfaceFrame.dispose();
+				} catch(InterruptedException exThreadFailed) {
+					systemInterfaceLabelStatus.setText("Houve algum erro ao encerrar o programa!");
+				    Thread.currentThread().interrupt();
+				}
+			}
+		}
 	}
 	
 	protected class HandlerHomeButton implements MouseListener {
@@ -297,13 +326,17 @@ public class SystemInterface {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(!systemInterfaceBusy) {
-				try {
-				    Thread.sleep(systemInterfaceLoadTime);
-				    systemInterfaceFrame.dispose();
-				} catch(InterruptedException exThreadFailed) {
-					systemInterfaceLabelStatus.setText("Houve algum erro ao encerrar o programa!");
-				    Thread.currentThread().interrupt();
+			if(!Main.isBrunoTesting) {
+				systemInterfaceConfirmation.requestConfirmation(0);
+			} else {
+				if(!systemInterfaceBusy) {
+					try {
+					    Thread.sleep(systemInterfaceLoadTime);
+					    systemInterfaceFrame.dispose();
+					} catch(InterruptedException exThreadFailed) {
+						systemInterfaceLabelStatus.setText("Houve algum erro ao encerrar o programa!");
+					    Thread.currentThread().interrupt();
+					}
 				}
 			}
 		}

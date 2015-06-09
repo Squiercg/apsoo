@@ -29,13 +29,13 @@ public class Common {
 	}
 	
 	private static int daysInMonth(int year, int month) {
-		Calendar mycal = new GregorianCalendar(year, 1, month);
+		Calendar mycal = new GregorianCalendar(year, month - 1, 1);
 		return mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
 	}
 	
 	private static Set<String> dates = new HashSet<String>();
 	static {
-	    for (int year = 1900; year < 2050; year++) {
+	    for (int year = 1950; year < 2100; year++) {
 	        for (int month = 1; month <= 12; month++) {
 	            for (int day = 1; day <= daysInMonth(year, month); day++) {
 	                StringBuilder date = new StringBuilder();
@@ -48,7 +48,7 @@ public class Common {
 	    }
 	}
 	
-	public static boolean isValidDate2(String dateString) {
+	public static boolean isValidDate(String dateString) {
 	    return dates.contains(dateString);
 	}
 	

@@ -5,7 +5,7 @@
 ##Projeto de Sistema de Controle de Estoque e Vendas
 
 ###Alunos:
-André Furlan, Augusto Ribas, Bruno Nazário, Doglas Sorgatto e Thiago Machado
+Augusto Ribas, Bruno Nazário, Doglas Sorgatto e Thiago Machado
 
 
 

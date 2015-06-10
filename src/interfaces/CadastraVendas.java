@@ -43,7 +43,7 @@ public class CadastraVendas {
 	private static Border defaultBorder;
 	private static String[] lista;
 	private static List<Cliente> clientes;
-	private static ClienteDao ClienteDao;
+	private static ClienteDao clienteDao;
 	private static JComboBox comboBoxClientes;
 	private static PopUpVenda popUp;
 	private static Confirmation conf;
@@ -125,15 +125,16 @@ public class CadastraVendas {
 		clientes = null;
 		
 		try {
-			ClienteDao = new ClienteDao(systemInterface.getSystemInterfaceDatabaseURL());
-			clientes = ClienteDao.getAll();
+			clienteDao = new ClienteDao(systemInterface.getSystemInterfaceDatabaseURL());
+			clientes = clienteDao.getForValue("ativo", "1");
 		} catch (SQLException e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de clientes!");
 		} finally {
-			if(clientes == null) {
+			if(clientes == null || clientes.size() == 0) {
 				lista = new String[1];
 				lista[0] = "Nenhum valor encontrado";
-				systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de clientes!");
+				String message = clientes == null ? "Houve um erro ao recuperar a lista de clientes!" : "Nenhum cliente ativo encontrado!";
+				systemInterface.getSystemInterfaceLabelStatus().setText(message);
 			}
 			else {
 				lista = new String[clientes.size()];
@@ -471,23 +472,34 @@ public class CadastraVendas {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(Common.isValidDate(textField.getText()) && table.getRowCount() > 0) {
-				conf.requestConfirmation(1);
-			} else if(!Common.isValidDate(textField.getText())) {
-				systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
-				textField.setBackground(Color.yellow);
+			if(!comboBoxClientes.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado")) {
+				if(Common.isValidDate(textField.getText()) && table.getRowCount() > 0) {
+					conf.requestConfirmation(1);
+				} else if(!Common.isValidDate(textField.getText())) {
+					systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
+					systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+					textField.setBackground(Color.yellow);
+					textField.requestFocus();
+				} else {
+					systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros a inserir no banco!");
+					systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+				}
 			} else {
-				systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros a inserir no banco!");
+					systemInterface.getSystemInterfaceLabelStatus().setText("Não há cliente ativo informado!");
+					systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+					comboBoxClientes.requestFocus();
 			}
 		}
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 			systemInterface.getSystemInterfaceLabelStatus().setText("Encerra a venda e adiciona ao banco");
 		}
 		
 		@Override
 		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
 		}
 		

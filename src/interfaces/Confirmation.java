@@ -138,6 +138,8 @@ public class Confirmation {
 				((CadastraLotes) caller).incluiLote(true);
 			if(caller instanceof SystemInterface)
 				((SystemInterface) caller).exitSystemInterface(true);
+			if(caller instanceof ModuloCategoria)
+				((ModuloCategoria) caller).incluiCategoria(true);
 			
 			source.dispose();
 		}
@@ -161,6 +163,8 @@ public class Confirmation {
 				((CadastraLotes) caller).incluiLote(false);
 			if(caller instanceof SystemInterface)
 				((SystemInterface) caller).exitSystemInterface(false);
+			if(caller instanceof ModuloCategoria)
+				((ModuloCategoria) caller).incluiCategoria(false);
 			
 			source.dispose();
 		}

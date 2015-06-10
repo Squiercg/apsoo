@@ -8,22 +8,21 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 
 public abstract class GenericDao<E> {
-
+	
 	protected Dao<E, Integer> dao;
 	private Class<E> type;
 	private JdbcConnectionSource connectionSource;
- 
+	
 	public GenericDao(String databaseUrl, Class<E> type) throws SQLException {
 		this.type = type;
 		connectionSource = new JdbcConnectionSource(databaseUrl);
 		setDao();
 	}
- 
-	//cria o DAO para o tipo solicitado
+	
 	protected void setDao() {
-		try{
+		try {
 			dao = DaoManager.createDao(connectionSource, type);
-		}catch(Exception e){
+		} catch(Exception e) {
 			e.printStackTrace();
 			finaliza();
 		}
@@ -33,85 +32,93 @@ public abstract class GenericDao<E> {
 		return dao.create(data);
 	}
 	
-	//Devolve todos os campos de uma tabela qualquer
 	public List<E> getAll() {
-		try{
+		try {
 			List<E> result = dao.queryForAll();
 			return result;
-		}catch(Exception e){
+		} catch(Exception e) {
 			e.printStackTrace();
 			return null;
-		}finally{
+		} finally {
 			finaliza();
 		}
 	}
 	
-	public List<E> getForValue(String field, String value){
+	public List<E> getAllActive() {
+		try {
+			List<E> result = dao.queryForAll();
+			return result;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			finaliza();
+		}
+	}
+	
+	public List<E> getForValue(String field, String value) {
 		try {
 			return dao.queryForEq(field, value);
-		} catch (SQLException e) {
+		} catch(SQLException e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 			finaliza();
 		}
 		return null;
 	}
 	
-	// Devolve resultado pelo id solicitado
 	public E getById(int id) {
-		try{
+		try {
 			E obj = dao.queryForId(id);
 			return obj;
-		}catch(Exception e){
+		} catch(Exception e) {
 			e.printStackTrace();
 			return null;
-		}finally{
+		} finally {
 			finaliza();
 		}
 	}
-	// Altera um dado no banco
-	public int update(E data){
+	
+	public int update(E data) {
 		int rows = 0;
 		try {
 			rows = dao.update(data);
-		} catch (SQLException e) {
+		} catch(SQLException e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 			finaliza();
 		}
 		return rows;
 	}
 	
-	//Apaga um registro completo no banco
-	public int delete (E data){
+	public int delete(E data) {
 		int rows = 0;
 		try {
 			rows = dao.delete(data);
-		} catch (SQLException e) {
+		} catch(SQLException e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 			finaliza();
 		}
 		return rows;
 	}
 	
-	//Apaga um registro pelo Id no banco
-		public int deleteById (int id){
-			int rows = 0;
-			try {
-				rows = dao.deleteById(id);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}finally{
-				finaliza();
-			}
-			return rows;
+	public int deleteById(int id){
+		int rows = 0;
+		try {
+			rows = dao.deleteById(id);
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			finaliza();
 		}
-		
-	private void finaliza(){
+		return rows;
+	}
+	
+	private void finaliza() {
 		try {
 			connectionSource.close();
-		} catch (SQLException e) {
+		} catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}

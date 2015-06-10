@@ -7,10 +7,10 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "Cliente")
 public class Cliente {
+	
 	@DatabaseField(generatedId = true, columnName = "id_cliente")
 	private int clienteId;
-	@DatabaseField(canBeNull = false, columnName = "cliente_nome",
-			index = true, indexName = "Nome_clientes")
+	@DatabaseField(canBeNull = false, columnName = "cliente_nome", index = true, indexName = "Nome_clientes")
 	private String clienteNome;
 	@DatabaseField(columnName = "cliente_endereco")
 	private String clienteEndereco;
@@ -25,22 +25,16 @@ public class Cliente {
 	@DatabaseField(columnName = "cliente_nascimento")
 	private Date clienteNascimento;
 	@DatabaseField(columnName = "cliente_email")
-	private String clienteEmail;	
+	private String clienteEmail;
+	@DatabaseField(canBeNull = false, columnName = "ativo", defaultValue = "1")
+	private int clienteAtivo;
 	
-	public Cliente() {}
+	public Cliente() {
+		
+	}
 	
-	public Cliente(
-			int clienteId, 
-			String clienteNome, 
-			String clienteEndereco,
-			String clienteCidade,
-			String clienteEstado, 
-			String clienteTelefone,
-			String clienteDocumento,
-			Date clienteNascimento,
-			String clienteEmail) {
-
-		this.clienteId = clienteId;
+	public Cliente(String clienteNome, String clienteEndereco, String clienteCidade, String clienteEstado, 
+			String clienteTelefone, String clienteDocumento, Date clienteNascimento, String clienteEmail) {
 		this.clienteNome = clienteNome;
 		this.clienteEndereco = clienteEndereco;
 		this.clienteCidade = clienteCidade;
@@ -49,46 +43,46 @@ public class Cliente {
 		this.clienteDocumento = clienteDocumento;
 		this.clienteNascimento = clienteNascimento;
 		this.clienteEmail = clienteEmail;
+		clienteAtivo = 1;
 	}
 	
 	public String getClienteCidade() {
 		return clienteCidade;
 	}
-
-	public void setClienteCidade(String clienteCidade) {
-		this.clienteCidade = clienteCidade;
-	}
-
+	
 	public Date getClienteNascimento() {
 		return clienteNascimento;
 	}
-
-	public void setClienteNascimento(Date clienteNascimento) {
-		this.clienteNascimento = clienteNascimento;
-	}
-
+	
 	public int getClienteId() {
 		return clienteId;
 	}
+	
 	public String getClienteNome() {
 		return clienteNome;
 	}
+	
 	public String getClienteEndereco() {
 		return clienteEndereco;
 	}
+	
 	public String getClienteEstado() {
 		return clienteEstado;
 	}
+	
 	public String getClienteTelefone() {
 		return clienteTelefone;
 	}
+	
 	public String getClienteDocumento() {
 		return clienteDocumento;
 	}
+	
 	public String getClienteEmail() {
 		return clienteEmail;
 	}
 	
-	
-
+	public int getClienteAtivo() {
+		return clienteAtivo;
+	}
 }

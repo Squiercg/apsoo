@@ -108,7 +108,7 @@ public class CadastraLotes {
 		placeHolder.setBorder(defaultBorder);
 		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getHeight() / 64 + (int) (preferredSize.getWidth() / 3)), 
-			(int) (preferredSize.getHeight() / 32)));
+				(int) (preferredSize.getHeight() / 32)));
 		panelLevel3.add(placeHolder, BorderLayout.WEST);
 		
 		placeHolder = new JLabel("Data da inclusão");
@@ -126,14 +126,15 @@ public class CadastraLotes {
 		
 		try {
 			fornecedorDao = new FornecedorDao(systemInterface.getSystemInterfaceDatabaseURL());
-			fornecedores = fornecedorDao.getAll();
+			fornecedores = fornecedorDao.getForValue("ativo", "1");
 		} catch (SQLException e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de fornecedores!");
 		} finally {
-			if(fornecedores == null) {
+			if(fornecedores == null|| fornecedores.size() == 0) {
 				lista = new String[1];
 				lista[0] = "Nenhum valor encontrado";
-				systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de fornecedores!");
+				String message = fornecedores == null ? "Houve um erro ao recuperar a lista de fornecedores!" : "Nenhum fornecedor ativo encontrado!";
+				systemInterface.getSystemInterfaceLabelStatus().setText(message);
 			}
 			else {
 				lista = new String[fornecedores.size()];
@@ -471,23 +472,34 @@ public class CadastraLotes {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(Common.isValidDate(textField.getText()) && table.getRowCount() > 0) {
-				conf.requestConfirmation(1);
-			} else if(!Common.isValidDate(textField.getText())) {
-				systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
-				textField.setBackground(Color.yellow);
+			if(!comboBoxFornecedores.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado")) {
+				if(Common.isValidDate(textField.getText()) && table.getRowCount() > 0) {
+					conf.requestConfirmation(1);
+				} else if(!Common.isValidDate(textField.getText())) {
+					systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
+					systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+					textField.setBackground(Color.yellow);
+					textField.requestFocus();
+				} else {
+					systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros a inserir no banco!");
+					systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+				}
 			} else {
-				systemInterface.getSystemInterfaceLabelStatus().setText("Não há registros a inserir no banco!");
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há fornecedor ativo informado!");
+				systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+				comboBoxFornecedores.requestFocus();
 			}
 		}
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 			systemInterface.getSystemInterfaceLabelStatus().setText("Encerra o lote e adiciona ao banco");
 		}
 		
 		@Override
 		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
 		}
 		

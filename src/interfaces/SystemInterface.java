@@ -39,6 +39,7 @@ public class SystemInterface {
 	private String systemInterfaceDatabaseURL;
 	private CadastraLotes systemInterfaceCadastraLotes;
 	private CadastraVendas systemInterfaceCadastraVendas;
+	private ModuloCategoria systemInterfaceCategorias;
 	private SystemInterface systemInterfaceSelfReference;
 	private Confirmation systemInterfaceConfirmation;
 	
@@ -58,8 +59,7 @@ public class SystemInterface {
 		setSystemInterfaceExitButton();
 		setSystemInterface();
 		setSystemInterfaceBusy();
-		setSystemInterfaceCadastraLotes();
-		setSystemInterfaceCadastraVendas();
+		setSystemInterfaceModules();
 	}
 	
 	private void setSystemInterfaceSelfReference() {
@@ -100,7 +100,7 @@ public class SystemInterface {
 			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_icon.png";
 			systemInterfaceFrame.setIconImage((new ImageIcon(systemIconImagePath)).getImage());
 		} catch (IOException exPathNotFound) {
-			systemInterfaceLabelStatus.setText("A imagem do icone do sistema nao foi encontrada!");
+			systemInterfaceLabelStatus.setText("A imagem do ícone do sistema não foi encontrada!");
 			System.out.print(systemInterfaceLabelStatus.getText());
 		}
 		systemInterfaceFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -159,19 +159,19 @@ public class SystemInterface {
 			}
 			systemInterfaceMenuBar.add(systemInterfaceMenu);
 		}
-		systemInterfaceMenu = new JMenu("Relatorios");
+		systemInterfaceMenu = new JMenu("Relatórios");
 		systemInterfaceMenu.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenu.getFont().getSize() + 4));
-		systemInterfaceMenu.addMouseListener(new HandlerMenuOptions("Relatorios", null, this));
+		systemInterfaceMenu.addMouseListener(new HandlerMenuOptions("Relatórios", null, this));
 		systemInterfaceMenuItemNames.clear();
-		systemInterfaceMenuItemNames.add("Conferencia de Estoque");
-		systemInterfaceMenuItemNames.add("Historico de Lotes");
+		systemInterfaceMenuItemNames.add("Conferência de Estoque");
+		systemInterfaceMenuItemNames.add("Histórico de Lotes");
 		systemInterfaceMenuItemNames.add("Comprovante de Venda");
-		systemInterfaceMenuItemNames.add("Historico de Vendas");
+		systemInterfaceMenuItemNames.add("Histórico de Vendas");
 		
 		for(String systemInterfaceMenuItemName : systemInterfaceMenuItemNames) {
 			systemInterfaceMenuItem = new JMenuItem(systemInterfaceMenuItemName);
 			systemInterfaceMenuItem.setFont(new Font(null, Font.PLAIN + Font.BOLD, systemInterfaceMenuItem.getFont().getSize() + 3));
-			systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions("Relatorios", systemInterfaceMenuItemName, this));
+			systemInterfaceMenuItem.addMouseListener(new HandlerMenuOptions("Relatórios", systemInterfaceMenuItemName, this));
 			systemInterfaceMenu.add(systemInterfaceMenuItem);
 		}
 		systemInterfaceMenuBar.add(systemInterfaceMenu);
@@ -204,7 +204,7 @@ public class SystemInterface {
 			systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_background.jpg";
 			systemInterfaceLabelImage = new JLabel(new ImageIcon(systemWelcomeImagePath));
 		} catch(IOException exPathNotFound) {
-			systemInterfaceLabelStatus.setText("Imagem da tela de login nao encontrada!");
+			systemInterfaceLabelStatus.setText("Imagem da tela de login não encontrada!");
 		} finally {
 			systemInterfaceStatusMessage = "Home";
 			systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
@@ -218,11 +218,10 @@ public class SystemInterface {
 		systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
 	}
 	
-	public void setSystemInterfaceCadastraLotes() {
+	public void setSystemInterfaceModules() {
 		systemInterfaceCadastraLotes = new CadastraLotes(this);
-	}
-	public void setSystemInterfaceCadastraVendas() {
 		systemInterfaceCadastraVendas = new CadastraVendas(this);
+		systemInterfaceCategorias = new ModuloCategoria(this);
 	}
 	
 	public SystemInterface getSystemInterfaceSelfReference() {
@@ -251,6 +250,10 @@ public class SystemInterface {
 	
 	public CadastraVendas getSystemInterfaceCadastraVendas() {
 		return systemInterfaceCadastraVendas;
+	}
+	
+	public ModuloCategoria getSystemInterfaceCategorias() {
+		return systemInterfaceCategorias;
 	}
 	
 	public JPanel getSystemInterfacePanelMain() {
@@ -357,7 +360,7 @@ public class SystemInterface {
 		public void mousePressed(MouseEvent e) {
 			if(!systemInterfaceBusy) {
 				clearSystemInterface(false);
-				systemInterfaceLabelStatus.setText("Encerrando conexoes..");
+				systemInterfaceLabelStatus.setText("Encerrando conexões..");
 			}
 		}
 		
@@ -382,7 +385,7 @@ public class SystemInterface {
 		public void mouseClicked(MouseEvent e) {
 			if(!systemInterfaceBusy) {
 				if(!(e.getSource() instanceof JMenu)) {
-					systemInterfaceStatusMessage = systemInterfaceMenuName.equalsIgnoreCase("Relatorios") ? 
+					systemInterfaceStatusMessage = systemInterfaceMenuName.equalsIgnoreCase("Relatórios") ? 
 						String.format("Home > %s > %s", systemInterfaceMenuName, systemInterfaceMenuItemName) : 
 						String.format("Home > %s > %s %s", systemInterfaceMenuName, systemInterfaceMenuItemName, systemInterfaceMenuName.toLowerCase());
 					systemInterfaceLabelStatus.setText(systemInterfaceStatusMessage);
@@ -393,6 +396,8 @@ public class SystemInterface {
 								systemInterfacePanelMain.add(systemInterfaceCadastraLotes.cadastraLote());
 							} else if(systemInterfaceMenuName.equalsIgnoreCase("Vendas")) {
 								systemInterfacePanelMain.add(systemInterfaceCadastraVendas.cadastraVenda());
+							} else if(systemInterfaceMenuName.equalsIgnoreCase("Categorias")) {
+								systemInterfacePanelMain.add(systemInterfaceCategorias.cadastraCategoria());
 							} else {
 								////////////////////////////////////////////////////////////////////////
 								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));								
@@ -421,9 +426,9 @@ public class SystemInterface {
 					!(systemInterfaceStatusMessage.equals(systemInterfaceLabelStatus.getText())) ?  
 						systemInterfaceStatusMessage : systemInterfaceLabelStatus.getText();
 				if(e.getSource() instanceof JMenu) {
-					systemInterfaceLabelStatus.setText("Acessa o modulo de " + systemInterfaceMenuName.toLowerCase());
+					systemInterfaceLabelStatus.setText("Acessa o módulo de " + systemInterfaceMenuName.toLowerCase());
 				} else {
-					if(systemInterfaceMenuName.equalsIgnoreCase("Relatorios")) {
+					if(systemInterfaceMenuName.equalsIgnoreCase("Relatórios")) {
 						systemInterfaceLabelStatus.setText(systemInterfaceMenuName + " de " + systemInterfaceMenuItemName.toLowerCase());
 					} else {
 						systemInterfaceLabelStatus.setText(systemInterfaceMenuItemName + " " + systemInterfaceMenuName.toLowerCase());

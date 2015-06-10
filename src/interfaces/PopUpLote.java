@@ -88,16 +88,18 @@ public class PopUpLote {
 		
 		lista = null;
 		categorias = null;
+		
 		try {
 			categoriaDao = new CategoriaDao(systemInterface.getSystemInterfaceDatabaseURL());
-			categorias = categoriaDao.getAll();
+			categorias = categoriaDao.getForValue("ativo", "1");
 		} catch (SQLException e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de categorias!");
 		} finally {
-			if(categorias == null) {
+			if(categorias == null || categorias.size() == 0) {
 				lista = new String[1];
 				lista[0] = "Nenhum valor encontrado";
-				systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de categorias!");
+				String message = categorias == null ? "Houve um erro ao recuperar a lista de categorias!" : "Nenhuma categoria ativa encontrada!";
+				systemInterface.getSystemInterfaceLabelStatus().setText(message);
 			}
 			else {
 				lista = new String[categorias.size()];
@@ -155,7 +157,7 @@ public class PopUpLote {
 		button.setForeground(Color.white);
 		button.addMouseListener(new HandlerAcceptButton(systemInterface, frame));
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 32) - 
-			(int) (preferredSize.getHeight() / 64)));
+				(int) (preferredSize.getHeight() / 64)));
 		panelLevel3.add(button, BorderLayout.EAST);
 		
 		placeHolder = new JLabel("");
@@ -194,12 +196,14 @@ public class PopUpLote {
 				textField.requestFocusInWindow();
 		    }
 		});
+		
 		frame.setVisible(true);
 		frame.repaint();
 	}
 	
 	private static JDialog setSystemInterfaceFrame(Dimension preferredSize) {
 		JDialog frame = new JDialog(systemInterface.getSystemInterfaceFrame(), "Seleção de Produtos", true);
+		
 		try {
 			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "\\" + "CDT_icon.png";
 			frame.setIconImage((new ImageIcon(systemIconImagePath)).getImage());
@@ -234,31 +238,37 @@ public class PopUpLote {
 		    	comboBoxProdutos.addItem(s);
 		    }
 		}
-	    
+		
 		comboBoxProdutos.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
 		comboBoxProdutos.setBackground(Color.white);
 		comboBoxProdutos.setEditable(false);
 		comboBoxProdutos.setSelectedIndex(0);
 	}
 	
-	public void encerraLote() {
-		itensLote.clear();
-		itensLotePrecos.clear();
-	}
-	
 	private String[] completaListaProdutos(SystemInterface systemInterface, JComboBox source) {
 		lista = null;
 		produtos = null;
+		
 		try {
 			produtoDao = new ProdutoDao(systemInterface.getSystemInterfaceDatabaseURL());
-			produtos = produtoDao.getForValue("prod_categoria", String.valueOf(categorias.get(source.getSelectedIndex()).getCategoriaId()));
+			produtos = produtoDao.getForValue("prod_categoria", source.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado") ? "0" : 
+				String.valueOf(categorias.get(source.getSelectedIndex()).getCategoriaId()));
+			ArrayList<Produto> produtosInativos = new ArrayList<Produto>();
+			
+			for(Produto p : produtos) {
+				if(p.getProdutoAtivo() == 0) {
+					produtosInativos.add(p);
+				}
+			}
+			produtos.removeAll(produtosInativos);
 		} catch (SQLException e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de produtos!");
 		} finally {
-			if(produtos == null) {
+			if(produtos == null || produtos.size() == 0) {
 				lista = new String[1];
 				lista[0] = "Nenhum valor encontrado";
-				systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de produtos!");
+				String message = produtos == null ? "Houve um erro ao recuperar a lista de produtos!" : "Nenhum produto ativo encontrado!";
+				systemInterface.getSystemInterfaceLabelStatus().setText(message);
 			}
 			else {
 				lista = new String[produtos.size()];
@@ -267,6 +277,11 @@ public class PopUpLote {
 			}
 		}
 		return lista;
+	}
+	
+	public void encerraLote() {
+		itensLote.clear();
+		itensLotePrecos.clear();
 	}
 	
 	private static class HandlerComboBox implements ActionListener {
@@ -295,44 +310,59 @@ public class PopUpLote {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(Common.isInteger(textField.getText())) {
-				int quantidade = Integer.parseInt(textField.getText());
-				if(quantidade > 0) {
-					DecimalFormat df = new DecimalFormat("#,###.00");
-					Object[] newRow = new Object[systemInterface.getSystemInterfaceCadastraLotes().getTable().getColumnCount()];
+			if(!comboBoxProdutos.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado")) {
+				if(Common.isInteger(textField.getText())) {
+					int quantidade = Integer.parseInt(textField.getText());
 					
-					newRow[0] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId();
-					newRow[1] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoDesc();
-					newRow[2] = categorias.get(comboBoxCategorias.getSelectedIndex()).getCategoriaDesc();
-					newRow[3] = textField.getText();
-					newRow[4] = "R$ " + String.valueOf(df.format(produtos
-						.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade));
-					
-					itensLote.add(new ItemLote(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId(), quantidade, 0));
-					itensLotePrecos.add(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade);
-					
-					systemInterface.getSystemInterfaceCadastraLotes().updateTable(newRow);
-					systemInterface.getSystemInterfaceCadastraLotes().updateValorTotal(produtos
-						.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade);
-					
-					source.dispose();
+					if(quantidade > 0) {
+						systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
+						
+						DecimalFormat df = new DecimalFormat("#,###.00");
+						Object[] newRow = new Object[systemInterface.getSystemInterfaceCadastraLotes().getTable().getColumnCount()];
+						
+						newRow[0] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId();
+						newRow[1] = produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoDesc();
+						newRow[2] = categorias.get(comboBoxCategorias.getSelectedIndex()).getCategoriaDesc();
+						newRow[3] = textField.getText();
+						newRow[4] = "R$ " + String.valueOf(df.format(produtos
+							.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade));
+						
+						itensLote.add(new ItemLote(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoId(), quantidade, 0));
+						itensLotePrecos.add(produtos.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade);
+						
+						systemInterface.getSystemInterfaceCadastraLotes().updateTable(newRow);
+						systemInterface.getSystemInterfaceCadastraLotes().updateValorTotal(produtos
+							.get(comboBoxProdutos.getSelectedIndex()).getProdutoCusto() * quantidade);
+						
+						source.dispose();
+					} else {
+						systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade deve ser maior que zero!");
+						systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+						textField.setBackground(Color.yellow);
+						textField.requestFocus();
+					}
 				} else {
-					systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade deve ser maior que zero!");
+					systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade de itens é inválido!");
+					systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
 					textField.setBackground(Color.yellow);
+					textField.requestFocus();
 				}
 			} else {
-				systemInterface.getSystemInterfaceLabelStatus().setText("Valor informado para a quantidade de itens é inválido!");
-				textField.setBackground(Color.yellow);
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há produto válido selecionado!");
+				systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);
+				comboBoxProdutos.requestFocus();
 			}
 		}
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 			systemInterface.getSystemInterfaceLabelStatus().setText("Adiciona os dados informados à tabela de itens do lote");
 		}
 		
 		@Override
 		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
 		}
 		
@@ -364,11 +394,13 @@ public class PopUpLote {
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 			systemInterface.getSystemInterfaceLabelStatus().setText("Retorna para o cadastro de lotes");
 		}
 		
 		@Override
 		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
 		}
 		

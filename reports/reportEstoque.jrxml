@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportEstoque" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="estoqueProdutoDescricao" class="java.lang.String"/>
+	<field name="estoqueProdutoCategoria" class="java.lang.String"/>
+	<field name="estoqueProdutoQtde" class="java.lang.Integer"/>
+	<field name="estoqueProdutoValor" class="java.lang.String"/>
+	<field name="estoqueProdutoAtivoFlag" class="java.lang.String"/>
+	<field name="estoqueProdutoValorTotal" class="java.lang.String"/>
+	<group name="Group1"/>
+	<group name="Group2"/>
+	<group name="Group3"/>
+	<group name="Group4"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="596" height="92" backcolor="#337AB7"/>
+				<staticText>
+					<reportElement x="25" y="35" width="530" height="43" forecolor="#FFFFFF"/>
+					<textElement>
+						<font size="30" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SCVE-CdT - Conferência de Estoque]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666"/>
+			</line>
+			<staticText>
+				<reportElement x="381" y="0" width="60" height="20"/>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="1" width="100" height="20"/>
+				<text><![CDATA[Produto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="122" y="1" width="100" height="20"/>
+				<text><![CDATA[Categoria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="454" y="1" width="100" height="20"/>
+				<text><![CDATA[Valor Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="333" y="0" width="33" height="20"/>
+				<text><![CDATA[Ativo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="239" y="0" width="78" height="20"/>
+				<text><![CDATA[Valor Unitário]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="38">
+			<textField>
+				<reportElement x="381" y="0" width="60" height="20"/>
+				<textFieldExpression><![CDATA[$F{estoqueProdutoQtde}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="1" width="100" height="20"/>
+				<textFieldExpression><![CDATA[$F{estoqueProdutoDescricao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="122" y="1" width="100" height="20"/>
+				<textFieldExpression><![CDATA[$F{estoqueProdutoCategoria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="0" width="33" height="20"/>
+				<textFieldExpression><![CDATA[$F{estoqueProdutoAtivoFlag}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="454" y="0" width="100" height="20"/>
+				<textFieldExpression><![CDATA[$F{estoqueProdutoValorTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="239" y="1" width="78" height="20"/>
+				<textFieldExpression><![CDATA[$F{estoqueProdutoValor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

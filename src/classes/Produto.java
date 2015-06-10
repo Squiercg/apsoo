@@ -62,10 +62,6 @@ public class Produto {
 		return produtoAtivo;
 	}
 	
-	public void setProdutoLucro(double produtoLucro) {
-		this.produtoLucro = produtoLucro;
-	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if(!(obj instanceof Produto))

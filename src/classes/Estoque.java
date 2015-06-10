@@ -13,14 +13,11 @@ public class Estoque {
 	@DatabaseField(canBeNull = false, columnName = "estoque_produto_quantidade")
 	private int estoqueProdutoQtde;
 		
-	public Estoque() {}
+	public Estoque() {
+		
+	}
 	
-	public Estoque(
-			int estoqueId, 
-			int estoqueProdutoId,
-			int estoqueProdutoQtde) {
-
-		this.estoqueId = estoqueId;
+	public Estoque(int estoqueProdutoId, int estoqueProdutoQtde) {
 		this.estoqueProdutoId = estoqueProdutoId;
 		this.estoqueProdutoQtde = estoqueProdutoQtde;
 	}
@@ -29,24 +26,11 @@ public class Estoque {
 		return estoqueId;
 	}
 	
-	public void setEstoque_id(int estoqueId) {
-		this.estoqueId = estoqueId;
-	}
-	
 	public int getEstoque_produto_id() {
 		return estoqueProdutoId;
-	}
-	
-	public void setEstoque_produto_id(int estoqueProdutoId) {
-		this.estoqueProdutoId = estoqueProdutoId;
 	}
 	
 	public int getEstoque_produto_quantidade() {
 		return estoqueProdutoQtde;
 	}
-	
-	public void setEstoque_produto_quantidade(int estoqueProdutoQtde) {
-		this.estoqueProdutoQtde = estoqueProdutoQtde;
-	}
-	
 }

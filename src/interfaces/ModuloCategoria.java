@@ -21,7 +21,6 @@ import main.Main;
 import repositorio.CategoriaDao;
 import classes.Categoria;
 
-//@SuppressWarnings("rawtypes")
 public class ModuloCategoria {
 	
 	private static Dimension preferredSize;
@@ -29,7 +28,6 @@ public class ModuloCategoria {
 	private static List<Categoria> categorias;
 	private static CategoriaDao categoriaDao;
 	private static Categoria categoria;
-//	private static JComboBox comboBoxCategorias;
 	private static JTextField textFieldCategoria;
 	private static Confirmation conf;
 	private static SystemInterface systemInterface;

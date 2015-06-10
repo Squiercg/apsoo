@@ -1,33 +1,76 @@
 package report;
 
 public class EstoqueReport {
-	private int estoqueId;
-	private int estoqueProdutoId;
+	private String estoqueProdutoDescricao;
+	private String estoqueProdutoCategoria;
+	private String estoqueProdutoValor;
+	private String estoqueProdutoValorTotal;
+	private String estoqueProdutoAtivoFlag;
 	private int estoqueProdutoQtde;
 	
 	public EstoqueReport() {}
-
-	public int getEstoque_id() {
-		return estoqueId;
+	
+	public EstoqueReport(
+			String estoqueProdutoDescricao, 
+			String estoqueProdutoCategoria, 
+			int estoqueProdutoQtde,
+			String estoqueProdutoValor,
+			String estoqueProdutoValorTotal,
+			String estoqueProdutoAtivoFlag) 
+	{
+		this.estoqueProdutoDescricao = estoqueProdutoDescricao;
+		this.estoqueProdutoCategoria = estoqueProdutoCategoria;
+		this.estoqueProdutoQtde = estoqueProdutoQtde;
+		this.estoqueProdutoValor = estoqueProdutoValor;
+		this.estoqueProdutoAtivoFlag = estoqueProdutoAtivoFlag;
+		this.estoqueProdutoValorTotal = estoqueProdutoValorTotal;
 	}
 	
-	public void setEstoque_id(int estoqueId) {
-		this.estoqueId = estoqueId;
+	public String getEstoqueProdutoDescricao() {
+		return estoqueProdutoDescricao;
 	}
 	
-	public int getEstoque_produto_id() {
-		return estoqueProdutoId;
+	public void setEstoqueProdutoDescricao(String estoqueProdutoDescricao) {
+		this.estoqueProdutoDescricao = estoqueProdutoDescricao;
 	}
 	
-	public void setEstoque_produto_id(int estoqueProdutoId) {
-		this.estoqueProdutoId = estoqueProdutoId;
+	public String getEstoqueProdutoCategoria() {
+		return estoqueProdutoCategoria;
 	}
 	
-	public int getEstoque_produto_quantidade() {
+	public void setEstoqueProdutoCategoria(String estoqueProdutoCategoria) {
+		this.estoqueProdutoCategoria = estoqueProdutoCategoria;
+	}
+	
+	public int getEstoqueProdutoQtde() {
 		return estoqueProdutoQtde;
 	}
 	
-	public void setEstoque_produto_quantidade(int estoqueProdutoQtde) {
+	public void setEstoqueProdutoQtde(int estoqueProdutoQtde) {
 		this.estoqueProdutoQtde = estoqueProdutoQtde;
+	}
+
+	public String getEstoqueProdutoValor() {
+		return estoqueProdutoValor;
+	}
+
+	public void setEstoqueProdutoValor(String estoqueProdutoValor) {
+		this.estoqueProdutoValor = estoqueProdutoValor;
+	}
+
+	public String getEstoqueProdutoAtivoFlag() {
+		return estoqueProdutoAtivoFlag;
+	}
+
+	public void setEstoqueProdutoAtivoFlag(String estoqueProdutoAtivoFlag) {
+		this.estoqueProdutoAtivoFlag = estoqueProdutoAtivoFlag;
+	}
+
+	public String getEstoqueProdutoValorTotal() {
+		return estoqueProdutoValorTotal;
+	}
+
+	public void setEstoqueProdutoValorTotal(String estoqueProdutoValorTotal) {
+		this.estoqueProdutoValorTotal = estoqueProdutoValorTotal;
 	}
 }

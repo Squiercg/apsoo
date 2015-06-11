@@ -474,7 +474,7 @@ public class CadastraLotes {
 		public void mouseClicked(MouseEvent e) {
 			if(!comboBoxFornecedores.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado")) {
 				if(Common.isValidDate(textField.getText()) && table.getRowCount() > 0) {
-					conf.requestConfirmation(1);
+					conf.requestConfirmation(1, null);
 				} else if(!Common.isValidDate(textField.getText())) {
 					systemInterface.getSystemInterfaceLabelStatus().setText("Data informada é inválida!");
 					systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.red);

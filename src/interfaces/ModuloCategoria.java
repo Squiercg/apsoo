@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
@@ -233,7 +235,7 @@ public class ModuloCategoria {
 		comboBoxCategorias.setBackground(Color.white);
 		comboBoxCategorias.setEditable(false);
 		comboBoxCategorias.setSelectedIndex(categoriaSelecionada == null ? 0 : categorias.indexOf(categoriaSelecionada));
-//		comboBoxCategorias.addActionListener(new HandlerComboBox(this));
+		comboBoxCategorias.addActionListener(new HandlerComboBox(this));
 		panelLevel4.add(comboBoxCategorias, BorderLayout.WEST);
 		
 		JPanel panelLevel5 = new JPanel(new BorderLayout());
@@ -296,12 +298,16 @@ public class ModuloCategoria {
 		float[] hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
 		alterButton.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
 		alterButton.setForeground(Color.white);
-		alterButton.addMouseListener(new HandlerAlterCategory(systemInterface));
+		alterButton.addMouseListener(new HandlerAlterCategoria(systemInterface));
 		alterButton.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
 			(int) (preferredSize.getHeight() / 64)));
 		panelLevel5.add(alterButton, BorderLayout.WEST);
 		
 		return panelLevel0;
+	}
+	
+	private JComboBox getComboBoxCategorias() {
+		return comboBoxCategorias;
 	}
 	
 	public void incluiCategoria(Boolean choice) {
@@ -315,6 +321,24 @@ public class ModuloCategoria {
 				systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCategorias().cadastraCategoria());
 				
 				systemInterface.getSystemInterfaceLabelStatus().setText("Categoria cadastrada com sucesso!");
+			} catch (SQLException e1) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados da categoria no banco!");
+			}
+		}
+	}
+	
+	public void atualizaCategoria(Boolean choice) {
+		if(choice) {
+				try {
+				categoriaDao = new CategoriaDao(systemInterface.getSystemInterfaceDatabaseURL());
+				categoriaDao.update(new Categoria(categoria.getCategoriaId(), comboBoxCategorias.getSelectedItem().toString(), 
+						comboBoxCategoriaAtiva.getSelectedItem().toString().equalsIgnoreCase("Sim") ? 1 : 0));
+				
+				systemInterface.clearSystemInterface(!Main.isBrunoTesting);
+				systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCategorias().consultaCategoria(categoria));
+				categoria = null;
+				
+				systemInterface.getSystemInterfaceLabelStatus().setText("Categoria atualizada com sucesso!");
 			} catch (SQLException e1) {
 				systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados da categoria no banco!");
 			}
@@ -336,7 +360,23 @@ public class ModuloCategoria {
 		return false;
 	}
 	
-	private static void completaCampos(Categoria categoria) {
+	private static boolean verificaCategoria(String novaCategoria, Categoria categoria) {
+		try {
+			categoriaDao = new CategoriaDao(systemInterface.getSystemInterfaceDatabaseURL());
+			categorias = categoriaDao.getAll();
+			categorias.remove(categoria);
+			
+			for(Categoria c : categorias) {
+				if(c.getCategoriaDesc().equalsIgnoreCase(novaCategoria))
+					return true;
+			}
+		} catch (SQLException e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao buscar os dados das categorias no banco!");
+		}
+		return false;
+	}
+	
+	private void completaCampos(Categoria categoria) {
 		completaAtivo(categoria);
 	}
 	
@@ -367,7 +407,21 @@ public class ModuloCategoria {
 		return lista;
 	}
 	
-	private static class HandlerAddCategoria implements MouseListener {
+	private static class HandlerComboBox implements ActionListener {
+		
+		private ModuloCategoria source;
+		
+		public HandlerComboBox(ModuloCategoria source) {
+			this.source = source;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			source.completaCampos(categorias.get(source.getComboBoxCategorias().getSelectedIndex()));
+		}
+	}
+	
+	protected static class HandlerAddCategoria implements MouseListener {
 		
 		private SystemInterface systemInterface;
 		
@@ -378,7 +432,7 @@ public class ModuloCategoria {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(!textFieldCategoria.getText().trim().equalsIgnoreCase("") && !verificaCategoria(textFieldCategoria.getText().trim())) {
-				conf.requestConfirmation(1);
+				conf.requestConfirmation(1, this);
 			} else if(textFieldCategoria.getText().trim().equalsIgnoreCase("")) {
 				systemInterface.getSystemInterfaceLabelStatus().setText("Não há registro a inserir no banco!");
 				textFieldCategoria.setBackground(Color.yellow);
@@ -411,19 +465,29 @@ public class ModuloCategoria {
 		}
 	}
 	
-	private static class HandlerAlterCategory implements MouseListener {
+	private static class HandlerAlterCategoria implements MouseListener {
 		
 		private SystemInterface systemInterface;
 		
-		public HandlerAlterCategory(SystemInterface systemInterface) {
+		public HandlerAlterCategoria(SystemInterface systemInterface) {
 			this.systemInterface = systemInterface;
 		}
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			categoria = categorias.get(comboBoxCategorias.getSelectedIndex());
+			
 			alterButton.setText("Salvar");
+			alterButton.removeMouseListener(alterButton.getMouseListeners()[1]);
+			alterButton.addMouseListener(new HandlerConfirmAlterCategoria(systemInterface, categorias.get(comboBoxCategorias.getSelectedIndex())));
+			
+			comboBoxCategorias.setEditable(true);
+			comboBoxCategorias.removeActionListener(comboBoxCategorias.getActionListeners()[0]);
+			comboBoxCategoriaAtiva.setEnabled(true);
+			
 			cancelButton.setText("Cancelar");
-			System.out.println(cancelButton.getMouseListeners()[0].getClass().getName());
+			cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
+			cancelButton.addMouseListener(new HandlerCancelCategoria(systemInterface, categorias.get(comboBoxCategorias.getSelectedIndex())));
 		}
 		
 		@Override
@@ -448,4 +512,91 @@ public class ModuloCategoria {
 			mouseExited(e);
 		}
 	}
+	
+	private static class HandlerCancelCategoria implements MouseListener {
+		
+		private SystemInterface systemInterface;
+		private Categoria categoria;
+		
+		public HandlerCancelCategoria(SystemInterface systemInterface, Categoria categoria) {
+			this.systemInterface = systemInterface;
+			this.categoria = categoria;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			systemInterface.clearSystemInterface(!Main.isBrunoTesting);
+			systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCategorias().consultaCategoria(categoria));
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
+			systemInterface.getSystemInterfaceLabelStatus().setText("Descarta as alterações realizadas");
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
+			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			mouseEntered(e);
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			mouseExited(e);
+		}
+	}
+	
+	protected static class HandlerConfirmAlterCategoria implements MouseListener {
+		
+		private SystemInterface systemInterface;
+		private Categoria categoria;
+		
+		public HandlerConfirmAlterCategoria(SystemInterface systemInterface, Categoria categoria) {
+			this.systemInterface = systemInterface;
+			this.categoria = categoria;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if(!comboBoxCategorias.getSelectedItem().toString().trim().equalsIgnoreCase("") && !verificaCategoria(comboBoxCategorias.getSelectedItem().toString().trim(), categoria)) {
+				conf.requestConfirmation(1, this);
+			} else if(comboBoxCategorias.getSelectedItem().toString().trim().equalsIgnoreCase("")) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("O nome da categoria não é válido!");
+				comboBoxCategorias.setBackground(Color.yellow);
+				comboBoxCategorias.requestFocus();
+			} else {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Categoria já existente!");
+				comboBoxCategorias.setBackground(Color.yellow);
+				comboBoxCategorias.requestFocus();
+			}
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
+			systemInterface.getSystemInterfaceLabelStatus().setText("Aplica as alterações à categoria selecionada");
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
+			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			mouseEntered(e);
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			mouseExited(e);
+		}
+	}	
 }

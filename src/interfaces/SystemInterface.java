@@ -330,7 +330,7 @@ public class SystemInterface {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(!Main.isBrunoTesting) {
-				systemInterfaceConfirmation.requestConfirmation(0);
+				systemInterfaceConfirmation.requestConfirmation(0, null);
 			} else {
 				if(!systemInterfaceBusy) {
 					try {

@@ -22,6 +22,17 @@ public class Categoria {
 		categoriaAtiva = 1;
 	}
 	
+	public Categoria(String categoriaDesc, int categoriaAtiva) {
+		this.categoriaDesc = categoriaDesc;
+		this.categoriaAtiva = categoriaAtiva;
+	}
+	
+	public Categoria(int categoriaId, String categoriaDesc, int categoriaAtiva) {
+		this.categoriaId = categoriaId;
+		this.categoriaDesc = categoriaDesc;
+		this.categoriaAtiva = categoriaAtiva;
+	}
+
 	public String getCategoriaDesc() {
 		return categoriaDesc;
 	}

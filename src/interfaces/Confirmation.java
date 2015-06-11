@@ -1,5 +1,8 @@
 package interfaces;
 
+import interfaces.ModuloCategoria.HandlerAddCategoria;
+import interfaces.ModuloCategoria.HandlerConfirmAlterCategoria;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,10 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import classes.ItemVenda;
-import classes.Produto;
-
-@SuppressWarnings("unused")
 public class Confirmation {
 	
 	private Boolean choice;
@@ -36,13 +34,13 @@ public class Confirmation {
 		this.caller = caller;
 	}
 	
-	public void requestConfirmation(Integer option) {
-		frame = setSystemInterfaceFrame(systemInterface, defaultBorder, choice, caller, option);
+	public void requestConfirmation(Integer option, Object subCaller) {
+		frame = setSystemInterfaceFrame(systemInterface, defaultBorder, choice, caller, subCaller, option);
 		frame.setVisible(true);
 		frame.repaint();
 	}
 	
-	private static JDialog setSystemInterfaceFrame(SystemInterface systemInterface, Border defaultBorder, Boolean choice, Object caller, Integer option) {
+	private static JDialog setSystemInterfaceFrame(SystemInterface systemInterface, Border defaultBorder, Boolean choice, Object caller, Object subCaller, Integer option) {
 		JDialog frame = new JDialog(systemInterface.getSystemInterfaceFrame(), true);
 		try {
 			String systemIconImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_icon.png";
@@ -56,12 +54,12 @@ public class Confirmation {
 		frame.setSize(new Dimension((int) (systemInterface.getSystemInterfaceDimension().getWidth() / 4) + 32, (int) (systemInterface.getSystemInterfaceDimension().getHeight() / 6)));
 		frame.setLocationRelativeTo(null);
 		
-		frame.add(setConfirmationWindow(frame, frame.getSize(), defaultBorder, choice, caller, option), BorderLayout.CENTER);
+		frame.add(setConfirmationWindow(frame, frame.getSize(), defaultBorder, choice, caller, subCaller, option), BorderLayout.CENTER);
 		
 		return frame;
 	}
 	
-	private static JPanel setConfirmationWindow(JDialog source, Dimension preferredSize, Border defaultBorder, Boolean choice, Object caller, Integer option) {
+	private static JPanel setConfirmationWindow(JDialog source, Dimension preferredSize, Border defaultBorder, Boolean choice, Object caller, Object subCaller, Integer option) {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		Common.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
@@ -102,14 +100,14 @@ public class Confirmation {
 		float[] hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
 		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
 		button.setForeground(Color.white);
-		button.addActionListener(new ChooseYes(source, caller));
+		button.addActionListener(new ChooseYes(source, caller, subCaller));
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3) + 16, (int) (preferredSize.getHeight() / 6) + 8));
 		panelLevel3.add(button, BorderLayout.WEST);
 		
 		button = new JButton("Não");
 		button.setBackground(Color.white);
 		button.setForeground(Color.black);
-		button.addActionListener(new ChooseNo(source, caller));
+		button.addActionListener(new ChooseNo(source, caller, subCaller));
 		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3) + 16, (int) (preferredSize.getHeight() / 6) + 8));
 		panelLevel3.add(button, BorderLayout.EAST);
 		
@@ -124,23 +122,29 @@ public class Confirmation {
 		
 		private JDialog source;
 		private Object caller;
+		private Object subCaller;
 		
-		public ChooseYes(JDialog source, Object caller) {
+		public ChooseYes(JDialog source, Object caller, Object subCaller) {
 			this.source = source;
 			this.caller = caller;
+			this.subCaller = subCaller;
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(caller instanceof CadastraVendas)
+			if(caller instanceof CadastraVendas) {
 				((CadastraVendas) caller).incluiVenda(true);
-			if(caller instanceof CadastraLotes)
+			} else if(caller instanceof CadastraLotes) {
 				((CadastraLotes) caller).incluiLote(true);
-			if(caller instanceof SystemInterface)
+			} else if(caller instanceof SystemInterface) {
 				((SystemInterface) caller).exitSystemInterface(true);
-			if(caller instanceof ModuloCategoria)
-				((ModuloCategoria) caller).incluiCategoria(true);
-			
+			} else if(caller instanceof ModuloCategoria) {
+				if(subCaller instanceof HandlerAddCategoria) {
+					((ModuloCategoria) caller).incluiCategoria(true);
+				} else if(subCaller instanceof HandlerConfirmAlterCategoria) {
+					((ModuloCategoria) caller).atualizaCategoria(true);
+				}
+			}
 			source.dispose();
 		}
 	}
@@ -149,23 +153,29 @@ public class Confirmation {
 		
 		private JDialog source;
 		private Object caller;
+		private Object subCaller;
 		
-		public ChooseNo(JDialog source, Object caller) {
+		public ChooseNo(JDialog source, Object caller, Object subCaller) {
 			this.source = source;
 			this.caller = caller;
+			this.subCaller = subCaller;
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(caller instanceof CadastraVendas)
+			if(caller instanceof CadastraVendas) {
 				((CadastraVendas) caller).incluiVenda(false);
-			if(caller instanceof CadastraLotes)
+			} else if(caller instanceof CadastraLotes) {
 				((CadastraLotes) caller).incluiLote(false);
-			if(caller instanceof SystemInterface)
+			} else if(caller instanceof SystemInterface) {
 				((SystemInterface) caller).exitSystemInterface(false);
-			if(caller instanceof ModuloCategoria)
-				((ModuloCategoria) caller).incluiCategoria(false);
-			
+			} else if(caller instanceof ModuloCategoria) {
+				if(subCaller instanceof HandlerAddCategoria) {
+					((ModuloCategoria) caller).incluiCategoria(false);
+				} else if(subCaller instanceof HandlerConfirmAlterCategoria) {
+					((ModuloCategoria) caller).atualizaCategoria(false);
+				}
+			}
 			source.dispose();
 		}
 	}

@@ -238,7 +238,6 @@ public class PopUpLote {
 		    	comboBoxProdutos.addItem(s);
 		    }
 		}
-		
 		comboBoxProdutos.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
 		comboBoxProdutos.setBackground(Color.white);
 		comboBoxProdutos.setEditable(false);

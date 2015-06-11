@@ -7,20 +7,24 @@ import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 import main.Main;
 import repositorio.CategoriaDao;
 import classes.Categoria;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ModuloCategoria {
 	
 	private static Dimension preferredSize;
@@ -29,6 +33,10 @@ public class ModuloCategoria {
 	private static CategoriaDao categoriaDao;
 	private static Categoria categoria;
 	private static JTextField textFieldCategoria;
+	private static JComboBox comboBoxCategorias;
+	private static JComboBox comboBoxCategoriaAtiva;
+	private static JButton alterButton;
+	private static JButton cancelButton;
 	private static Confirmation conf;
 	private static SystemInterface systemInterface;
 	
@@ -95,7 +103,7 @@ public class ModuloCategoria {
 		Color outerBorderColor = Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]);
 		Border compound = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outerBorderColor), BorderFactory.createLineBorder(innerBorderColor));
 		textFieldCategoria.setBorder(compound);
-		textFieldCategoria.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3), (int) (preferredSize.getHeight() / 32)));
+		textFieldCategoria.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
 		panelLevel4.add(textFieldCategoria, BorderLayout.WEST);
 		
 		SwingUtilities.invokeLater(new Runnable() {
@@ -127,12 +135,13 @@ public class ModuloCategoria {
 		panelLevel5 = new JPanel(new BorderLayout());
 		panelLevel4.add(panelLevel5, BorderLayout.EAST);
 		
-		JButton button = new JButton("Voltar");
-		button.setBackground(Color.white);
-		button.setForeground(Color.black);
-		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
+		cancelButton = new JButton("Voltar");
+		cancelButton.setBackground(Color.white);
+		cancelButton.setForeground(Color.black);
+		cancelButton.addMouseListener(systemInterface.new HandlerHomeButton());
+		cancelButton.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
 			(int) (preferredSize.getHeight() / 64)));
-		panelLevel5.add(button, BorderLayout.EAST);
+		panelLevel5.add(cancelButton, BorderLayout.EAST);
 		
 		placeHolder = new JLabel("");
 		placeHolder.setBorder(defaultBorder);
@@ -140,14 +149,157 @@ public class ModuloCategoria {
 				(int) (preferredSize.getHeight() / 64)));
 		panelLevel5.add(placeHolder, BorderLayout.CENTER);
 		
-		button = new JButton("Salvar");
+		alterButton = new JButton("Salvar");
 		hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
-		button.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
-		button.setForeground(Color.white);
-		button.addMouseListener(new HandlerAddCategoria(systemInterface));
-		button.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
+		alterButton.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
+		alterButton.setForeground(Color.white);
+		alterButton.addMouseListener(new HandlerAddCategoria(systemInterface));
+		alterButton.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
 			(int) (preferredSize.getHeight() / 64)));
-		panelLevel5.add(button, BorderLayout.WEST);
+		panelLevel5.add(alterButton, BorderLayout.WEST);
+		
+		return panelLevel0;
+	}
+	
+	public JPanel consultaCategoria(Categoria categoriaSelecionada) {
+		JPanel panelLevel0 = new JPanel(new BorderLayout());
+		Common.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
+		
+		JPanel panelLevel1 = new JPanel(new BorderLayout());
+		panelLevel0.add(panelLevel1, BorderLayout.CENTER);
+		
+		JPanel panelLevel2 = new JPanel(new BorderLayout());
+		panelLevel1.add(panelLevel2, BorderLayout.NORTH);
+		
+		JLabel placeHolder = new JLabel("");
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		placeHolder.setBorder(defaultBorder);
+		panelLevel2.add(placeHolder, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("Consulta de Categorias");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 20));
+		panelLevel2.add(placeHolder, BorderLayout.CENTER);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 16)));
+		placeHolder.setBorder(defaultBorder);
+		panelLevel2.add(placeHolder, BorderLayout.SOUTH);
+		
+		panelLevel2 = new JPanel(new BorderLayout());
+		panelLevel1.add(panelLevel2, BorderLayout.CENTER);
+		
+		JPanel panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("Categoria");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getHeight() / 64 + (int) (preferredSize.getWidth() / 3)), 
+			(int) (preferredSize.getHeight() / 32)));
+		panelLevel3.add(placeHolder, BorderLayout.WEST);
+		
+		placeHolder = new JLabel("Ativo"); 
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
+		panelLevel3.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.CENTER);
+		JPanel panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.NORTH);
+		
+		String lista[] = null;
+		categorias = null;
+		
+		try {
+			categoriaDao = new CategoriaDao(systemInterface.getSystemInterfaceDatabaseURL());
+			categorias = categoriaDao.getAll();
+		} catch (SQLException e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de categorias!");
+		} finally {
+			if(categorias == null || categorias.size() == 0) {
+				categorias = new ArrayList<Categoria>();
+				categorias.add(new Categoria("Nenhum valor encontrado"));
+				String message = categorias == null ? "Houve um erro ao recuperar a lista de categorias!" : "Nenhuma categoria encontrada!";
+				systemInterface.getSystemInterfaceLabelStatus().setText(message);
+			}
+			lista = new String[categorias.size()];
+			for(Categoria c : categorias)
+				lista[categorias.indexOf(c)] = c.getCategoriaDesc();
+		}
+		comboBoxCategorias = new JComboBox(lista);
+		comboBoxCategorias.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
+		comboBoxCategorias.setBackground(Color.white);
+		comboBoxCategorias.setEditable(false);
+		comboBoxCategorias.setSelectedIndex(categoriaSelecionada == null ? 0 : categorias.indexOf(categoriaSelecionada));
+//		comboBoxCategorias.addActionListener(new HandlerComboBox(this));
+		panelLevel4.add(comboBoxCategorias, BorderLayout.WEST);
+		
+		JPanel panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.CENTER);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3) + (int) (preferredSize.getWidth() / 64) - 
+			(int) (preferredSize.getWidth() / 4) - 5, (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.WEST);
+		
+		completaCampos(categorias.get(comboBoxCategorias.getSelectedIndex()));
+		comboBoxCategoriaAtiva.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(comboBoxCategoriaAtiva, BorderLayout.CENTER);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4) + 
+			(int) (preferredSize.getWidth() / 64), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.EAST);
+		
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.SOUTH);
+		panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.SOUTH);
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.SOUTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.EAST);
+		
+		cancelButton = new JButton("Voltar");
+		cancelButton.setBackground(Color.white);
+		cancelButton.setForeground(Color.black);
+		cancelButton.addMouseListener(systemInterface.new HandlerHomeButton());
+		cancelButton.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
+			(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(cancelButton, BorderLayout.EAST);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 64),  (int) (preferredSize.getHeight() / 16) - 
+				(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+		
+		alterButton = new JButton("Editar");
+		float[] hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
+		alterButton.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
+		alterButton.setForeground(Color.white);
+		alterButton.addMouseListener(new HandlerAlterCategory(systemInterface));
+		alterButton.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
+			(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(alterButton, BorderLayout.WEST);
 		
 		return panelLevel0;
 	}
@@ -184,6 +336,37 @@ public class ModuloCategoria {
 		return false;
 	}
 	
+	private static void completaCampos(Categoria categoria) {
+		completaAtivo(categoria);
+	}
+	
+	private static String[] completaAtivo(Categoria categoria) {
+		String lista[] = {"Não", "Sim"};
+		boolean isNull = categoria.getCategoriaDesc().equalsIgnoreCase("Nenhum valor encontrado"); 
+		
+		if(isNull) {
+			lista = new String[1];
+			lista[0] = "N/A";
+		}
+		if(comboBoxCategoriaAtiva == null) {
+			comboBoxCategoriaAtiva = new JComboBox<>(lista);
+		} else {
+			comboBoxCategoriaAtiva.removeAllItems();
+		    for(String s : lista){
+		    	comboBoxCategoriaAtiva.addItem(s);
+		    }
+		}
+		comboBoxCategoriaAtiva.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		comboBoxCategoriaAtiva.setBackground(Color.white);
+		comboBoxCategoriaAtiva.setEditable(false);
+		comboBoxCategoriaAtiva.setEnabled(false);
+		UIManager.put("ComboBox.disabledBackground", Color.white);
+		UIManager.put("ComboBox.disabledForeground", Color.black);
+		comboBoxCategoriaAtiva.setSelectedIndex(isNull ? 0 : categoria.getCategoriaAtiva());
+		
+		return lista;
+	}
+	
 	private static class HandlerAddCategoria implements MouseListener {
 		
 		private SystemInterface systemInterface;
@@ -214,6 +397,44 @@ public class ModuloCategoria {
 		
 		@Override
 		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			mouseEntered(e);
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			mouseExited(e);
+		}
+	}
+	
+	private static class HandlerAlterCategory implements MouseListener {
+		
+		private SystemInterface systemInterface;
+		
+		public HandlerAlterCategory(SystemInterface systemInterface) {
+			this.systemInterface = systemInterface;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			alterButton.setText("Salvar");
+			cancelButton.setText("Cancelar");
+			System.out.println(cancelButton.getMouseListeners()[0].getClass().getName());
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
+			systemInterface.getSystemInterfaceLabelStatus().setText("Altera as informações da categoria selecionada");
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
 			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
 		}
 		

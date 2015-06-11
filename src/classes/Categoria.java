@@ -33,4 +33,11 @@ public class Categoria {
 	public int getCategoriaAtiva() {
 		return categoriaAtiva;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Categoria))
+			return false;
+		return this.getCategoriaId() == ((Categoria) obj).getCategoriaId();
+	}
 }

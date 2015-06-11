@@ -404,9 +404,13 @@ public class SystemInterface {
 								////////////////////////////////////////////////////////////////////////
 							}
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
-							////////////////////////////////////////////////////////////////////////
-							systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
-							////////////////////////////////////////////////////////////////////////
+							if(systemInterfaceMenuName.equalsIgnoreCase("Categorias")) {
+								systemInterfacePanelMain.add(systemInterfaceCategorias.consultaCategoria(null));
+							} else {
+								////////////////////////////////////////////////////////////////////////
+								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));								
+								////////////////////////////////////////////////////////////////////////
+							}
 						} else {
 							////////////////////////////////////////////////////////////////////////
 							systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));

@@ -40,6 +40,7 @@ public class SystemInterface {
 	private CadastraLotes systemInterfaceCadastraLotes;
 	private CadastraVendas systemInterfaceCadastraVendas;
 	private ModuloCategoria systemInterfaceCategorias;
+	private ModuloProduto systemInterfaceProdutos;
 	private SystemInterface systemInterfaceSelfReference;
 	private Confirmation systemInterfaceConfirmation;
 	
@@ -222,6 +223,7 @@ public class SystemInterface {
 		systemInterfaceCadastraLotes = new CadastraLotes(this);
 		systemInterfaceCadastraVendas = new CadastraVendas(this);
 		systemInterfaceCategorias = new ModuloCategoria(this);
+		systemInterfaceProdutos = new ModuloProduto(this);
 	}
 	
 	public SystemInterface getSystemInterfaceSelfReference() {
@@ -398,6 +400,8 @@ public class SystemInterface {
 								systemInterfacePanelMain.add(systemInterfaceCadastraVendas.cadastraVenda());
 							} else if(systemInterfaceMenuName.equalsIgnoreCase("Categorias")) {
 								systemInterfacePanelMain.add(systemInterfaceCategorias.cadastraCategoria());
+							} else if(systemInterfaceMenuName.equalsIgnoreCase("Produtos")) {
+								systemInterfacePanelMain.add(systemInterfaceProdutos.cadastraProduto());
 							} else {
 								////////////////////////////////////////////////////////////////////////
 								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));								

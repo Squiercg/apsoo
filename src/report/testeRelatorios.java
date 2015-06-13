@@ -115,7 +115,7 @@ public class testeRelatorios {
 		Relatorios.gerarRelatorioVendas(vendas);
 		
 		// Comprovante de Venda
-		Relatorios.gerarComprovanteVenda(vendas.subList(0, 1));
+		Relatorios.gerarComprovanteVenda(vendas.get(0));
 	}
 	
 	private static void Lote() throws IOException, SQLException, JRException {

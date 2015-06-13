@@ -2,6 +2,7 @@ package report;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -52,8 +53,11 @@ public class Relatorios {
 		viewer.setVisible(true);	 	
 	}
 	
-	public static void gerarComprovanteVenda(List<Operacao> lista) throws JRException, IOException
+	public static void gerarComprovanteVenda(Operacao venda) throws JRException, IOException
 	{
+		List<Operacao> lista = new ArrayList<Operacao>();
+		lista.add(venda);
+		
 		String relatorio = "reports/reportComprovanteVenda.jrxml";
 		
 		JasperReport report = JasperCompileManager

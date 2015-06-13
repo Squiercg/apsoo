@@ -10,12 +10,12 @@
 		<field name="produtoId" class="java.lang.Integer"/>
 		<field name="produtoDescricao" class="java.lang.String"/>
 		<field name="quantidade" class="java.lang.Integer"/>
-		<field name="valor" class="java.lang.Double"/>
+		<field name="valor" class="java.lang.String"/>
 	</subDataset>
 	<field name="operacaoId" class="java.lang.Integer"/>
 	<field name="nomeSolicitante" class="java.lang.String"/>
-	<field name="dataOperacao" class="java.util.Date"/>
-	<field name="valorOperacao" class="java.lang.Double"/>
+	<field name="dataOperacao" class="java.lang.String"/>
+	<field name="valorOperacao" class="java.lang.String"/>
 	<field name="produtosOperacao" class="java.util.List"/>
 	<group name="Group1"/>
 	<group name="Group2"/>
@@ -27,7 +27,7 @@
 	<title>
 		<band height="72">
 			<frame>
-				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699"/>
+				<reportElement mode="Opaque" x="-20" y="-20" width="597" height="92" backcolor="#337AB7"/>
 				<staticText>
 					<reportElement x="20" y="20" width="234" height="43" forecolor="#FFFFFF"/>
 					<textElement>
@@ -40,7 +40,7 @@
 					<textElement textAlignment="Right">
 						<font size="14" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Relatório de Conferência de Vendas]]></text>
+					<text><![CDATA[Histórico de Vendas]]></text>
 				</staticText>
 			</frame>
 		</band>
@@ -60,6 +60,7 @@
 			</textField>
 			<textField>
 				<reportElement x="19" y="30" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{operacaoId}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -68,10 +69,10 @@
 			</textField>
 			<staticText>
 				<reportElement x="19" y="10" width="100" height="20"/>
-				<textElement>
+				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Código da Venda]]></text>
+				<text><![CDATA[Venda ID]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="132" y="10" width="197" height="20"/>
@@ -82,13 +83,14 @@
 			</staticText>
 			<staticText>
 				<reportElement x="347" y="10" width="100" height="20"/>
-				<textElement>
+				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Data]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="347" y="30" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
 				<textFieldExpression><![CDATA[$F{dataOperacao}]]></textFieldExpression>
 			</textField>
 			<componentElement>
@@ -100,6 +102,7 @@
 					<jr:listContents height="25" width="433">
 						<textField>
 							<reportElement x="0" y="5" width="110" height="20"/>
+							<textElement textAlignment="Center"/>
 							<textFieldExpression><![CDATA[$F{produtoId}]]></textFieldExpression>
 						</textField>
 						<textField>
@@ -108,9 +111,10 @@
 						</textField>
 						<textField>
 							<reportElement x="224" y="5" width="100" height="20"/>
+							<textElement textAlignment="Center"/>
 							<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
 						</textField>
-						<textField pattern="¤ #,##0.00">
+						<textField pattern="">
 							<reportElement x="333" y="5" width="100" height="20"/>
 							<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
 						</textField>
@@ -119,10 +123,10 @@
 			</componentElement>
 			<staticText>
 				<reportElement x="50" y="57" width="110" height="20"/>
-				<textElement>
+				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Código do Produto]]></text>
+				<text><![CDATA[Produto ID]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="167" y="57" width="100" height="20"/>
@@ -133,7 +137,7 @@
 			</staticText>
 			<staticText>
 				<reportElement x="274" y="57" width="100" height="20"/>
-				<textElement>
+				<textElement textAlignment="Center">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Quantidade]]></text>

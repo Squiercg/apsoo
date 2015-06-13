@@ -3,7 +3,9 @@ package report;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +31,16 @@ import classes.ItemLote;
 
 public class testeRelatorios {
 
+	static DecimalFormat decimal = new DecimalFormat("0.00");
+	static DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+	
 	public static void main(String[] args) throws SQLException, IOException, JRException {
 		
-		//Estoque();
-		//Venda();
+		Estoque();
+		Venda();
 		Lote();
 	}
 	
-	@SuppressWarnings("unused")
 	private static void Estoque() throws SQLException, IOException, JRException	{
 		
 		String databaseURL = "jdbc:sqlite:" + new File("lib/.").getCanonicalPath() + "/" + "CDT_database.sqlite";
@@ -51,17 +55,14 @@ public class testeRelatorios {
 			String ativo = prod.getProdutoAtivo() == 1 ? "Sim": "Não";
 			
 			Double total = estoque.getEstoque_produto_quantidade() * prod.getProdutoPreco();
-			DecimalFormat decimal = new DecimalFormat("0.00"); 
-			String valorTotal = "R$ " + decimal.format(total);
-			String valor = "R$ " + decimal.format(prod.getProdutoPreco());
 			
 			lista.add(
 				new EstoqueReport(
 						prod.getProdutoDesc(),
 						categ.getCategoriaDesc(),
 						estoque.getEstoque_produto_quantidade(),
-						valor,
-						valorTotal,
+						"R$ " + decimal.format(prod.getProdutoPreco()),
+						"R$ " + decimal.format(total),
 						ativo
 				)
 			);
@@ -69,8 +70,7 @@ public class testeRelatorios {
 		
 		Relatorios.gerarRelatorioEstoque(lista);
 	}
-	
-	@SuppressWarnings("unused")
+
 	private static void Venda() throws IOException, SQLException, JRException {
 		
 		List<Operacao> vendas = new ArrayList<Operacao>();
@@ -78,14 +78,16 @@ public class testeRelatorios {
 		String databaseURL = "jdbc:sqlite:" + new File("lib/.").getCanonicalPath() + "/" + "CDT_database.sqlite";
 		List<Venda> listaVendas = new VendaDao(databaseURL).getAll();
 		
-		for(Venda venda : listaVendas) {
-			Cliente cliente = new ClienteDao(databaseURL).getById(venda.getVendaCliente());
+		for(Venda venda : listaVendas) 
+		{
+			Cliente cliente = new ClienteDao(databaseURL).getById(venda.getVendaCliente());		
+			
 			Operacao vendaOperacao = 
 					new Operacao(
 							venda.getVendaId(),
 							cliente.getClienteNome(), 
-							venda.getVendaData(), 
-							venda.getVendaValor()
+							df.format(venda.getVendaData()), 
+							"R$ " + decimal.format(venda.getVendaValor())
 					);
 			
 			// Lista para preencher os produtos de cada venda
@@ -101,7 +103,7 @@ public class testeRelatorios {
 								produto.getProdutoId(), 
 								produto.getProdutoDesc(),
 								item.getQuantidade(),
-								produto.getProdutoPreco()
+								"R$ " + decimal.format(produto.getProdutoPreco())
 						)
 				);
 			}
@@ -111,6 +113,9 @@ public class testeRelatorios {
 		}
 		
 		Relatorios.gerarRelatorioVendas(vendas);
+		
+		// Comprovante de Venda
+		Relatorios.gerarComprovanteVenda(vendas.subList(0, 1));
 	}
 	
 	private static void Lote() throws IOException, SQLException, JRException {
@@ -120,14 +125,15 @@ public class testeRelatorios {
 		String databaseURL = "jdbc:sqlite:" + new File("lib/.").getCanonicalPath() + "/" + "CDT_database.sqlite";
 		List<Lote> listaLotes = new LoteDao(databaseURL).getAll();
 		
-		for(Lote lote : listaLotes) {
+		for(Lote lote : listaLotes) 
+		{
 			Fornecedor fornecedor = new FornecedorDao(databaseURL).getById(lote.getLoteFornecedor());
 			Operacao loteOperacao = 
 					new Operacao(
 							lote.getLoteId(),
 							fornecedor.getFornecedorNome(), 
-							lote.getLoteData(), 
-							lote.getLoteValor()
+							df.format(lote.getLoteData()), 
+							"R$ " + decimal.format(lote.getLoteValor())
 					);
 			
 			// Lista para preencher os produtos de cada lote
@@ -135,7 +141,8 @@ public class testeRelatorios {
 			
 			List<ItemLote> itens = new ItemLoteProdutoDao(databaseURL).getForValue("lote", String.valueOf(lote.getLoteId()));
 			
-			for(ItemLote item : itens) {
+			for(ItemLote item : itens) 
+			{
 				Produto produto = new ProdutoDao(databaseURL).getById(item.getProduto());
 				
 				loteProdutos.add(
@@ -143,7 +150,7 @@ public class testeRelatorios {
 								produto.getProdutoId(), 
 								produto.getProdutoDesc(),
 								item.getQuantidade(),
-								produto.getProdutoPreco()
+								"R$ " + decimal.format(produto.getProdutoCusto())
 						)
 				);
 			}

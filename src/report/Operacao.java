@@ -1,23 +1,22 @@
 package report;
 
-import java.util.Date;
 import java.util.List;
 
 public class Operacao {
 	private int operacaoId;
 	private String nomeSolicitante;
-	private Date dataOperacao;
-	private double valorOperacao;
+	private String dataOperacao;
+	private String valorOperacao;
 	private List<ProdutoOperacao> produtosOperacao;
 	
-	public Operacao(int operacaoId, String nomeSolicitante, Date dataOperacao, double valorOperacao) {
+	public Operacao(int operacaoId, String nomeSolicitante, String dataOperacao, String valorOperacao) {
 		this.operacaoId = operacaoId;
 		this.nomeSolicitante = nomeSolicitante;
 		this.dataOperacao = dataOperacao;
 		this.valorOperacao = valorOperacao;
 	}
 	
-	public Operacao(int operacaoId, String nomeSolicitante, Date dataOperacao, double valorOperacao, List<ProdutoOperacao> produtosOperacao) {
+	public Operacao(int operacaoId, String nomeSolicitante, String dataOperacao, String valorOperacao, List<ProdutoOperacao> produtosOperacao) {
 		this.operacaoId = operacaoId;
 		this.nomeSolicitante = nomeSolicitante;
 		this.dataOperacao = dataOperacao;
@@ -33,11 +32,11 @@ public class Operacao {
 		return this.nomeSolicitante;
 	}
 	
-	public Date getDataOperacao() {
+	public String getDataOperacao() {
 		return this.dataOperacao;
 	}
 	
-	public double getValorOperacao() {
+	public String getValorOperacao() {
 		return this.valorOperacao;
 	}
 	

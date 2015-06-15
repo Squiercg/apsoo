@@ -80,7 +80,8 @@ public class ModuloCategoria {
 		JPanel panelLevel3 = new JPanel(new BorderLayout());
 		panelLevel2.add(panelLevel3, BorderLayout.NORTH);
 		
-		placeHolder = new JLabel("Categoria");
+		placeHolder = new JLabel("Categoria*");
+		placeHolder.setToolTipText("O preenchimento deste campo é obrigatório");
 		placeHolder.setBorder(defaultBorder);
 		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getHeight() / 64 + (int) (preferredSize.getWidth() / 3)), 
@@ -227,6 +228,7 @@ public class ModuloCategoria {
 				systemInterface.getSystemInterfaceLabelStatus().setText(message);
 			}
 			lista = new String[categorias.size()];
+			
 			for(Categoria c : categorias)
 				lista[categorias.indexOf(c)] = c.getCategoriaDesc();
 		}
@@ -431,6 +433,7 @@ public class ModuloCategoria {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
+			textFieldCategoria.setBackground(Color.white);
 			if(!textFieldCategoria.getText().trim().equalsIgnoreCase("") && !verificaCategoria(textFieldCategoria.getText().trim())) {
 				conf.requestConfirmation(1, this);
 			} else if(textFieldCategoria.getText().trim().equalsIgnoreCase("")) {

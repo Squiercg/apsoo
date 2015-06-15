@@ -2,6 +2,7 @@ package interfaces;
 
 import interfaces.ModuloCategoria.HandlerAddCategoria;
 import interfaces.ModuloCategoria.HandlerConfirmAlterCategoria;
+import interfaces.ModuloProduto.HandlerAddProduto;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -144,6 +145,10 @@ public class Confirmation {
 				} else if(subCaller instanceof HandlerConfirmAlterCategoria) {
 					((ModuloCategoria) caller).atualizaCategoria(true);
 				}
+			} else if(caller instanceof ModuloProduto) {
+				if(subCaller instanceof HandlerAddProduto) {
+					((ModuloProduto) caller).incluiProduto(true);
+				}
 			}
 			source.dispose();
 		}
@@ -174,6 +179,10 @@ public class Confirmation {
 					((ModuloCategoria) caller).incluiCategoria(false);
 				} else if(subCaller instanceof HandlerConfirmAlterCategoria) {
 					((ModuloCategoria) caller).atualizaCategoria(false);
+				}
+			} else if(caller instanceof ModuloProduto) {
+				if(subCaller instanceof HandlerAddProduto) {
+					((ModuloProduto) caller).incluiProduto(false);
 				}
 			}
 			source.dispose();

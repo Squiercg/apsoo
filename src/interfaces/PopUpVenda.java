@@ -297,8 +297,8 @@ public class PopUpVenda {
 		try {
 			EstoqueDao estoqueDao = new EstoqueDao(systemInterface.getSystemInterfaceDatabaseURL());
 			try {
-				Estoque estoque = estoqueDao.getById(produtos.get(source.getSelectedIndex()).getProdutoId());
-				quantidadeEstoque = estoque.getEstoque_produto_quantidade();
+				List<Estoque> estoque = estoqueDao.getForValue("estoque_produto_id", String.valueOf(produtos.get(source.getSelectedIndex()).getProdutoId()));
+				quantidadeEstoque = estoque.get(0).getEstoque_produto_quantidade();
 				systemInterface.getSystemInterfaceLabelStatus().setText(produtos.get(source.getSelectedIndex()).getProdutoDesc() + 
 						" disponível em estoque: " + quantidadeEstoque);
 			} catch(IndexOutOfBoundsException ex) {

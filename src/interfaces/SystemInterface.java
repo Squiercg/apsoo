@@ -258,6 +258,10 @@ public class SystemInterface {
 		return systemInterfaceCategorias;
 	}
 	
+	public ModuloProduto getSystemInterfaceProdutos() {
+		return systemInterfaceProdutos;
+	}
+	
 	public JPanel getSystemInterfacePanelMain() {
 		return systemInterfacePanelMain;
 	}

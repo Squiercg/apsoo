@@ -103,6 +103,7 @@ public class PopUpLote {
 			}
 			else {
 				lista = new String[categorias.size()];
+				
 				for(Categoria c : categorias)
 					lista[categorias.indexOf(c)] = c.getCategoriaDesc();
 			}

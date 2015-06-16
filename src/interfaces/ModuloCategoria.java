@@ -195,14 +195,15 @@ public class ModuloCategoria {
 		JPanel panelLevel3 = new JPanel(new BorderLayout());
 		panelLevel2.add(panelLevel3, BorderLayout.NORTH);
 		
-		placeHolder = new JLabel("Categoria");
+		placeHolder = new JLabel("Categoria*");
+		placeHolder.setToolTipText("O preenchimento deste campo é obrigatório");
 		placeHolder.setBorder(defaultBorder);
 		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getHeight() / 64 + (int) (preferredSize.getWidth() / 3)), 
 			(int) (preferredSize.getHeight() / 32)));
 		panelLevel3.add(placeHolder, BorderLayout.WEST);
 		
-		placeHolder = new JLabel("Ativo"); 
+		placeHolder = new JLabel("Ativo");
 		placeHolder.setBorder(defaultBorder);
 		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
 		panelLevel3.add(placeHolder, BorderLayout.CENTER);
@@ -490,7 +491,7 @@ public class ModuloCategoria {
 			
 			cancelButton.setText("Cancelar");
 			cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
-			cancelButton.addMouseListener(new HandlerCancelCategoria(systemInterface, categorias.get(comboBoxCategorias.getSelectedIndex())));
+			cancelButton.addMouseListener(new HandlerCancelCategoria(systemInterface, categoria));
 		}
 		
 		@Override

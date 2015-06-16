@@ -34,6 +34,20 @@ public class Produto {
 		produtoAtivo = 1;
 	}
 	
+	public Produto(int produtoId, String produtoDesc, int produtoCategoria, double produtoCusto, double produtoPreco, double produtoLucro, int produtoAtivo) {
+		this.produtoId = produtoId;
+		this.produtoDesc = produtoDesc;
+		this.produtoCategoria = produtoCategoria;
+		this.produtoCusto = produtoCusto;
+		this.produtoPreco = produtoPreco;
+		this.produtoLucro = produtoLucro;
+		this.produtoAtivo = produtoAtivo;
+	}
+	
+	public Produto(String produtoDesc) {
+		this.produtoDesc = produtoDesc;
+	}
+
 	public int getProdutoId() {
 		return produtoId;
 	}

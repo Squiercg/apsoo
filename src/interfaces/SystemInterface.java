@@ -41,6 +41,7 @@ public class SystemInterface {
 	private CadastraVendas systemInterfaceCadastraVendas;
 	private ModuloCategoria systemInterfaceCategorias;
 	private ModuloProduto systemInterfaceProdutos;
+	private ModuloFornecedor systemInterfaceFornecedores;
 	private SystemInterface systemInterfaceSelfReference;
 	private Confirmation systemInterfaceConfirmation;
 	
@@ -224,6 +225,7 @@ public class SystemInterface {
 		systemInterfaceCadastraVendas = new CadastraVendas(this);
 		systemInterfaceCategorias = new ModuloCategoria(this);
 		systemInterfaceProdutos = new ModuloProduto(this);
+		systemInterfaceFornecedores = new ModuloFornecedor(this);
 	}
 	
 	public SystemInterface getSystemInterfaceSelfReference() {
@@ -260,6 +262,10 @@ public class SystemInterface {
 	
 	public ModuloProduto getSystemInterfaceProdutos() {
 		return systemInterfaceProdutos;
+	}
+	
+	public ModuloFornecedor getSystemInterfaceFornecedores() {
+		return systemInterfaceFornecedores;
 	}
 	
 	public JPanel getSystemInterfacePanelMain() {
@@ -406,6 +412,8 @@ public class SystemInterface {
 								systemInterfacePanelMain.add(systemInterfaceCategorias.cadastraCategoria());
 							} else if(systemInterfaceMenuName.equalsIgnoreCase("Produtos")) {
 								systemInterfacePanelMain.add(systemInterfaceProdutos.cadastraProduto());
+							} else if(systemInterfaceMenuName.equalsIgnoreCase("Fornecedores")) {
+								systemInterfacePanelMain.add(systemInterfaceFornecedores.cadastraFornecedor());
 							} else {
 								////////////////////////////////////////////////////////////////////////
 								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));								

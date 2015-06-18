@@ -50,8 +50,10 @@ public class ModuloProduto {
 	private static JButton cancelButton;
 	private static Confirmation conf;
 	private static SystemInterface systemInterface;
+	private boolean updated;
 	
 	public ModuloProduto(SystemInterface systemInterface) {
+		updated = false;
 		ModuloProduto.systemInterface = systemInterface;
 		preferredSize = systemInterface.getSystemInterfaceDimension();
 		defaultBorder = Main.isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
@@ -396,7 +398,7 @@ public class ModuloProduto {
 		comboBoxCategorias.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
 		comboBoxCategorias.setBackground(Color.white);
 		comboBoxCategorias.setEditable(false);
-		comboBoxCategorias.setSelectedIndex(produtoSelecionado == null ? 0 : buscaCategoria(categorias, produto.getProdutoCategoria()));
+		comboBoxCategorias.setSelectedIndex(produtoSelecionado == null ? 0 : buscaCategoria(categorias, produtoSelecionado.getProdutoCategoria()));
 		comboBoxCategorias.addActionListener(new HandlerComboBox(this, produtoSelecionado));
 		
 		criaListaProdutos(produtoSelecionado);
@@ -594,10 +596,10 @@ public class ModuloProduto {
 		return panelLevel0;
 	}
 	
-	private static int buscaCategoria(List<Categoria> categorias2, int categoriaId) {
-		for(Categoria c : categorias2) {
+	private static int buscaCategoria(List<Categoria> categorias, int categoriaId) {
+		for(Categoria c : categorias) {
 			if(c.getCategoriaId() == categoriaId)
-				return categorias2.indexOf(c);
+				return categorias.indexOf(c);
 		}
 		return 0;
 	}
@@ -679,11 +681,13 @@ public class ModuloProduto {
 		if(choice) {
 				try {
 				produtoDao = new ProdutoDao(systemInterface.getSystemInterfaceDatabaseURL());
-				produtoDao.update(new Produto(produto.getProdutoId(), comboBoxProdutos.getSelectedItem().toString(), categorias.get(comboBoxCategorias.getSelectedIndex()).getCategoriaId(), 
+				produto = new Produto(produto.getProdutoId(), comboBoxProdutos.getSelectedItem().toString(), categorias.get(comboBoxCategorias.getSelectedIndex()).getCategoriaId(), 
 						Double.parseDouble(textFieldProdutoCusto.getText().trim().replace(",", ".")), Double.parseDouble(textFieldProdutoPreco.getText().trim().replace(",", ".")), 
-						Double.parseDouble(textFieldProdutoLucro.getText().trim().replace(",", ".")) / 100, comboBoxProdutoAtivo.getSelectedItem().toString().equalsIgnoreCase("Sim") ? 1 : 0));
+						Double.parseDouble(textFieldProdutoLucro.getText().trim().replace(",", ".")) / 100, comboBoxProdutoAtivo.getSelectedItem().toString().equalsIgnoreCase("Sim") ? 1 : 0);
+				produtoDao.update(produto);
 				
 				systemInterface.clearSystemInterface(!Main.isBrunoTesting);
+				updated = false;
 				systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceProdutos().consultaProduto(produto));
 				produto = null;
 				
@@ -796,7 +800,8 @@ public class ModuloProduto {
 		comboBoxProdutos.addActionListener(new HandlerCompletaProdutos(this));
 		comboBoxProdutos.setBackground(Color.white);
 		comboBoxProdutos.setEditable(false);
-		comboBoxProdutos.setSelectedIndex(produtoSelecionado == null ? 0 : produtos.indexOf(produtoSelecionado));
+		comboBoxProdutos.setSelectedIndex(produtoSelecionado == null || updated ? 0 : produtos.indexOf(produtoSelecionado));
+		updated = produtoSelecionado != null;
 	}
 	
 	private static String[] completaListaProdutos(SystemInterface systemInterface, JComboBox source) {

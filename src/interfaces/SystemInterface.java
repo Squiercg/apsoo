@@ -416,17 +416,19 @@ public class SystemInterface {
 								systemInterfacePanelMain.add(systemInterfaceFornecedores.cadastraFornecedor());
 							} else {
 								////////////////////////////////////////////////////////////////////////
-								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));								
+								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
 								////////////////////////////////////////////////////////////////////////
 							}
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
 							if(systemInterfaceMenuName.equalsIgnoreCase("Categorias")) {
 								systemInterfacePanelMain.add(systemInterfaceCategorias.consultaCategoria(null));
 							} else if (systemInterfaceMenuName.equalsIgnoreCase("Produtos")) {
-								systemInterfacePanelMain.add(systemInterfaceProdutos.consultaProduto(null));								
+								systemInterfacePanelMain.add(systemInterfaceProdutos.consultaProduto(null));
+							} else if(systemInterfaceMenuName.equalsIgnoreCase("Fornecedores")) {
+								systemInterfacePanelMain.add(systemInterfaceFornecedores.consultaFornecedor(null));
 							} else {
 								////////////////////////////////////////////////////////////////////////
-								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));								
+								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
 								////////////////////////////////////////////////////////////////////////
 							}
 						} else {

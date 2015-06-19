@@ -21,11 +21,23 @@ public class Fornecedor {
 		
 	}
 	
+	public Fornecedor(String fornecedorNome) {
+		this.fornecedorNome = fornecedorNome;
+	}
+	
 	public Fornecedor(String fornecedorNome, String fornecedorTelefone, String fornecedorEmail) {
 		this.fornecedorNome = fornecedorNome;
 		this.fornecedorTelefone = fornecedorTelefone;
 		this.fornecedorEmail = fornecedorEmail;
 		fornecedorAtivo = 1;
+	}
+	
+	public Fornecedor(int fornecedorId, String fornecedorNome, String fornecedorTelefone, String fornecedorEmail, int fornecedorAtivo) {
+		this.fornecedorId = fornecedorId;
+		this.fornecedorNome = fornecedorNome;
+		this.fornecedorTelefone = fornecedorTelefone;
+		this.fornecedorEmail = fornecedorEmail;
+		this.fornecedorAtivo = fornecedorAtivo;
 	}
 	
 	public int getFornecedorId() {
@@ -46,5 +58,12 @@ public class Fornecedor {
 	
 	public int getFornecedorAtivo() {
 		return fornecedorAtivo;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Fornecedor))
+			return false;
+		return this.getFornecedorId() == ((Fornecedor) obj).getFornecedorId();
 	}
 }

@@ -679,7 +679,7 @@ public class ModuloProduto {
 	
 	public void atualizaProduto(Boolean choice) {
 		if(choice) {
-				try {
+			try {
 				produtoDao = new ProdutoDao(systemInterface.getSystemInterfaceDatabaseURL());
 				produto = new Produto(produto.getProdutoId(), comboBoxProdutos.getSelectedItem().toString(), categorias.get(comboBoxCategorias.getSelectedIndex()).getCategoriaId(), 
 						Double.parseDouble(textFieldProdutoCusto.getText().trim().replace(",", ".")), Double.parseDouble(textFieldProdutoPreco.getText().trim().replace(",", ".")), 

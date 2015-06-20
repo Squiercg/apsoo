@@ -35,7 +35,7 @@ public class Common {
 	
 	private static Set<String> dates = new HashSet<String>();
 	static {
-	    for (int year = 1950; year < 2100; year++) {
+	    for (int year = 1900; year < 2100; year++) {
 	        for (int month = 1; month <= 12; month++) {
 	            for (int day = 1; day <= daysInMonth(year, month); day++) {
 	                StringBuilder date = new StringBuilder();

@@ -1,6 +1,6 @@
 package classes;
 
-import java.sql.Date;
+import java.util.Date;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -84,5 +84,12 @@ public class Cliente {
 	
 	public int getClienteAtivo() {
 		return clienteAtivo;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Cliente))
+			return false;
+		return this.getClienteId() == ((Cliente) obj).getClienteId();
 	}
 }

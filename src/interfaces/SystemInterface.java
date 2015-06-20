@@ -42,6 +42,7 @@ public class SystemInterface {
 	private ModuloCategoria systemInterfaceCategorias;
 	private ModuloProduto systemInterfaceProdutos;
 	private ModuloFornecedor systemInterfaceFornecedores;
+	private ModuloCliente systemInterfaceClientes;
 	private SystemInterface systemInterfaceSelfReference;
 	private Confirmation systemInterfaceConfirmation;
 	
@@ -226,6 +227,7 @@ public class SystemInterface {
 		systemInterfaceCategorias = new ModuloCategoria(this);
 		systemInterfaceProdutos = new ModuloProduto(this);
 		systemInterfaceFornecedores = new ModuloFornecedor(this);
+		systemInterfaceClientes = new ModuloCliente(this);
 	}
 	
 	public SystemInterface getSystemInterfaceSelfReference() {
@@ -266,6 +268,10 @@ public class SystemInterface {
 	
 	public ModuloFornecedor getSystemInterfaceFornecedores() {
 		return systemInterfaceFornecedores;
+	}
+	
+	public ModuloCliente getSystemInterfaceClientes() {
+		return systemInterfaceClientes;
 	}
 	
 	public JPanel getSystemInterfacePanelMain() {
@@ -414,10 +420,10 @@ public class SystemInterface {
 								systemInterfacePanelMain.add(systemInterfaceProdutos.cadastraProduto());
 							} else if(systemInterfaceMenuName.equalsIgnoreCase("Fornecedores")) {
 								systemInterfacePanelMain.add(systemInterfaceFornecedores.cadastraFornecedor());
+							} else if(systemInterfaceMenuName.equalsIgnoreCase("Clientes")) {
+								systemInterfacePanelMain.add(systemInterfaceClientes.cadastraCliente());
 							} else {
-								////////////////////////////////////////////////////////////////////////
 								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
-								////////////////////////////////////////////////////////////////////////
 							}
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Consultar")) {
 							if(systemInterfaceMenuName.equalsIgnoreCase("Categorias")) {

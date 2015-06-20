@@ -14,20 +14,20 @@ import repositorio.CategoriaDao;
 import repositorio.ClienteDao;
 import repositorio.EstoqueDao;
 import repositorio.FornecedorDao;
+import repositorio.ItemLoteProdutoDao;
 import repositorio.ItemVendaDao;
 import repositorio.LoteDao;
 import repositorio.ProdutoDao;
 import repositorio.VendaDao;
-import repositorio.ItemLoteProdutoDao;
-import classes.Cliente;
-import classes.Fornecedor;
-import classes.ItemVenda;
-import classes.Venda;
 import classes.Categoria;
+import classes.Cliente;
 import classes.Estoque;
-import classes.Produto;
-import classes.Lote;
+import classes.Fornecedor;
 import classes.ItemLote;
+import classes.ItemVenda;
+import classes.Lote;
+import classes.Produto;
+import classes.Venda;
 
 public class testeRelatorios {
 

@@ -632,7 +632,7 @@ public class ModuloFornecedor {
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Adiciona o produto informado ao banco");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Adiciona o fornecedor informado ao banco");
 		}
 		
 		@Override
@@ -684,7 +684,7 @@ public class ModuloFornecedor {
 		@Override
 		public void mouseEntered(MouseEvent e) {
 			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
-			systemInterface.getSystemInterfaceLabelStatus().setText("Altera as informações da categoria selecionada");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Altera as informações ddo fornecedor selecionado");
 		}
 		
 		@Override

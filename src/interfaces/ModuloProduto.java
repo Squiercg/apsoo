@@ -995,7 +995,7 @@ public class ModuloProduto {
 		@Override
 		public void mouseEntered(MouseEvent e) {
 			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
-			systemInterface.getSystemInterfaceLabelStatus().setText("Altera as informações da categoria selecionada");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Altera as informações do produto selecionado");
 		}
 		
 		@Override

@@ -169,7 +169,6 @@ public class SystemInterface {
 		systemInterfaceMenuItemNames.clear();
 		systemInterfaceMenuItemNames.add("Conferência de Estoque");
 		systemInterfaceMenuItemNames.add("Histórico de Lotes");
-		systemInterfaceMenuItemNames.add("Comprovante de Venda");
 		systemInterfaceMenuItemNames.add("Histórico de Vendas");
 		
 		for(String systemInterfaceMenuItemName : systemInterfaceMenuItemNames) {
@@ -443,10 +442,10 @@ public class SystemInterface {
 							systemInterfacePanelMain.add(systemInterfaceRelatorios.relatorioConferenciaEstoque());
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Histórico de Lotes")) {
 							systemInterfacePanelMain.add(systemInterfaceRelatorios.relatorioHistoricoLotes());
+						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Histórico de Vendas")) {
+							systemInterfacePanelMain.add(systemInterfaceRelatorios.relatorioHistoricoVendas());
 						} else {
-							////////////////////////////////////////////////////////////////////////
 							systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
-							////////////////////////////////////////////////////////////////////////
 						}
 					}
 				} else {

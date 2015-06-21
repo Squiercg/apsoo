@@ -49,4 +49,11 @@ public class Venda {
 	public double getVendaValor() {
 		return vendaValor;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Venda))
+			return false;
+		return this.getVendaId() == ((Venda) obj).getVendaId();
+	}
 }

@@ -49,4 +49,11 @@ public class Lote {
 	public double getLoteValor() {
 		return loteValor;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Lote))
+			return false;
+		return this.getLoteId() == ((Lote) obj).getLoteId();
+	}
 }

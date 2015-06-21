@@ -8,8 +8,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -17,17 +21,27 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 
 import main.Main;
 import net.sf.jasperreports.engine.JRException;
 import report.EstoqueReport;
+import report.Operacao;
+import report.ProdutoOperacao;
 import report.Relatorios;
 import repositorio.CategoriaDao;
 import repositorio.EstoqueDao;
+import repositorio.FornecedorDao;
+import repositorio.ItemLoteProdutoDao;
+import repositorio.LoteDao;
 import repositorio.ProdutoDao;
 import classes.Categoria;
 import classes.Estoque;
+import classes.Fornecedor;
+import classes.ItemLote;
+import classes.Lote;
 import classes.Produto;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -45,7 +59,7 @@ public class ModuloRelatorios {
 		defaultBorder = Main.isBrunoTesting ? BorderFactory.createRaisedBevelBorder() : BorderFactory.createEmptyBorder();
 	}
 	
-	public JPanel relatorioConferenciaEstoque(Categoria categoriaSelecionada) {
+	public JPanel relatorioConferenciaEstoque() {
 		JPanel panelLevel0 = new JPanel(new BorderLayout());
 		Common.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
 		
@@ -122,7 +136,7 @@ public class ModuloRelatorios {
 		comboBoxCategorias.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
 		comboBoxCategorias.setBackground(Color.white);
 		comboBoxCategorias.setEditable(false);
-		comboBoxCategorias.setSelectedIndex(categoriaSelecionada == null ? 0 : categorias.indexOf(categoriaSelecionada));
+		comboBoxCategorias.setSelectedIndex(0);
 		panelLevel4.add(comboBoxCategorias, BorderLayout.WEST);
 		
 		JPanel panelLevel5 = new JPanel(new BorderLayout());
@@ -176,6 +190,216 @@ public class ModuloRelatorios {
 		alterButton.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
 		alterButton.setForeground(Color.white);
 		alterButton.addMouseListener(new HandlerConferenciaEstoque(systemInterface, comboBoxCategorias, categorias));
+		alterButton.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
+			(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(alterButton, BorderLayout.WEST);
+		
+		return panelLevel0;
+	}
+	
+	public JPanel relatorioHistoricoLotes() {
+		JPanel panelLevel0 = new JPanel(new BorderLayout());
+		Common.makeLateralBorders(panelLevel0, preferredSize, defaultBorder);
+		
+		JPanel panelLevel1 = new JPanel(new BorderLayout());
+		panelLevel0.add(panelLevel1, BorderLayout.CENTER);
+		
+		JPanel panelLevel2 = new JPanel(new BorderLayout());
+		panelLevel1.add(panelLevel2, BorderLayout.NORTH);
+		
+		JLabel placeHolder = new JLabel("");
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		placeHolder.setBorder(defaultBorder);
+		panelLevel2.add(placeHolder, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("Histórico de Lotes");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 20));
+		panelLevel2.add(placeHolder, BorderLayout.CENTER);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 16)));
+		placeHolder.setBorder(defaultBorder);
+		panelLevel2.add(placeHolder, BorderLayout.SOUTH);
+		
+		panelLevel2 = new JPanel(new BorderLayout());
+		panelLevel1.add(panelLevel2, BorderLayout.CENTER);
+		
+		JPanel panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("Fornecedor");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getHeight() / 64 + (int) (preferredSize.getWidth() / 3)), 
+			(int) (preferredSize.getHeight() / 32)));
+		panelLevel3.add(placeHolder, BorderLayout.WEST);
+		
+		placeHolder = new JLabel("Data de Inclusão"); 
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setForeground(placeHolder.getBackground());
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
+		panelLevel3.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.CENTER);
+		JPanel panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.NORTH);
+		
+		String lista[] = null;
+		List<Fornecedor> fornecedores = null;
+		
+		try {
+			FornecedorDao fornecedorDao = new FornecedorDao(systemInterface.getSystemInterfaceDatabaseURL());
+			fornecedores = fornecedorDao.getAll();
+		} catch (SQLException e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de fornecedores!");
+		} finally {
+			if(fornecedores == null || fornecedores.size() == 0) {
+				fornecedores = new ArrayList<Fornecedor>();
+				fornecedores.add(new Fornecedor("Nenhum valor encontrado"));
+				String message = fornecedores == null ? "Houve um erro ao recuperar a lista de categorias!" : "Nenhuma categoria encontrada!";
+				systemInterface.getSystemInterfaceLabelStatus().setText(message);
+			}
+			boolean isNull = fornecedores.get(0).getFornecedorNome().equalsIgnoreCase("Nenhum valor encontrado");
+			lista = new String[isNull ? fornecedores.size() : fornecedores.size() + 1];
+			
+			if(!isNull) {
+				lista[0] = "Todos os fornecedores";
+			}
+			for(Fornecedor f : fornecedores)
+				lista[fornecedores.indexOf(f) + (isNull ? 0 : 1)] = f.getFornecedorNome();
+		}
+		JComboBox comboBoxFornecedores = new JComboBox(lista);
+		comboBoxFornecedores.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
+		comboBoxFornecedores.setBackground(Color.white);
+		comboBoxFornecedores.setEditable(false);
+		comboBoxFornecedores.setSelectedIndex(0);
+		panelLevel4.add(comboBoxFornecedores, BorderLayout.WEST);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				comboBoxFornecedores.requestFocusInWindow();
+		    }
+		});
+		
+		JPanel panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.CENTER);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4) + 
+			(int) (preferredSize.getWidth() / 64), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.EAST);
+		
+		panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.CENTER);
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel4.add(placeHolder, BorderLayout.NORTH);
+		
+		panelLevel3 = panelLevel4;
+		panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.CENTER);
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("Data início*");
+		placeHolder.setToolTipText("O preenchimento deste campo é obrigatório");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getHeight() / 64 + (int) (preferredSize.getWidth() / 3)), 
+			(int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.WEST);
+		
+		placeHolder = new JLabel("Data final*");
+		placeHolder.setToolTipText("O preenchimento deste campo é obrigatório");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 7));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel3 = panelLevel4;
+		panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.CENTER);
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.NORTH);
+		
+		JTextField textFieldDataIncio = new JTextField();
+		textFieldDataIncio.setText((new SimpleDateFormat("dd/MM/yyyy")).format(new Date()));
+		float[] hsbColor = Color.RGBtoHSB(184, 207, 229, null);
+		Color innerBorderColor = Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]);
+		hsbColor = Color.RGBtoHSB(122, 138, 153, null);
+		Color outerBorderColor = Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]);
+		Border compound = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(outerBorderColor), BorderFactory.createLineBorder(innerBorderColor));
+		textFieldDataIncio.setBorder(compound);
+		textFieldDataIncio.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(textFieldDataIncio, BorderLayout.WEST);
+		
+		panelLevel4 = panelLevel5;
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.CENTER);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 3) + (int) (preferredSize.getWidth() / 64) - 
+			(int) (preferredSize.getWidth() / 4) - 5, (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.WEST);
+		
+		JTextField textFieldDataFinal = new JTextField();
+		textFieldDataFinal.setText((new SimpleDateFormat("dd/MM/yyyy")).format(new Date()));
+		textFieldDataFinal.setBorder(compound);
+		textFieldDataFinal.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(textFieldDataFinal, BorderLayout.CENTER);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 4) + 
+			(int) (preferredSize.getWidth() / 64), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.EAST);
+		
+		panelLevel3 = new JPanel(new BorderLayout());
+		panelLevel2.add(panelLevel3, BorderLayout.SOUTH);
+		panelLevel4 = new JPanel(new BorderLayout());
+		panelLevel3.add(panelLevel4, BorderLayout.SOUTH);
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.NORTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.SOUTH);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth()), (int) (preferredSize.getHeight() / 32)));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+		
+		panelLevel5 = new JPanel(new BorderLayout());
+		panelLevel4.add(panelLevel5, BorderLayout.EAST);
+		
+		cancelButton = new JButton("Voltar");
+		cancelButton.setBackground(Color.white);
+		cancelButton.setForeground(Color.black);
+		cancelButton.addMouseListener(systemInterface.new HandlerHomeButton());
+		cancelButton.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
+			(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(cancelButton, BorderLayout.EAST);
+		
+		placeHolder = new JLabel("");
+		placeHolder.setBorder(defaultBorder);
+		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 64),  (int) (preferredSize.getHeight() / 16) - 
+				(int) (preferredSize.getHeight() / 64)));
+		panelLevel5.add(placeHolder, BorderLayout.CENTER);
+		
+		alterButton = new JButton("Gerar");
+		hsbColor = Color.RGBtoHSB(51, 122, 183, null); 
+		alterButton.setBackground(Color.getHSBColor(hsbColor[0], hsbColor[1], hsbColor[2]));
+		alterButton.setForeground(Color.white);
+		alterButton.addMouseListener(new HandlerHistoricoLotes(systemInterface, comboBoxFornecedores, fornecedores, textFieldDataIncio, textFieldDataFinal));
 		alterButton.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 8), (int) (preferredSize.getHeight() / 16) - 
 			(int) (preferredSize.getHeight() / 64)));
 		panelLevel5.add(alterButton, BorderLayout.WEST);
@@ -251,13 +475,168 @@ public class ModuloRelatorios {
 					systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de estoque!");
 				}
 			} else {
-				systemInterface.getSystemInterfaceLabelStatus().setText("Não há categoria válida a ser alterada!");
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há catagoria válida para a busca!");
 			}
 		}
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Gera o relatório de conferência de estoque com a categoria selecionada");
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText(systemInterface.getSystemInterfaceStatusMessage());
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			mouseEntered(e);
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			mouseExited(e);
+		}
+	}
+	
+	protected static class HandlerHistoricoLotes implements MouseListener {
+		
+		private SystemInterface systemInterface;
+		private JComboBox source;
+		private List<Fornecedor> fornecedores;
+		private JTextField dataInicio;
+		private JTextField dataFinal;
+		
+		public HandlerHistoricoLotes(SystemInterface systemInterface, JComboBox source, List<Fornecedor> fornecedores, JTextField dataInicio, JTextField dataFinal) {
+			this.systemInterface = systemInterface;
+			this.source = source;
+			this.fornecedores = fornecedores;
+			this.dataInicio = dataInicio;
+			this.dataFinal = dataFinal;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			dataInicio.setBackground(Color.white);
+			dataFinal.setBackground(Color.white);
+			if(!source.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado") && 
+					!dataInicio.getText().trim().equalsIgnoreCase("") && Common.isValidDate(dataInicio.getText()) && 
+					!dataFinal.getText().trim().equalsIgnoreCase("") && Common.isValidDate(dataFinal.getText())) {
+				DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					Date dateInicio = df.parse(dataInicio.getText().trim());
+					Date dateFinal = df.parse(dataFinal.getText().trim());
+					
+					if(dateFinal.getTime() >= dateInicio.getTime()) {
+						List<Operacao> lotes = new ArrayList<Operacao>();
+						List<Lote> listaLotes = null;
+						try {
+							if(source.getSelectedItem().toString().equalsIgnoreCase("Todos os fornecedores")) {
+								listaLotes = new LoteDao(systemInterface.getSystemInterfaceDatabaseURL()).getAll();
+							} else {
+								listaLotes = new LoteDao(systemInterface.getSystemInterfaceDatabaseURL()).getForValue("lote_fornecedor", 
+										String.valueOf(fornecedores.get(source.getSelectedIndex() - 1).getFornecedorId()));
+							}
+							ArrayList<Lote> lotesMenoresDataInicio = new ArrayList<Lote>();
+							ArrayList<Lote> lotesMaioresDataFinal = new ArrayList<Lote>();
+							
+							for(Lote l : listaLotes) {
+								if(l.getLoteData().getTime() < dateInicio.getTime()) {
+									lotesMenoresDataInicio.add(l);
+								}
+								if(l.getLoteData().getTime() > dateFinal.getTime()) {
+									lotesMaioresDataFinal.add(l);
+								}
+							}
+							listaLotes.removeAll(lotesMenoresDataInicio);
+							listaLotes.removeAll(lotesMaioresDataFinal);
+						} catch (SQLException e1) {
+							systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de lotes!");
+						}
+						DecimalFormat decimal = new DecimalFormat("0.00");
+						
+						for(Lote lote : listaLotes) {
+							Fornecedor fornecedor = null;
+							try {
+								fornecedor = new FornecedorDao(systemInterface.getSystemInterfaceDatabaseURL()).getById(lote.getLoteFornecedor());
+							} catch (SQLException e1) {
+								systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de lotes!");
+							}
+							Operacao loteOperacao = new Operacao(
+									lote.getLoteId(), 
+									fornecedor.getFornecedorNome(), 
+									df.format(lote.getLoteData()), 
+									"R$ " + decimal.format(lote.getLoteValor())
+							);
+							List<ProdutoOperacao> loteProdutos = new ArrayList<ProdutoOperacao>();
+							List<ItemLote> itens = null;
+							try {
+								itens = new ItemLoteProdutoDao(systemInterface.getSystemInterfaceDatabaseURL()).getForValue("lote", String.valueOf(lote.getLoteId()));
+							} catch (SQLException e1) {
+								systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de lotes!");
+							}
+							
+							for(ItemLote item : itens) {
+								Produto produto = null;
+								try {
+									produto = new ProdutoDao(systemInterface.getSystemInterfaceDatabaseURL()).getById(item.getProduto());
+								} catch (SQLException e1) {
+									systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de lotes!");
+								}
+								
+								loteProdutos.add(new ProdutoOperacao(
+										produto.getProdutoId(), 
+										produto.getProdutoDesc(), 
+										item.getQuantidade(), 
+										"R$ " + decimal.format(produto.getProdutoCusto()))
+								);
+							}
+							loteOperacao.setProdutosOperacao(loteProdutos);
+							lotes.add(loteOperacao);
+						}
+						
+						try {
+							Relatorios.gerarRelatorioLotes(lotes);
+						} catch (JRException e1) {
+							systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de lotes!");
+						} catch (IOException e1) {
+							systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de lotes!");
+						}
+					} else {
+						systemInterface.getSystemInterfaceLabelStatus().setText("A data final deve ser maior que a data inicial!");
+						dataInicio.setBackground(Color.yellow);
+						dataFinal.setBackground(Color.yellow);
+					}
+				} catch (ParseException e1) {
+					systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao converter as datas!");
+					dataInicio.setBackground(Color.yellow);
+					dataFinal.setBackground(Color.yellow);
+				}
+			} else if(dataInicio.getText().trim().equalsIgnoreCase("")) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("É necessário informar a data de início!");
+				dataInicio.setBackground(Color.yellow);
+				dataInicio.requestFocus();
+			} else if(!Common.isValidDate(dataInicio.getText())) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Data de início informada é inválida!");
+				dataInicio.setBackground(Color.yellow);
+				dataInicio.requestFocus();
+			} else if(dataFinal.getText().trim().equalsIgnoreCase("")) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("É necessário informar a data final!");
+				dataFinal.setBackground(Color.yellow);
+				dataFinal.requestFocus();
+			} else if(!Common.isValidDate(dataFinal.getText())) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Data final informada é inválida!");
+				dataFinal.setBackground(Color.yellow);
+				dataFinal.requestFocus();
+			} else {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há fornecedor válido para a busca!");
+			}
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Gera o relatório de histórico de lotes com o fornecedor selecionado");
 		}
 		
 		@Override

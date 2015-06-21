@@ -11,17 +11,11 @@ import java.util.List;
 
 import net.sf.jasperreports.engine.JRException;
 import repositorio.ClienteDao;
-import repositorio.FornecedorDao;
-import repositorio.ItemLoteProdutoDao;
 import repositorio.ItemVendaDao;
-import repositorio.LoteDao;
 import repositorio.ProdutoDao;
 import repositorio.VendaDao;
 import classes.Cliente;
-import classes.Fornecedor;
-import classes.ItemLote;
 import classes.ItemVenda;
-import classes.Lote;
 import classes.Produto;
 import classes.Venda;
 
@@ -33,7 +27,6 @@ public class testeRelatorios {
 	public static void main(String[] args) throws SQLException, IOException, JRException {
 		
 		Venda();
-		Lote();
 	}
 	
 	private static void Venda() throws IOException, SQLException, JRException {
@@ -82,49 +75,4 @@ public class testeRelatorios {
 		// Comprovante de Venda
 		Relatorios.gerarComprovanteVenda(vendas.get(0));
 	}
-	
-	private static void Lote() throws IOException, SQLException, JRException {
-		
-		List<Operacao> lotes = new ArrayList<Operacao>();
-		
-		String databaseURL = "jdbc:sqlite:" + new File("lib/.").getCanonicalPath() + "/" + "CDT_database.sqlite";
-		List<Lote> listaLotes = new LoteDao(databaseURL).getAll();
-		
-		for(Lote lote : listaLotes) 
-		{
-			Fornecedor fornecedor = new FornecedorDao(databaseURL).getById(lote.getLoteFornecedor());
-			Operacao loteOperacao = 
-					new Operacao(
-							lote.getLoteId(),
-							fornecedor.getFornecedorNome(), 
-							df.format(lote.getLoteData()), 
-							"R$ " + decimal.format(lote.getLoteValor())
-					);
-			
-			// Lista para preencher os produtos de cada lote
-			List<ProdutoOperacao> loteProdutos = new ArrayList<ProdutoOperacao>();
-			
-			List<ItemLote> itens = new ItemLoteProdutoDao(databaseURL).getForValue("lote", String.valueOf(lote.getLoteId()));
-			
-			for(ItemLote item : itens) 
-			{
-				Produto produto = new ProdutoDao(databaseURL).getById(item.getProduto());
-				
-				loteProdutos.add(
-						new ProdutoOperacao(
-								produto.getProdutoId(), 
-								produto.getProdutoDesc(),
-								item.getQuantidade(),
-								"R$ " + decimal.format(produto.getProdutoCusto())
-						)
-				);
-			}
-			
-			loteOperacao.setProdutosOperacao(loteProdutos);
-			lotes.add(loteOperacao);
-		}
-		
-		Relatorios.gerarRelatorioLotes(lotes);
-	}
-	
 }

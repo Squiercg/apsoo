@@ -440,7 +440,9 @@ public class SystemInterface {
 								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
 							}
 						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Conferência de Estoque")) {
-							systemInterfacePanelMain.add(systemInterfaceRelatorios.relatorioConferenciaEstoque(null));
+							systemInterfacePanelMain.add(systemInterfaceRelatorios.relatorioConferenciaEstoque());
+						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Histórico de Lotes")) {
+							systemInterfacePanelMain.add(systemInterfaceRelatorios.relatorioHistoricoLotes());
 						} else {
 							////////////////////////////////////////////////////////////////////////
 							systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));

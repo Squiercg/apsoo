@@ -661,24 +661,28 @@ public class ModuloFornecedor {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			fornecedor = fornecedores.get(comboBoxFornecedorNome.getSelectedIndex());
-			
-			alterButton.setText("Salvar");
-			alterButton.removeMouseListener(alterButton.getMouseListeners()[1]);
-			alterButton.addMouseListener(new HandlerConfirmAlterFornecedor(systemInterface));
-			
-			textFieldFornecedorTelefone.setEnabled(true);
-			textFieldFornecedorTelefone.setEditable(true);
-			textFieldFornecedorEmail.setEnabled(true);
-			textFieldFornecedorEmail.setEditable(true);
-			
-			comboBoxFornecedorNome.setEditable(true);
-			comboBoxFornecedorNome.removeActionListener(comboBoxFornecedorNome.getActionListeners()[0]);
-			comboBoxFornecedorAtivo.setEnabled(true);
-			
-			cancelButton.setText("Cancelar");
-			cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
-			cancelButton.addMouseListener(new HandlerCancelFornecedor(systemInterface, fornecedor));
+			if(!comboBoxFornecedorNome.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado")) {
+				fornecedor = fornecedores.get(comboBoxFornecedorNome.getSelectedIndex());
+				
+				alterButton.setText("Salvar");
+				alterButton.removeMouseListener(alterButton.getMouseListeners()[1]);
+				alterButton.addMouseListener(new HandlerConfirmAlterFornecedor(systemInterface));
+				
+				textFieldFornecedorTelefone.setEnabled(true);
+				textFieldFornecedorTelefone.setEditable(true);
+				textFieldFornecedorEmail.setEnabled(true);
+				textFieldFornecedorEmail.setEditable(true);
+				
+				comboBoxFornecedorNome.setEditable(true);
+				comboBoxFornecedorNome.removeActionListener(comboBoxFornecedorNome.getActionListeners()[0]);
+				comboBoxFornecedorAtivo.setEnabled(true);
+				
+				cancelButton.setText("Cancelar");
+				cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
+				cancelButton.addMouseListener(new HandlerCancelFornecedor(systemInterface, fornecedor));
+			} else {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há fornecedor válido a ser alterado!");				
+			}
 		}
 		
 		@Override

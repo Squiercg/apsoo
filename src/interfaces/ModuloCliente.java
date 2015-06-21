@@ -1104,34 +1104,38 @@ public class ModuloCliente {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			cliente = clientes.get(comboBoxClienteNome.getSelectedIndex());
-			
-			alterButton.setText("Salvar");
-			alterButton.removeMouseListener(alterButton.getMouseListeners()[1]);
-			alterButton.addMouseListener(new HandlerConfirmAlterCliente(systemInterface));
-			
-			textFieldClienteDataNasc.setEnabled(true);
-			textFieldClienteDataNasc.setEditable(true);
-			textFieldClienteEmail.setEnabled(true);
-			textFieldClienteEmail.setEditable(true);
-			textFieldClienteEndereco.setEnabled(true);
-			textFieldClienteEndereco.setEditable(true);
-			textFieldClienteTelefone.setEnabled(true);
-			textFieldClienteTelefone.setEditable(true);
-			textFieldClienteCidade.setEnabled(true);
-			textFieldClienteCidade.setEditable(true);
-			textFieldClienteEstado.setEnabled(true);
-			textFieldClienteEstado.setEditable(true);
-			textFieldClienteDocumento.setEnabled(true);
-			textFieldClienteDocumento.setEditable(true);
-			
-			comboBoxClienteNome.setEditable(true);
-			comboBoxClienteNome.removeActionListener(comboBoxClienteNome.getActionListeners()[0]);
-			comboBoxClienteAtivo.setEnabled(true);
-			
-			cancelButton.setText("Cancelar");
-			cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
-			cancelButton.addMouseListener(new HandlerCancelCliente(systemInterface, cliente));
+			if(!comboBoxClienteNome.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado")) {
+				cliente = clientes.get(comboBoxClienteNome.getSelectedIndex());
+				
+				alterButton.setText("Salvar");
+				alterButton.removeMouseListener(alterButton.getMouseListeners()[1]);
+				alterButton.addMouseListener(new HandlerConfirmAlterCliente(systemInterface));
+				
+				textFieldClienteDataNasc.setEnabled(true);
+				textFieldClienteDataNasc.setEditable(true);
+				textFieldClienteEmail.setEnabled(true);
+				textFieldClienteEmail.setEditable(true);
+				textFieldClienteEndereco.setEnabled(true);
+				textFieldClienteEndereco.setEditable(true);
+				textFieldClienteTelefone.setEnabled(true);
+				textFieldClienteTelefone.setEditable(true);
+				textFieldClienteCidade.setEnabled(true);
+				textFieldClienteCidade.setEditable(true);
+				textFieldClienteEstado.setEnabled(true);
+				textFieldClienteEstado.setEditable(true);
+				textFieldClienteDocumento.setEnabled(true);
+				textFieldClienteDocumento.setEditable(true);
+				
+				comboBoxClienteNome.setEditable(true);
+				comboBoxClienteNome.removeActionListener(comboBoxClienteNome.getActionListeners()[0]);
+				comboBoxClienteAtivo.setEnabled(true);
+				
+				cancelButton.setText("Cancelar");
+				cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
+				cancelButton.addMouseListener(new HandlerCancelCliente(systemInterface, cliente));
+			} else {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há cliente válido a ser alterado!");				
+			}
 		}
 		
 		@Override

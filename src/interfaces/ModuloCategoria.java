@@ -479,19 +479,23 @@ public class ModuloCategoria {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			categoria = categorias.get(comboBoxCategorias.getSelectedIndex());
-			
-			alterButton.setText("Salvar");
-			alterButton.removeMouseListener(alterButton.getMouseListeners()[1]);
-			alterButton.addMouseListener(new HandlerConfirmAlterCategoria(systemInterface, categorias.get(comboBoxCategorias.getSelectedIndex())));
-			
-			comboBoxCategorias.setEditable(true);
-			comboBoxCategorias.removeActionListener(comboBoxCategorias.getActionListeners()[0]);
-			comboBoxCategoriaAtiva.setEnabled(true);
-			
-			cancelButton.setText("Cancelar");
-			cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
-			cancelButton.addMouseListener(new HandlerCancelCategoria(systemInterface, categoria));
+			if(!comboBoxCategorias.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado")) {
+				categoria = categorias.get(comboBoxCategorias.getSelectedIndex());
+				
+				alterButton.setText("Salvar");
+				alterButton.removeMouseListener(alterButton.getMouseListeners()[1]);
+				alterButton.addMouseListener(new HandlerConfirmAlterCategoria(systemInterface, categorias.get(comboBoxCategorias.getSelectedIndex())));
+				
+				comboBoxCategorias.setEditable(true);
+				comboBoxCategorias.removeActionListener(comboBoxCategorias.getActionListeners()[0]);
+				comboBoxCategoriaAtiva.setEnabled(true);
+				
+				cancelButton.setText("Cancelar");
+				cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
+				cancelButton.addMouseListener(new HandlerCancelCategoria(systemInterface, categoria));
+			} else {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há categoria válida a ser alterada!");				
+			}
 		}
 		
 		@Override

@@ -810,22 +810,21 @@ public class ModuloProduto {
 		
 		try {
 			produtoDao = new ProdutoDao(systemInterface.getSystemInterfaceDatabaseURL());
-			produtos = produtoDao.getForValue("prod_categoria", source.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado") ? "0" : 
+			produtos = produtoDao.getForValue("prod_categoria", source.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado") ? "-1" : 
 				String.valueOf(categorias.get(source.getSelectedIndex()).getCategoriaId()));
 		} catch (SQLException e) {
 			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de produtos!");
 		} finally {
 			if(produtos == null || produtos.size() == 0) {
-				lista = new String[1];
-				lista[0] = "Nenhum valor encontrado";
+				produtos = new ArrayList<Produto>();
+				produtos.add(new Produto("Nenhum valor encontrado"));
 				String message = produtos == null ? "Houve um erro ao recuperar a lista de produtos!" : "Nenhum produto ativo encontrado!";
 				systemInterface.getSystemInterfaceLabelStatus().setText(message);
 			}
-			else {
-				lista = new String[produtos.size()];
-				for(Produto p : produtos)
-					lista[produtos.indexOf(p)] = p.getProdutoDesc();
-			}
+			lista = new String[produtos.size()];
+			
+			for(Produto p : produtos)
+				lista[produtos.indexOf(p)] = p.getProdutoDesc();
 		}
 		return lista;
 	}
@@ -969,27 +968,31 @@ public class ModuloProduto {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			produto = produtos.get(comboBoxProdutos.getSelectedIndex());
-			
-			alterButton.setText("Salvar");
-			alterButton.removeMouseListener(alterButton.getMouseListeners()[1]);
-			alterButton.addMouseListener(new HandlerConfirmAlterProduto(systemInterface));
-			
-			textFieldProdutoCusto.setEnabled(true);
-			textFieldProdutoCusto.setEditable(true);
-			textFieldProdutoLucro.setEnabled(true);
-			textFieldProdutoLucro.setEditable(true);
-			textFieldProdutoPreco.setEnabled(true);
-			textFieldProdutoPreco.setEditable(true);
-			
-			comboBoxProdutos.setEditable(true);
-			comboBoxProdutos.removeActionListener(comboBoxProdutos.getActionListeners()[0]);
-			comboBoxProdutoAtivo.setEnabled(true);
-			comboBoxCategorias.removeActionListener(comboBoxCategorias.getActionListeners()[0]);
-			
-			cancelButton.setText("Cancelar");
-			cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
-			cancelButton.addMouseListener(new HandlerCancelProduto(systemInterface, produto));
+			if(!comboBoxProdutos.getSelectedItem().toString().equalsIgnoreCase("Nenhum valor encontrado")) {
+				produto = produtos.get(comboBoxProdutos.getSelectedIndex());
+				
+				alterButton.setText("Salvar");
+				alterButton.removeMouseListener(alterButton.getMouseListeners()[1]);
+				alterButton.addMouseListener(new HandlerConfirmAlterProduto(systemInterface));
+				
+				textFieldProdutoCusto.setEnabled(true);
+				textFieldProdutoCusto.setEditable(true);
+				textFieldProdutoLucro.setEnabled(true);
+				textFieldProdutoLucro.setEditable(true);
+				textFieldProdutoPreco.setEnabled(true);
+				textFieldProdutoPreco.setEditable(true);
+				
+				comboBoxProdutos.setEditable(true);
+				comboBoxProdutos.removeActionListener(comboBoxProdutos.getActionListeners()[0]);
+				comboBoxProdutoAtivo.setEnabled(true);
+				comboBoxCategorias.removeActionListener(comboBoxCategorias.getActionListeners()[0]);
+				
+				cancelButton.setText("Cancelar");
+				cancelButton.removeMouseListener(cancelButton.getMouseListeners()[1]);
+				cancelButton.addMouseListener(new HandlerCancelProduto(systemInterface, produto));
+			} else {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Não há produto válido a ser alterado!");				
+			}
 		}
 		
 		@Override

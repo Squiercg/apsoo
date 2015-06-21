@@ -33,6 +33,10 @@ public class Cliente {
 		
 	}
 	
+	public Cliente(String clienteNome) {
+		this.clienteNome = clienteNome;
+	}
+	
 	public Cliente(String clienteNome, String clienteEndereco, String clienteCidade, String clienteEstado, 
 			String clienteTelefone, String clienteDocumento, Date clienteNascimento, String clienteEmail) {
 		this.clienteNome = clienteNome;
@@ -44,6 +48,20 @@ public class Cliente {
 		this.clienteNascimento = clienteNascimento;
 		this.clienteEmail = clienteEmail;
 		clienteAtivo = 1;
+	}
+	
+	public Cliente(int clienteId, String clienteNome, String clienteEndereco, String clienteCidade, String clienteEstado, 
+			String clienteTelefone, String clienteDocumento, Date clienteNascimento, String clienteEmail, int clienteAtivo) {
+		this.clienteId = clienteId;
+		this.clienteNome = clienteNome;
+		this.clienteEndereco = clienteEndereco;
+		this.clienteCidade = clienteCidade;
+		this.clienteEstado = clienteEstado;
+		this.clienteTelefone = clienteTelefone;
+		this.clienteDocumento = clienteDocumento;
+		this.clienteNascimento = clienteNascimento;
+		this.clienteEmail = clienteEmail;
+		this.clienteAtivo = clienteAtivo;
 	}
 	
 	public String getClienteCidade() {

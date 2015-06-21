@@ -432,10 +432,10 @@ public class SystemInterface {
 								systemInterfacePanelMain.add(systemInterfaceProdutos.consultaProduto(null));
 							} else if(systemInterfaceMenuName.equalsIgnoreCase("Fornecedores")) {
 								systemInterfacePanelMain.add(systemInterfaceFornecedores.consultaFornecedor(null));
+							} else if(systemInterfaceMenuName.equalsIgnoreCase("Clientes")) {
+								systemInterfacePanelMain.add(systemInterfaceClientes.consultaCliente(null));
 							} else {
-								////////////////////////////////////////////////////////////////////////
 								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
-								////////////////////////////////////////////////////////////////////////
 							}
 						} else {
 							////////////////////////////////////////////////////////////////////////

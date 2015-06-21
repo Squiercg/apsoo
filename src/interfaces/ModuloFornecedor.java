@@ -684,7 +684,7 @@ public class ModuloFornecedor {
 		@Override
 		public void mouseEntered(MouseEvent e) {
 			systemInterface.getSystemInterfaceLabelStatus().setForeground(Color.black);
-			systemInterface.getSystemInterfaceLabelStatus().setText("Altera as informações ddo fornecedor selecionado");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Altera as informações do fornecedor selecionado");
 		}
 		
 		@Override
@@ -742,6 +742,7 @@ public class ModuloFornecedor {
 			mouseExited(e);
 		}
 	}
+	
 	protected static class HandlerConfirmAlterFornecedor implements MouseListener {
 		
 		private SystemInterface systemInterface;

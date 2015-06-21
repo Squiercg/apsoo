@@ -3,6 +3,7 @@ package interfaces;
 import interfaces.ModuloCategoria.HandlerAddCategoria;
 import interfaces.ModuloCategoria.HandlerConfirmAlterCategoria;
 import interfaces.ModuloCliente.HandlerAddCliente;
+import interfaces.ModuloCliente.HandlerConfirmAlterCliente;
 import interfaces.ModuloFornecedor.HandlerAddFornecedor;
 import interfaces.ModuloFornecedor.HandlerConfirmAlterFornecedor;
 import interfaces.ModuloProduto.HandlerAddProduto;
@@ -164,6 +165,8 @@ public class Confirmation {
 			} else if(caller instanceof ModuloCliente) {
 				if(subCaller instanceof HandlerAddCliente) {
 					((ModuloCliente) caller).incluiCliente(true);
+				} else if(subCaller instanceof HandlerConfirmAlterCliente) {
+					((ModuloCliente) caller).atualizaCliente(true);
 				}
 			}
 			source.dispose();
@@ -211,6 +214,8 @@ public class Confirmation {
 			} else if(caller instanceof ModuloCliente) {
 				if(subCaller instanceof HandlerAddCliente) {
 					((ModuloCliente) caller).incluiCliente(false);
+				} else if(subCaller instanceof HandlerConfirmAlterCliente) {
+					((ModuloCliente) caller).atualizaCliente(false);
 				}
 			}
 			source.dispose();

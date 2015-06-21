@@ -10,18 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.jasperreports.engine.JRException;
-import repositorio.CategoriaDao;
 import repositorio.ClienteDao;
-import repositorio.EstoqueDao;
 import repositorio.FornecedorDao;
 import repositorio.ItemLoteProdutoDao;
 import repositorio.ItemVendaDao;
 import repositorio.LoteDao;
 import repositorio.ProdutoDao;
 import repositorio.VendaDao;
-import classes.Categoria;
 import classes.Cliente;
-import classes.Estoque;
 import classes.Fornecedor;
 import classes.ItemLote;
 import classes.ItemVenda;
@@ -36,41 +32,10 @@ public class testeRelatorios {
 	
 	public static void main(String[] args) throws SQLException, IOException, JRException {
 		
-		Estoque();
 		Venda();
 		Lote();
 	}
 	
-	private static void Estoque() throws SQLException, IOException, JRException	{
-		
-		String databaseURL = "jdbc:sqlite:" + new File("lib/.").getCanonicalPath() + "/" + "CDT_database.sqlite";
-		List<Estoque> listaEstoque = new EstoqueDao(databaseURL).getAll();
-		List<EstoqueReport> lista = new ArrayList<EstoqueReport>();
-		
-		for(Estoque estoque: listaEstoque)
-		{
-			Produto prod = new ProdutoDao(databaseURL).getById(estoque.getEstoque_produto_id());
-			Categoria categ = new CategoriaDao(databaseURL).getById(prod.getProdutoCategoria());			
-			
-			String ativo = prod.getProdutoAtivo() == 1 ? "Sim": "Não";
-			
-			Double total = estoque.getEstoque_produto_quantidade() * prod.getProdutoPreco();
-			
-			lista.add(
-				new EstoqueReport(
-						prod.getProdutoDesc(),
-						categ.getCategoriaDesc(),
-						estoque.getEstoque_produto_quantidade(),
-						"R$ " + decimal.format(prod.getProdutoPreco()),
-						"R$ " + decimal.format(total),
-						ativo
-				)
-			);
-		}
-		
-		Relatorios.gerarRelatorioEstoque(lista);
-	}
-
 	private static void Venda() throws IOException, SQLException, JRException {
 		
 		List<Operacao> vendas = new ArrayList<Operacao>();

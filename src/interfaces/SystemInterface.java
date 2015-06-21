@@ -43,6 +43,7 @@ public class SystemInterface {
 	private ModuloProduto systemInterfaceProdutos;
 	private ModuloFornecedor systemInterfaceFornecedores;
 	private ModuloCliente systemInterfaceClientes;
+	private ModuloRelatorios systemInterfaceRelatorios;
 	private SystemInterface systemInterfaceSelfReference;
 	private Confirmation systemInterfaceConfirmation;
 	
@@ -228,6 +229,7 @@ public class SystemInterface {
 		systemInterfaceProdutos = new ModuloProduto(this);
 		systemInterfaceFornecedores = new ModuloFornecedor(this);
 		systemInterfaceClientes = new ModuloCliente(this);
+		systemInterfaceRelatorios = new ModuloRelatorios(this);
 	}
 	
 	public SystemInterface getSystemInterfaceSelfReference() {
@@ -437,6 +439,8 @@ public class SystemInterface {
 							} else {
 								systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));
 							}
+						} else if(systemInterfaceMenuItemName.equalsIgnoreCase("Conferência de Estoque")) {
+							systemInterfacePanelMain.add(systemInterfaceRelatorios.relatorioConferenciaEstoque(null));
 						} else {
 							////////////////////////////////////////////////////////////////////////
 							systemInterfacePanelMain.add(Common.underConstruction(systemInterfaceSelfReference));

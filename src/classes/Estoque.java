@@ -12,14 +12,17 @@ public class Estoque {
 	private int estoqueProdutoId;
 	@DatabaseField(canBeNull = false, columnName = "estoque_produto_quantidade")
 	private int estoqueProdutoQtde;
+	@DatabaseField(canBeNull = false, columnName = "estoque_categoria_id")
+	private int estoqueCategoriaId;
 		
 	public Estoque() {
 		
 	}
 	
-	public Estoque(int estoqueProdutoId, int estoqueProdutoQtde) {
+	public Estoque(int estoqueProdutoId, int estoqueProdutoQtde, int estoqueCategoriaId) {
 		this.estoqueProdutoId = estoqueProdutoId;
 		this.estoqueProdutoQtde = estoqueProdutoQtde;
+		this.estoqueCategoriaId = estoqueCategoriaId;
 	}
 	
 	public int getEstoque_id() {
@@ -32,5 +35,9 @@ public class Estoque {
 	
 	public int getEstoque_produto_quantidade() {
 		return estoqueProdutoQtde;
+	}
+	
+	public int getEstoque_categoria_id() {
+		return estoqueId;
 	}
 }

@@ -1,5 +1,6 @@
 package interfaces;
 
+import interfaces.CadastraVendas.HandlerAddVenda;
 import interfaces.ModuloCategoria.HandlerAddCategoria;
 import interfaces.ModuloCategoria.HandlerConfirmAlterCategoria;
 import interfaces.ModuloCliente.HandlerAddCliente;
@@ -81,7 +82,7 @@ public class Confirmation {
 		placeHolder.setBorder(defaultBorder);
 		panelLevel3.add(placeHolder, BorderLayout.NORTH);
 		
-		String text = option == 0 ? "Deseja realmente sair?" : "Concluir operação?";
+		String text = option == 0 ? "Deseja realmente sair?" : option == 1 ? "Concluir operação?" : "Gerar comprovante de venda?";
 		placeHolder = new JLabel(text);
 		placeHolder.setFont(new Font(null, Font.PLAIN + Font.BOLD, placeHolder.getFont().getSize() + 5));
 		placeHolder.setPreferredSize(new Dimension((int) (preferredSize.getWidth() / 2), (int) (preferredSize.getHeight() / 6)));
@@ -139,7 +140,11 @@ public class Confirmation {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(caller instanceof CadastraVendas) {
-				((CadastraVendas) caller).incluiVenda(true);
+				if(subCaller instanceof HandlerAddVenda) {
+					((CadastraVendas) caller).geraComprovante(true);
+				} else {
+					((CadastraVendas) caller).incluiVenda(true);
+				}
 			} else if(caller instanceof CadastraLotes) {
 				((CadastraLotes) caller).incluiLote(true);
 			} else if(caller instanceof SystemInterface) {
@@ -188,7 +193,11 @@ public class Confirmation {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(caller instanceof CadastraVendas) {
-				((CadastraVendas) caller).incluiVenda(false);
+				if(subCaller instanceof HandlerAddVenda) {
+					((CadastraVendas) caller).geraComprovante(false);
+				} else {
+					((CadastraVendas) caller).incluiVenda(false);
+				}
 			} else if(caller instanceof CadastraLotes) {
 				((CadastraLotes) caller).incluiLote(false);
 			} else if(caller instanceof SystemInterface) {

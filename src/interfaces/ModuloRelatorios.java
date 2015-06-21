@@ -623,6 +623,70 @@ public class ModuloRelatorios {
 		return panelLevel0;
 	}
 	
+	public static void geraComprovanteVenda(int vendaId) {
+		
+		List<Operacao> vendas = new ArrayList<Operacao>();
+		List<Venda> listaVendas = null;
+		try {
+			Venda vendaTemp = new VendaDao(systemInterface.getSystemInterfaceDatabaseURL()).getById(vendaId);
+			ArrayList<Venda> vendasTemp = new ArrayList<Venda>();
+			vendasTemp.add(vendaTemp);
+			listaVendas = vendasTemp;
+		} catch (SQLException e1) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de vendas!");
+		}
+		DecimalFormat decimal = new DecimalFormat("0.00");
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+						
+		for(Venda venda : listaVendas) {
+			Cliente cliente = null;
+			try {
+				cliente = new ClienteDao(systemInterface.getSystemInterfaceDatabaseURL()).getById(venda.getVendaCliente());
+			} catch (SQLException e1) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de vendas!");
+			}
+			Operacao vendaOperacao = new Operacao(
+					venda.getVendaId(), 
+					cliente.getClienteNome(), 
+					df.format(venda.getVendaData()), 
+					"R$ " + decimal.format(venda.getVendaValor())
+			);
+			List<ProdutoOperacao> vendaProdutos = new ArrayList<ProdutoOperacao>();
+			List<ItemVenda> itens = null;
+			try {
+				itens = new ItemVendaDao(systemInterface.getSystemInterfaceDatabaseURL()).getForValue("venda", String.valueOf(venda.getVendaId()));
+			} catch (SQLException e1) {
+				systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de vendas!");
+			}
+			
+			for(ItemVenda item : itens) {
+				Produto produto = null;
+				try {
+					produto = new ProdutoDao(systemInterface.getSystemInterfaceDatabaseURL()).getById(item.getProduto());
+				} catch (SQLException e1) {
+					systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de vendas!");
+				}
+				
+				vendaProdutos.add(new ProdutoOperacao(
+						produto.getProdutoId(), 
+						produto.getProdutoDesc(), 
+						item.getQuantidade(), 
+						"R$ " + decimal.format(produto.getProdutoCusto()))
+				);
+			}
+			vendaOperacao.setProdutosOperacao(vendaProdutos);
+			vendas.add(vendaOperacao);
+		}
+		
+		try {
+			Relatorios.gerarRelatorioVendas(vendas);
+		} catch (JRException e1) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de vendas!");
+		} catch (IOException e1) {
+			systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de vendas!");
+		}
+	}
+	
 	protected static class HandlerConferenciaEstoque implements MouseListener {
 		
 		private SystemInterface systemInterface;
@@ -923,7 +987,7 @@ public class ModuloRelatorios {
 							listaVendas.removeAll(vendasMenoresDataInicio);
 							listaVendas.removeAll(vendasMaioresDataFinal);
 						} catch (SQLException e1) {
-							systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de lotes!");
+							systemInterface.getSystemInterfaceLabelStatus().setText("Houve um erro ao recuperar a lista de vendas!");
 						}
 						DecimalFormat decimal = new DecimalFormat("0.00");
 						

@@ -53,6 +53,7 @@ public class CadastraVendas {
 	private static Double valorTotal;
 	private static JTextField textField;
 	private static Venda venda;
+	private int ultimaVenda;
 	private SystemInterface systemInterface;
 	
 	public CadastraVendas(SystemInterface systemInterface) {
@@ -359,9 +360,9 @@ public class CadastraVendas {
 					VendaDao vendaDao = new VendaDao(systemInterface.getSystemInterfaceDatabaseURL());
 					ItemVendaDao itemVendaDao = new ItemVendaDao(systemInterface.getSystemInterfaceDatabaseURL());
 					
-					int id = vendaDao.insertVenda(venda);
+					ultimaVenda = vendaDao.insertVenda(venda);
 					for(ItemVenda i : popUp.getItensVenda()) {
-						i.setVenda(id);
+						i.setVenda(ultimaVenda);
 						itemVendaDao.insert(i);
 					}
 					popUp.encerraVenda();
@@ -369,12 +370,19 @@ public class CadastraVendas {
 					
 					systemInterface.clearSystemInterface(!Main.isBrunoTesting);
 					systemInterface.getSystemInterfacePanelMain().add(systemInterface.getSystemInterfaceCadastraVendas().cadastraVenda());
+					conf.requestConfirmation(2, new HandlerAddVenda(null));
 					
 					systemInterface.getSystemInterfaceLabelStatus().setText("Venda cadastrada com sucesso!");
 				} catch (SQLException e1) {
 					systemInterface.getSystemInterfaceLabelStatus().setText("Houve uma falha ao inserir os dados da venda no banco!");
 				}
 			}
+		}
+	}
+	
+	public void geraComprovante(Boolean choice) {
+		if(choice) {
+			ModuloRelatorios.geraComprovanteVenda(ultimaVenda);
 		}
 	}
 	
@@ -462,7 +470,7 @@ public class CadastraVendas {
 		}
 	}
 	
-	private static class HandlerAddVenda implements MouseListener {
+	protected static class HandlerAddVenda implements MouseListener {
 		
 		private SystemInterface systemInterface;
 		

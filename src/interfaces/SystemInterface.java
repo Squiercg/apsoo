@@ -91,7 +91,7 @@ public class SystemInterface {
 	}
 	
 	private void setSystemInterfaceDimension() {
-		systemInterfaceDimension = new Dimension(1024, 720);
+		systemInterfaceDimension = new Dimension(1024, 768);
 	}
 	
 	private void setSystemInterfaceDatabaseURL(String systemInterfaceDatabaseURL) {

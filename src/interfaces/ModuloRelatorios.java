@@ -671,7 +671,7 @@ public class ModuloRelatorios {
 						produto.getProdutoId(), 
 						produto.getProdutoDesc(), 
 						item.getQuantidade(), 
-						"R$ " + decimal.format(produto.getProdutoCusto()))
+						"R$ " + decimal.format(produto.getProdutoPreco()))
 				);
 			}
 			vendaOperacao.setProdutosOperacao(vendaProdutos);
@@ -1024,7 +1024,7 @@ public class ModuloRelatorios {
 										produto.getProdutoId(), 
 										produto.getProdutoDesc(), 
 										item.getQuantidade(), 
-										"R$ " + decimal.format(produto.getProdutoCusto()))
+										"R$ " + decimal.format(produto.getProdutoPreco()))
 								);
 							}
 							vendaOperacao.setProdutosOperacao(vendaProdutos);
@@ -1071,7 +1071,7 @@ public class ModuloRelatorios {
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			systemInterface.getSystemInterfaceLabelStatus().setText("Gera o relatório de histórico de lotes com o fornecedor selecionado");
+			systemInterface.getSystemInterfaceLabelStatus().setText("Gera o relatório de histórico de vendas com o cliente selecionado");
 		}
 		
 		@Override

@@ -61,9 +61,9 @@ public class SystemInterface {
 		setSystemInterfaceHomeButton();
 		setSystemInterfaceMenu();
 		setSystemInterfaceExitButton();
+		setSystemInterfaceModules();
 		setSystemInterface();
 		setSystemInterfaceBusy();
-		setSystemInterfaceModules();
 	}
 	
 	private void setSystemInterfaceSelfReference() {
@@ -195,8 +195,8 @@ public class SystemInterface {
 			String systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_welcome.jpg";
 			systemInterfaceLabelImage = new JLabel(new ImageIcon(systemWelcomeImagePath));
 			systemInterfaceFrame.add(systemInterfaceLabelImage);
-			systemInterfaceFrame.repaint();
 			systemInterfaceFrame.setVisible(true);
+			
 			try {
 			    Thread.sleep(systemInterfaceLoadTime * 2);
 			} catch(InterruptedException exThreadFailed) {
@@ -204,6 +204,8 @@ public class SystemInterface {
 			    Thread.currentThread().interrupt();
 			}
 			systemInterfaceFrame.remove(systemInterfaceLabelImage);
+			systemInterfaceFrame.repaint();
+			
 			systemWelcomeImagePath = new File("lib/.").getCanonicalPath() + "/" + "CDT_background.jpg";
 			systemInterfaceLabelImage = new JLabel(new ImageIcon(systemWelcomeImagePath));
 		} catch(IOException exPathNotFound) {

@@ -967,7 +967,7 @@ public class ModuloRelatorios {
 						List<Operacao> vendas = new ArrayList<Operacao>();
 						List<Venda> listaVendas = null;
 						try {
-							if(source.getSelectedItem().toString().equalsIgnoreCase("Todos os fornecedores")) {
+							if(source.getSelectedItem().toString().equalsIgnoreCase("Todos os clientes")) {
 								listaVendas = new VendaDao(systemInterface.getSystemInterfaceDatabaseURL()).getAll();
 							} else {
 								listaVendas = new VendaDao(systemInterface.getSystemInterfaceDatabaseURL()).getForValue("venda_cliente", 
